@@ -48,11 +48,19 @@ public class UserEntity {
     @ManyToMany(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
     @JoinTable(name = "\"user_role\"", joinColumns = @JoinColumn(name = "\"user_id\""), inverseJoinColumns = @JoinColumn(name = "\"role_id\""))
     private Set<RoleEntity> roles;
-
+    @JsonIgnore
+    @OneToOne(mappedBy = "groupLeader",targetEntity = SubjectEntity.class)
+    private SubjectEntity subjectLeader;
+    @JsonIgnore
+    @ManyToOne()
+    @JoinColumn(name = "\"subject\"")
+    private SubjectEntity subject;
     public UserEntity(String password, String phone) {
         this.password = password;
         this.phone = phone;
     }
+
+
 
     public String getId() {
         return id;
