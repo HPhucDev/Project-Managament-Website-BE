@@ -32,6 +32,17 @@ public class UserEntity {
     @JsonIgnore
     @Column(name = "\"password\"")
     private String password;
+    @OneToOne(mappedBy = "user")
+    @JsonIgnore
+    private StudentEntity student;
+
+    public StudentEntity getStudent() {
+        return student;
+    }
+
+    public void setStudent(StudentEntity student) {
+        this.student = student;
+    }
 
     @Column(name = "\"gender\"")
     private String gender;
