@@ -13,10 +13,10 @@ public class CorsConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
-                        .allowedMethods("GET","POST","DELETE","PUT","OPTIONS","PATCH")
+                        .allowedMethods("GET","POST","DELETE","PUT","OPTIONS")
                         .allowedHeaders("*")
-                        .allowedOrigins("https://subject-management.herokuapp.com/","http://127.0.0.1:4040/","http://localhost:3000/","http://localhost:8080/","http://localhost:5000/"
-                        )
+                        .allowedOrigins("http://localhost:3000/","http://localhost:8080/","https://tiki-web.vercel.app/"
+                        ,"https://gorgeous-pastelito-2fb64c.netlify.app/","https://tiki-ui.vercel.app/")
                         .allowCredentials(true)
                         .maxAge(3600);
             }
