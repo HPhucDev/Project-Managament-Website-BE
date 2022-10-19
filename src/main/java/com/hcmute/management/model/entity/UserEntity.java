@@ -66,6 +66,10 @@ public class UserEntity {
     @ManyToOne()
     @JoinColumn(name = "\"subject\"")
     private SubjectEntity subject;
+
+    @OneToOne(mappedBy = "user")
+    @JsonIgnore
+    private LecturerEntity lecturer;
     public UserEntity(String password, String phone) {
         this.password = password;
         this.phone = phone;

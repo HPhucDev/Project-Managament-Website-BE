@@ -14,6 +14,7 @@ import java.util.Set;
 @RestResource(exported = false)
 @Entity
 @Table(name = "\"classes\"")
+@RestResource(exported = false)
 public class ClassEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

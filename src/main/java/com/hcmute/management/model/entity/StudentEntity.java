@@ -9,6 +9,7 @@ import java.util.Date;
 
 @RestResource(exported = false)
 @Entity
+@RestResource(exported = false)
 @Table(name ="\"students\"")
 public class StudentEntity {
     @Id
