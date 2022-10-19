@@ -7,7 +7,7 @@ import org.springframework.data.rest.core.annotation.RestResource;
 import javax.persistence.*;
 import java.util.Date;
 
-
+@RestResource(exported = false)
 @Entity
 @Table(name ="\"students\"")
 public class StudentEntity {
