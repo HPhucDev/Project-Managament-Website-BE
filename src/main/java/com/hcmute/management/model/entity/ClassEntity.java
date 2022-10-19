@@ -13,6 +13,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "\"classes\"")
+@RestResource(exported = false)
 public class ClassEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
