@@ -11,7 +11,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 
-@RestResource(exported = false)
+
 @Entity
 @Table(name = "\"classes\"")
 @RestResource(exported = false)
