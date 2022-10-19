@@ -35,7 +35,7 @@ public class OAuth2Handler extends SimpleUrlAuthenticationSuccessHandler {
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-        String targetUrl = determineTargetUrl(request, response,authentication);
+        String targetUrl = determineTargetUrl(request, response, authentication);
         if (response.isCommitted()) {
             log.debug("Response has already been committed. Unable to redirect to " + targetUrl);
             return;
@@ -45,7 +45,7 @@ public class OAuth2Handler extends SimpleUrlAuthenticationSuccessHandler {
 
     }
 
-//    protected String determineTargetUrl(HttpServletRequest request, HttpServletResponse response,Authentication authentication) {
+    //    protected String determineTargetUrl(HttpServletRequest request, HttpServletResponse response,Authentication authentication) {
 //        Optional<String> redirectUri = CookieUtils.getCookie(request, HttpCookieOAuth2AuthorizationRequestRepository.REDIRECT_URI_PARAM_COOKIE_NAME)
 //                .map(Cookie::getValue);
 //        System.out.println("redirectUri: " + redirectUri);

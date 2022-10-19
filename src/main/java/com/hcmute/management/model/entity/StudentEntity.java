@@ -10,7 +10,7 @@ import java.util.Date;
 
 @Entity
 @RestResource(exported = false)
-@Table(name ="\"students\"")
+@Table(name = "\"students\"")
 public class StudentEntity {
     @Id
     @Column(name = "\"id\"")
@@ -31,10 +31,10 @@ public class StudentEntity {
     private String education_program;
 
     @ManyToOne()
-    @JoinColumn(name ="classes_id")
+    @JoinColumn(name = "classes_id")
     private ClassEntity classes;
 
-    @Column(name ="\"major\"")
+    @Column(name = "\"major\"")
     private String major;
 
     public String getId() {
@@ -81,7 +81,7 @@ public class StudentEntity {
         this.major = major;
     }
 
-    public StudentEntity( UserEntity user, Date school_year, String education_program, ClassEntity classes, String major) {
+    public StudentEntity(UserEntity user, Date school_year, String education_program, ClassEntity classes, String major) {
         this.user = user;
         this.school_year = school_year;
         this.education_program = education_program;

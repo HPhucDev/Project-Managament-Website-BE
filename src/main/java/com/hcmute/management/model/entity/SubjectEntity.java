@@ -23,9 +23,9 @@ public class SubjectEntity {
             strategy = "org.hibernate.id.UUIDGenerator"
     )
     private String id;
-    @Column(name="\"name\"")
+    @Column(name = "\"name\"")
     private String name;
-    @Column(name="\"target\"")
+    @Column(name = "\"target\"")
     private String target;
     @Column(name = "\"Requirement\"")
     private String requirement;
@@ -46,7 +46,7 @@ public class SubjectEntity {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "\"group_leader\"")
     private UserEntity groupLeader;
-    @OneToMany(mappedBy = "subject",targetEntity = UserEntity.class,cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "subject", targetEntity = UserEntity.class, cascade = CascadeType.ALL)
     private List<UserEntity> groupMember;
     @Column(name = "\"status\"")
     private int status;
