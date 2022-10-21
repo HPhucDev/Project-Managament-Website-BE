@@ -75,7 +75,29 @@ public class UserEntity {
         this.phone = phone;
     }
 
+    public SubjectEntity getSubjectLeader() {
+        return subjectLeader;
+    }
 
+    public void setSubjectLeader(SubjectEntity subjectLeader) {
+        this.subjectLeader = subjectLeader;
+    }
+
+    public SubjectEntity getSubject() {
+        return subject;
+    }
+
+    public void setSubject(SubjectEntity subject) {
+        this.subject = subject;
+    }
+
+    public LecturerEntity getLecturer() {
+        return lecturer;
+    }
+
+    public void setLecturer(LecturerEntity lecturer) {
+        this.lecturer = lecturer;
+    }
 
     public String getId() {
         return id;
