@@ -3,6 +3,7 @@ package com.hcmute.management.handler;
 import com.hcmute.management.repository.HttpCookieOAuth2AuthorizationRequestRepository;
 import com.hcmute.management.security.JWT.JwtUtils;
 import com.hcmute.management.datechecker.CookieUtils;
+import com.hcmute.management.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,14 +29,12 @@ public class OAuth2Handler extends SimpleUrlAuthenticationSuccessHandler {
     @Autowired
     JwtUtils jwtUtils;
     @Autowired
-//    UserService userService;
 
     private final HttpCookieOAuth2AuthorizationRequestRepository httpCookieOAuth2AuthorizationRequestRepository;
 
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-        String targetUrl = determineTargetUrl(request, response,authentication);
         if (response.isCommitted()) {
             log.debug("Response has already been committed. Unable to redirect to " + targetUrl);
             return;
@@ -45,7 +44,6 @@ public class OAuth2Handler extends SimpleUrlAuthenticationSuccessHandler {
 
     }
 
-//    protected String determineTargetUrl(HttpServletRequest request, HttpServletResponse response,Authentication authentication) {
 //        Optional<String> redirectUri = CookieUtils.getCookie(request, HttpCookieOAuth2AuthorizationRequestRepository.REDIRECT_URI_PARAM_COOKIE_NAME)
 //                .map(Cookie::getValue);
 //        System.out.println("redirectUri: " + redirectUri);

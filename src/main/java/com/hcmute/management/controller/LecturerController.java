@@ -56,18 +56,17 @@ public class LecturerController {
             UserEntity user = userService.findById(UUID.fromString(jwtUtils.getUserNameFromJwtToken(accessToken)).toString());
             if (user == null) {
                 throw new BadCredentialsException("User not found");
-            }
-            else {
-                LecturerEntity findLecturer =lecturerService.getLecturerById(addNewLecturerRequest.getId());
+            } else {
+                LecturerEntity findLecturer = lecturerService.getLecturerById(addNewLecturerRequest.getId());
                 //id have been existed
-                if (findLecturer!=null){
+                if (findLecturer != null) {
                     response.setStatus((HttpStatus.BAD_REQUEST.value()));
                     response.setMessage("Id have been existed");
                     response.setSuccess(false);
                     return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
                 }
                 //LecturerEntity lecturer = LecturerMapping.addLecturerToEntity((addNewLecturerRequest));
-                LecturerEntity lecturer=lecturerService.saveLecturer(addNewLecturerRequest,user);
+                LecturerEntity lecturer = lecturerService.saveLecturer(addNewLecturerRequest, user);
                 response.setStatus(HttpStatus.OK.value());
                 response.setMessage("Add Lecturer successfully");
                 response.setSuccess(true);
@@ -119,7 +118,7 @@ public class LecturerController {
                     response.setSuccess(false);
                     return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
                 }
-                lecturerService.updateLecturer(updateLecturerRequest,user,id);
+                lecturerService.updateLecturer(updateLecturerRequest, user, id);
                 response.setStatus(HttpStatus.OK.value());
                 response.setMessage("Update Lecturer successfully");
                 response.setSuccess(true);
@@ -128,25 +127,26 @@ public class LecturerController {
             }
         } else throw new BadCredentialsException("access token is missing");
     }
+
     @GetMapping("/{id}")
-    public ResponseEntity<SuccessResponse>getLecturerById(@PathVariable("id")String userId){
+    public ResponseEntity<SuccessResponse> getLecturerById(@PathVariable("id") String userId) {
         LecturerEntity lecturer = lecturerService.getLecturerById(userId);
         SuccessResponse response = new SuccessResponse();
-        if(lecturer==null)
-        {
+        if (lecturer == null) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
-            response.setMessage("Can't find Lecturer with id "+userId);
+            response.setMessage("Can't find Lecturer with id " + userId);
             response.setSuccess(false);
-            return new ResponseEntity<>(response,HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
         response.setStatus(HttpStatus.OK.value());
         response.setMessage("Get Lecturer successfully");
         response.setSuccess(true);
-        response.getData().put("LecturerInfo",lecturer);
-        return new ResponseEntity<>(response,HttpStatus.OK);
+        response.getData().put("LecturerInfo", lecturer);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
     @DeleteMapping("/delete")
-    public ResponseEntity<SuccessResponse>deleteLecturer(@RequestBody List<String> listLecturerId,HttpServletRequest httpServletRequest){
+    public ResponseEntity<SuccessResponse> deleteLecturer(@RequestBody List<String> listLecturerId, HttpServletRequest httpServletRequest) {
         String authorizationHeader = httpServletRequest.getHeader(AUTHORIZATION);
         SuccessResponse response = new SuccessResponse();
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
@@ -158,7 +158,7 @@ public class LecturerController {
             response.setStatus(HttpStatus.OK.value());
             response.setMessage("Delete Lecturer successfully");
             response.setSuccess(true);
-            return new ResponseEntity<>(response,HttpStatus.OK);
-        }else throw new BadCredentialsException("access token is missing");
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } else throw new BadCredentialsException("access token is missing");
     }
 }

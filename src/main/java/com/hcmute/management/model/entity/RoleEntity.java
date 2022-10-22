@@ -18,7 +18,7 @@ public class RoleEntity {
     private String name;
 
     public RoleEntity(UUID id, String name) {
-        this.id= String.valueOf(id);
+        this.id = String.valueOf(id);
         this.name = name;
     }
 
