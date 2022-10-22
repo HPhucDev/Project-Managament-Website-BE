@@ -6,6 +6,7 @@ import com.hcmute.management.model.entity.SubjectEntity;
 import com.hcmute.management.model.payload.SuccessResponse;
 import com.hcmute.management.model.payload.request.Subject.AddNewSubjectRequest;
 import com.hcmute.management.model.payload.request.Subject.UpdateSubjectRequest;
+import com.hcmute.management.model.payload.response.PagingResponse;
 import com.hcmute.management.security.JWT.JwtUtils;
 import com.hcmute.management.service.SubjectService;
 import lombok.RequiredArgsConstructor;
@@ -66,12 +67,39 @@ public class SubjectController {
 
         }else throw new BadCredentialsException("access token is missing");
     }
-    @GetMapping("/showall")
-    public ResponseEntity<SuccessResponse> getAllSubject(@RequestParam(defaultValue = "0") int page,
-                                                         @RequestParam(defaultValue = "5") int size)
+    @GetMapping("/getallpaging")
+    public ResponseEntity<PagingResponse> getAllSubjectPaging(@RequestParam(defaultValue = "0") int page,
+                                                              @RequestParam(defaultValue = "5") int size)
     {
         List<SubjectEntity> listSubject = subjectService.findAllSubjectPaging(page,size);
+        int totalElements = subjectService.getAllSubject().size();
+        PagingResponse response = new PagingResponse();
+        if (listSubject.size()==0)
+        {
+            response.setStatus(HttpStatus.BAD_REQUEST.value());
+            response.setMessage("List Subject is empty");
+            response.setSuccess(false);
+            response.setEmpty(true);
+            return new ResponseEntity<>(response,HttpStatus.OK);
+        }
+
+        response.setStatus(HttpStatus.OK.value());
+        response.setMessage("Save Subject successfully");
+        response.setSuccess(true);
+        response.getData().put("ListSubjectInfo",listSubject);
+        response.setEmpty(false);
+        response.setFirst(page==0);
+        response.setSize(size);
+        response.setTotalPages(totalElements%size==0 ? totalElements/size : totalElements/size+1);
+        response.setLast( page == response.getTotalPages()-1);
+        response.setTotalElements(totalElements);
+        return new ResponseEntity<>(response,HttpStatus.OK);
+    }
+    @GetMapping("/getall")
+    public ResponseEntity<SuccessResponse> getAll()
+    {
         SuccessResponse response = new SuccessResponse();
+        List<SubjectEntity> listSubject = subjectService.getAllSubject();
         if (listSubject.size()==0)
         {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
@@ -86,7 +114,7 @@ public class SubjectController {
         response.getData().put("ListSubjectInfo",listSubject);
         return new ResponseEntity<>(response,HttpStatus.OK);
     }
-    @PutMapping("/update/{id}")
+    @PatchMapping("/update/{id}")
     public ResponseEntity<SuccessResponse> updateSubject(@Valid @RequestBody UpdateSubjectRequest updateSubjectRequest,BindingResult errors,HttpServletRequest httpServletRequest,@PathVariable("id") String id) throws Exception {
         if (errors.hasErrors()) {
             throw new MethodArgumentNotValidException(errors);
