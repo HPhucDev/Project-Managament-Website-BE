@@ -17,6 +17,6 @@ public interface LecturerService {
     List<LecturerEntity> getAllLecturer();
     LecturerEntity getLecturerById(String id);
     void deleteById(List<String> ListId);
-    List <LecturerEntity>findAllSubjectPaging(int pageNo,int pagSize);
+    List <LecturerEntity>findAllLecturerPaging(int pageNo,int pagSize);
     public LecturerEntity findByUserId(UserEntity user);
 }
