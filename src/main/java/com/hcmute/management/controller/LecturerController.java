@@ -51,42 +51,56 @@ public class LecturerController {
             String accessToken = authorizationHeader.substring("Bearer ".length());
 
             if (jwtUtils.validateExpiredToken(accessToken) == true) {
-                throw new BadCredentialsException("access token is  expired");
+                //throw new BadCredentialsException("access token is  expired");
+                response.setStatus(HttpStatus.UNAUTHORIZED.value());
+                response.setMessage("access token is expired");
+                response.setSuccess(false);
+                return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
             }
-            UserEntity user = userService.findById(UUID.fromString(jwtUtils.getUserNameFromJwtToken(accessToken)).toString());
+            //UserEntity user = userService.findById(UUID.fromString(jwtUtils.getUserNameFromJwtToken(accessToken)).toString());
+            UserEntity user =userService.findById(addNewLecturerRequest.getUserid());
             if (user == null) {
-                throw new BadCredentialsException("User not found");
+                //throw new BadCredentialsException("User not found");
+                response.setStatus(HttpStatus.NOT_FOUND.value());
+                response.setMessage("User not found");
+                response.setSuccess(false);
+                return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
             }
             else {
                 LecturerEntity findLecturer =lecturerService.getLecturerById(addNewLecturerRequest.getId());
                 //id have been existed
                 if (findLecturer!=null){
-                    response.setStatus((HttpStatus.BAD_REQUEST.value()));
-                    response.setMessage("Id have been existed");
+                    response.setStatus((HttpStatus.FOUND.value()));
+                    response.setMessage("Id is existed");
                     response.setSuccess(false);
-                    return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+                    return new ResponseEntity<>(response, HttpStatus.FOUND);
                 }
                 //LecturerEntity lecturer = LecturerMapping.addLecturerToEntity((addNewLecturerRequest));
                 LecturerEntity lecturer=lecturerService.saveLecturer(addNewLecturerRequest,user);
                 response.setStatus(HttpStatus.OK.value());
                 response.setMessage("Add Lecturer successfully");
                 response.setSuccess(true);
-                response.getData().put("LecturerInfo", lecturer);
+                response.getData().put("Lecturer", lecturer);
                 return new ResponseEntity<>(response, HttpStatus.OK);
             }
-        } else throw new BadCredentialsException("access token is missing");
+        } else {
+            //throw new BadCredentialsException("access token is missing");
+            response.setStatus(HttpStatus.UNAUTHORIZED.value());
+            response.setMessage("access token is missing");
+            response.setSuccess(false);
+            return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
+        }
     }
 
     @GetMapping("/getall")
-    public ResponseEntity<SuccessResponse> getAllLecturer(@RequestParam(defaultValue = "0") int page,
-                                                          @RequestParam(defaultValue = "5") int size) {
-        List<LecturerEntity> listLecturer = lecturerService.findAllSubjectPaging(page, size);
+    public ResponseEntity<SuccessResponse> getAllLecturer() {
+        List<LecturerEntity> listLecturer = lecturerService.getAllLecturer();
         SuccessResponse response = new SuccessResponse();
         if (listLecturer.size() == 0) {
-            response.setStatus(HttpStatus.BAD_REQUEST.value());
+            response.setStatus(HttpStatus.NOT_FOUND.value());
             response.setMessage("List Lecturer is empty");
             response.setSuccess(false);
-            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
         }
         response.setStatus(HttpStatus.OK.value());
         response.setMessage("Get all Lecturer successfully");
@@ -96,28 +110,38 @@ public class LecturerController {
 
     }
 
-    @PutMapping("/update/{id}")
+    @PatchMapping("/update/{id}")
     public ResponseEntity<SuccessResponse> updateLecturer(@Valid @RequestBody UpdateLecturerRequest updateLecturerRequest, BindingResult errors, HttpServletRequest httpServletRequest, @PathVariable("id") String id) throws Exception {
+        SuccessResponse response = new SuccessResponse();
         if (errors.hasErrors()) {
             throw new MethodArgumentNotValidException(errors);
         }
         String authorizationHeader = httpServletRequest.getHeader(AUTHORIZATION);
-        SuccessResponse response = new SuccessResponse();
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             String accessToken = authorizationHeader.substring("Bearer ".length());
             if (jwtUtils.validateExpiredToken(accessToken) == true) {
-                throw new BadCredentialsException("access token is  expired");
+                //throw new BadCredentialsException("access token is  expired");
+                response.setStatus(HttpStatus.UNAUTHORIZED.value());
+                response.setMessage("access token is expired");
+                response.setSuccess(false);
+                return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
             }
-            UserEntity user = userService.findById(UUID.fromString(jwtUtils.getUserNameFromJwtToken(accessToken)).toString());
-            if (user == null) {
-                throw new BadCredentialsException("User not found");
+            //UserEntity user = userService.findById(UUID.fromString(jwtUtils.getUserNameFromJwtToken(accessToken)).toString());
+            LecturerEntity lecturer = lecturerService.getLecturerById(id);
+
+            if (lecturer == null) {
+                response.setStatus((HttpStatus.NOT_FOUND.value()));
+                response.setMessage("Can't find lecturer with id:" + id);
+                response.setSuccess(false);
+                return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
             } else {
-                LecturerEntity lecturer = lecturerService.getLecturerById(id);
-                if (lecturer == null) {
-                    response.setStatus((HttpStatus.BAD_REQUEST.value()));
-                    response.setMessage("Can't find lecturer with id = " + id);
-                    response.setSuccess(false);
-                    return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+                UserEntity user =lecturer.getUser();
+                if (user == null) {
+                    // throw new BadCredentialsException("User not found");
+                response.setStatus(HttpStatus.NOT_FOUND.value());
+                response.setMessage("User not found");
+                response.setSuccess(false);
+                return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
                 }
                 lecturerService.updateLecturer(updateLecturerRequest,user,id);
                 response.setStatus(HttpStatus.OK.value());
@@ -126,18 +150,24 @@ public class LecturerController {
                 response.getData().put("LecturerInfo", lecturer);
                 return new ResponseEntity<>(response, HttpStatus.OK);
             }
-        } else throw new BadCredentialsException("access token is missing");
+        } else {
+            //throw new BadCredentialsException("access token is missing");
+            response.setStatus(HttpStatus.UNAUTHORIZED.value());
+            response.setMessage("access token is missing");
+            response.setSuccess(false);
+            return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
+        }
     }
     @GetMapping("/{id}")
-    public ResponseEntity<SuccessResponse>getLecturerById(@PathVariable("id")String userId){
-        LecturerEntity lecturer = lecturerService.getLecturerById(userId);
+    public ResponseEntity<SuccessResponse>getLecturerById(@PathVariable("id")String id){
+        LecturerEntity lecturer = lecturerService.getLecturerById(id);
         SuccessResponse response = new SuccessResponse();
         if(lecturer==null)
         {
-            response.setStatus(HttpStatus.BAD_REQUEST.value());
-            response.setMessage("Can't find Lecturer with id "+userId);
+            response.setStatus(HttpStatus.NOT_FOUND.value());
+            response.setMessage("Can't find Lecturer with id:"+id);
             response.setSuccess(false);
-            return new ResponseEntity<>(response,HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(response,HttpStatus.NOT_FOUND);
         }
         response.setStatus(HttpStatus.OK.value());
         response.setMessage("Get Lecturer successfully");
@@ -152,13 +182,24 @@ public class LecturerController {
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             String accessToken = authorizationHeader.substring("Bearer ".length());
             if (jwtUtils.validateExpiredToken(accessToken) == true) {
-                throw new BadCredentialsException("access token is  expired");
+                //throw new BadCredentialsException("access token is  expired");
+                response.setStatus(HttpStatus.UNAUTHORIZED.value());
+                response.setMessage("access token is expired");
+                response.setSuccess(false);
+                return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
             }
             lecturerService.deleteById(listLecturerId);
             response.setStatus(HttpStatus.OK.value());
             response.setMessage("Delete Lecturer successfully");
             response.setSuccess(true);
             return new ResponseEntity<>(response,HttpStatus.OK);
-        }else throw new BadCredentialsException("access token is missing");
+        }else {
+            //throw new BadCredentialsException("access token is missing");
+            response.setStatus(HttpStatus.UNAUTHORIZED.value());
+            response.setMessage("access token is missing");
+            response.setSuccess(false);
+            return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
+        }
     }
+
 }
