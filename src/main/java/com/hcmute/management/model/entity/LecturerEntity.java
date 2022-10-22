@@ -36,7 +36,6 @@ public class LecturerEntity {
     private boolean active;
     @OneToOne
     @JoinColumn(name="user_id")
-    @JsonIgnore
     private UserEntity user;
 
     public  LecturerEntity (){}

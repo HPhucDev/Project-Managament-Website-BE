@@ -52,7 +52,7 @@ public class UserEntity {
 
     @Column(name = "\"status\"")
     private boolean status;
-
+    @Column(name = "\"active\"")
     private boolean active;
 
     @JsonIgnore

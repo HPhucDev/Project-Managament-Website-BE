@@ -5,8 +5,7 @@ import com.hcmute.management.model.entity.StudentEntity;
 import com.hcmute.management.model.entity.UserEntity;
 import com.hcmute.management.model.payload.SuccessResponse;
 import com.hcmute.management.model.payload.request.Student.AddNewStudentRequest;
-import com.hcmute.management.model.payload.request.Student.ChangeInfoStudentRequest;
-import com.hcmute.management.model.payload.request.Student.DeleteStudentRequest;
+import com.hcmute.management.model.payload.request.Student.UpdateStudentRequest;
 import com.hcmute.management.repository.StudentRepository;
 import com.hcmute.management.security.JWT.JwtUtils;
 import com.hcmute.management.service.StudentService;
@@ -19,8 +18,8 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -82,16 +81,16 @@ public class StudentController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @PostMapping("/insert")
+    @PostMapping("/add")
     @ResponseBody
-    private ResponseEntity<SuccessResponse> insertStudent(HttpServletRequest req, @RequestBody AddNewStudentRequest addNewStudentRequest) {
+    private ResponseEntity<SuccessResponse> addStudent(HttpServletRequest req, @RequestBody AddNewStudentRequest addNewStudentRequest, BindingResult errors) {
         String authorizationHeader = req.getHeader(AUTHORIZATION);
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             String accessToken = authorizationHeader.substring("Bearer ".length());
             if (jwtUtils.validateExpiredToken(accessToken)) {
                 throw new BadCredentialsException("access token is expired");
             }
-            UserEntity user = userService.findById(UUID.fromString(jwtUtils.getUserNameFromJwtToken(accessToken)).toString());
+            UserEntity user = userService.findById(addNewStudentRequest.getUserid());
             if (user == null) {
                 throw new BadCredentialsException("User not found");
             } else {
@@ -115,9 +114,9 @@ public class StudentController {
         throw new BadCredentialsException("access token is missing");
     }
 
-    @PutMapping("/changeinf")
+    @PutMapping("/update/{id}")
     @ResponseBody
-    public ResponseEntity<SuccessResponse> changeInfo(HttpServletRequest req, @RequestBody @Valid ChangeInfoStudentRequest changeInfoStudentRequest) {
+    public ResponseEntity<SuccessResponse> updateStudent(HttpServletRequest req, @RequestBody @Valid UpdateStudentRequest changeInfoStudentRequest) {
         String authorizationHeader = req.getHeader(AUTHORIZATION);
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             String accessToken = authorizationHeader.substring("Bearer ".length());

@@ -4,6 +4,7 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -25,6 +26,7 @@ public class AddNewStudentRequest {
     @NotEmpty(message = "Địa chỉ không được để trống")
     private String address;
     @NotEmpty(message = "Năm học không được để trống")
+    @DateTimeFormat(pattern = "yyyy")
     private Date schoolyear;
     @NotEmpty(message = "Chuyên ngành không được để trống")
     private String major;
@@ -32,5 +34,7 @@ public class AddNewStudentRequest {
     private String educationprogram;
     @NotNull(message = "Mã lớp học không được để trống")
     private int  classid;
+    @NotNull(message = "Id user không được để trống")
+    private String userid;
 
 }

@@ -4,14 +4,12 @@ import com.hcmute.management.model.entity.ClassEntity;
 import com.hcmute.management.model.entity.StudentEntity;
 import com.hcmute.management.model.entity.UserEntity;
 import com.hcmute.management.model.payload.request.Student.AddNewStudentRequest;
-import com.hcmute.management.model.payload.request.Student.ChangeInfoStudentRequest;
+import com.hcmute.management.model.payload.request.Student.UpdateStudentRequest;
 import com.hcmute.management.repository.ClassRepository;
 import com.hcmute.management.repository.StudentRepository;
 import com.hcmute.management.repository.UserRepository;
-import com.hcmute.management.service.ClassService;
 import com.hcmute.management.service.StudentService;
 import lombok.RequiredArgsConstructor;
-import org.apache.catalina.User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -67,7 +65,7 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public StudentEntity changeInf(ChangeInfoStudentRequest changeInfoStudentRequest, UserEntity user) {
+    public StudentEntity changeInf(UpdateStudentRequest changeInfoStudentRequest, UserEntity user) {
         StudentEntity student = studentRepository.findByUser(user);
         if(student == null)
         {

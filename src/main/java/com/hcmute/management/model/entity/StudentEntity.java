@@ -16,10 +16,6 @@ public class StudentEntity {
     @Column(name = "\"id\"")
     private String id;
 
-    public void setId(String id) {
-        this.id = id;
-    }
-
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id", referencedColumnName = "user_id")
     private UserEntity user;
@@ -37,8 +33,15 @@ public class StudentEntity {
     @Column(name = "\"major\"")
     private String major;
 
+    @OneToOne(mappedBy = "student")
+    @JsonIgnore
+    private ProgressEntity progress;
+
     public String getId() {
         return id;
+    }
+    public void setId(String id) {
+        this.id = id;
     }
 
     public UserEntity getUser() {

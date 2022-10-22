@@ -1,5 +1,6 @@
 package com.hcmute.management.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.aspectj.apache.bcel.classfile.Module;
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.rest.core.annotation.RestResource;
@@ -54,6 +55,10 @@ public class SubjectEntity {
     private LocalDateTime startDate;
     @Column(name = "\"end_Date\"")
     private LocalDateTime endDate;
+
+    @OneToOne(mappedBy = "subject")
+    @JsonIgnore
+    private ProgressEntity progress;
 
     public String getId() {
         return id;
