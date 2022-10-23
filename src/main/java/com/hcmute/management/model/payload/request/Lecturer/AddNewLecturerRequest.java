@@ -1,5 +1,6 @@
 package com.hcmute.management.model.payload.request.Lecturer;
 
+import com.hcmute.management.model.entity.UserEntity;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,4 +28,6 @@ public class AddNewLecturerRequest {
     private String gender;
     @NotEmpty(message = "Địa chỉ không được để trống")
     private String address;
+    @NotEmpty(message ="UserId không được để trống")
+    private String userid;
 }

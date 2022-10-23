@@ -6,6 +6,7 @@ import com.hcmute.management.model.entity.SubjectEntity;
 import com.hcmute.management.model.payload.SuccessResponse;
 import com.hcmute.management.model.payload.request.Subject.AddNewSubjectRequest;
 import com.hcmute.management.model.payload.request.Subject.UpdateSubjectRequest;
+import com.hcmute.management.model.payload.response.PagingResponse;
 import com.hcmute.management.security.JWT.JwtUtils;
 import com.hcmute.management.service.SubjectService;
 import lombok.RequiredArgsConstructor;
@@ -32,59 +33,89 @@ public class SubjectController {
     private final SubjectService subjectService;
     @Autowired
     JwtUtils jwtUtils;
-
     @PostMapping("/add")
-    public ResponseEntity<SuccessResponse> addSubject(@RequestBody @Valid AddNewSubjectRequest addNewSubjectRequest, BindingResult errors, HttpServletRequest httpServletRequest) throws Exception {
-        if (errors.hasErrors()) {
+    public ResponseEntity<SuccessResponse> addSubject(@RequestBody @Valid AddNewSubjectRequest addNewSubjectRequest, BindingResult errors, HttpServletRequest httpServletRequest) throws Exception
+    {
+        if (errors.hasErrors())
+        {
             throw new MethodArgumentNotValidException(errors);
         }
         String authorizationHeader = httpServletRequest.getHeader(AUTHORIZATION);
         SuccessResponse response = new SuccessResponse();
-        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+        if(authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             String accessToken = authorizationHeader.substring("Bearer ".length());
 
             if (jwtUtils.validateExpiredToken(accessToken) == true) {
                 throw new BadCredentialsException("access token is  expired");
             }
-            SubjectEntity subject = SubjectMapping.addSubjectToEntity(addNewSubjectRequest);
-            if (subject.getEndDate().compareTo(subject.getStartDate()) <= 0) {
+            SubjectEntity subject= SubjectMapping.addSubjectToEntity(addNewSubjectRequest);
+            if (subject.getEndDate().compareTo(subject.getStartDate())<=0)
+            {
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
                 response.setMessage("EndDate or StartDate not valid");
                 response.setSuccess(false);
-                return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-            } else {
+                return new ResponseEntity<>(response,HttpStatus.BAD_REQUEST);
+            }
+            else {
                 subjectService.saveSubject(subject);
                 response.setStatus(HttpStatus.OK.value());
                 response.setMessage("Save Subject successfully");
                 response.setSuccess(true);
-                response.getData().put("SubjectInfo", subject);
-                return new ResponseEntity<>(response, HttpStatus.OK);
+                response.getData().put("SubjectInfo",subject);
+                return new ResponseEntity<>(response,HttpStatus.OK);
             }
 
-        } else throw new BadCredentialsException("access token is missing");
+        }else throw new BadCredentialsException("access token is missing");
     }
-
-    @GetMapping("/showall")
-    public ResponseEntity<SuccessResponse> getAllSubject(@RequestParam(defaultValue = "0") int page,
-                                                         @RequestParam(defaultValue = "5") int size) {
-        List<SubjectEntity> listSubject = subjectService.findAllSubjectPaging(page, size);
-        SuccessResponse response = new SuccessResponse();
-        if (listSubject.size() == 0) {
+    @GetMapping("/getallpaging")
+    public ResponseEntity<PagingResponse> getAllSubjectPaging(@RequestParam(defaultValue = "0") int page,
+                                                              @RequestParam(defaultValue = "5") int size)
+    {
+        List<SubjectEntity> listSubject = subjectService.findAllSubjectPaging(page,size);
+        int totalElements = subjectService.getAllSubject().size();
+        PagingResponse response = new PagingResponse();
+        if (listSubject.size()==0)
+        {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
             response.setMessage("List Subject is empty");
             response.setSuccess(false);
-            return new ResponseEntity<>(response, HttpStatus.OK);
+            response.setEmpty(true);
+            return new ResponseEntity<>(response,HttpStatus.OK);
         }
 
         response.setStatus(HttpStatus.OK.value());
         response.setMessage("Save Subject successfully");
         response.setSuccess(true);
-        response.getData().put("ListSubjectInfo", listSubject);
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        response.getData().put("ListSubjectInfo",listSubject);
+        response.setEmpty(false);
+        response.setFirst(page==0);
+        response.setSize(size);
+        response.setTotalPages(totalElements%size==0 ? totalElements/size : totalElements/size+1);
+        response.setLast( page == response.getTotalPages()-1);
+        response.setTotalElements(totalElements);
+        return new ResponseEntity<>(response,HttpStatus.OK);
     }
+    @GetMapping("/getall")
+    public ResponseEntity<SuccessResponse> getAll()
+    {
+        SuccessResponse response = new SuccessResponse();
+        List<SubjectEntity> listSubject = subjectService.getAllSubject();
+        if (listSubject.size()==0)
+        {
+            response.setStatus(HttpStatus.BAD_REQUEST.value());
+            response.setMessage("List Subject is empty");
+            response.setSuccess(false);
+            return new ResponseEntity<>(response,HttpStatus.OK);
+        }
 
-    @PutMapping("/update/{id}")
-    public ResponseEntity<SuccessResponse> updateSubject(@Valid @RequestBody UpdateSubjectRequest updateSubjectRequest, BindingResult errors, HttpServletRequest httpServletRequest, @PathVariable("id") String id) throws Exception {
+        response.setStatus(HttpStatus.OK.value());
+        response.setMessage("Save Subject successfully");
+        response.setSuccess(true);
+        response.getData().put("ListSubjectInfo",listSubject);
+        return new ResponseEntity<>(response,HttpStatus.OK);
+    }
+    @PatchMapping("/update/{id}")
+    public ResponseEntity<SuccessResponse> updateSubject(@Valid @RequestBody UpdateSubjectRequest updateSubjectRequest,BindingResult errors,HttpServletRequest httpServletRequest,@PathVariable("id") String id) throws Exception {
         if (errors.hasErrors()) {
             throw new MethodArgumentNotValidException(errors);
         }
@@ -96,47 +127,50 @@ public class SubjectController {
                 throw new BadCredentialsException("access token is  expired");
             }
             SubjectEntity subject = subjectService.getSubjectById(id);
-            if (subject == null) {
+            if (subject==null)
+            {
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
-                response.setMessage("Can't find subject with id " + id);
+                response.setMessage("Can't find subject with id "+id);
                 response.setSuccess(false);
-                return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>(response,HttpStatus.BAD_REQUEST);
             }
-            subject = SubjectMapping.updateRequestToEntity(subject, updateSubjectRequest);
-            if (subject.getEndDate().compareTo(subject.getStartDate()) <= 0) {
+            subject=SubjectMapping.updateRequestToEntity(subject,updateSubjectRequest);
+            if (subject.getEndDate().compareTo(subject.getStartDate())<=0)
+            {
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
                 response.setMessage("EndDate or StartDate not valid");
                 response.setSuccess(false);
-                return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>(response,HttpStatus.BAD_REQUEST);
             }
             subjectService.saveSubject(subject);
             response.setStatus(HttpStatus.OK.value());
             response.setMessage("Save Subject successfully");
             response.setSuccess(true);
-            response.getData().put("SubjectInfo", subject);
-            return new ResponseEntity<>(response, HttpStatus.OK);
+            response.getData().put("SubjectInfo",subject);
+            return new ResponseEntity<>(response,HttpStatus.OK);
         } else throw new BadCredentialsException("access token is missing");
     }
-
     @GetMapping("/{id}")
-    public ResponseEntity<SuccessResponse> getSubjectById(@PathVariable("id") String id) {
+    public ResponseEntity<SuccessResponse> getSubjectById(@PathVariable("id") String id)
+    {
         SubjectEntity subject = subjectService.getSubjectById(id);
         SuccessResponse response = new SuccessResponse();
-        if (subject == null) {
+        if(subject==null)
+        {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
-            response.setMessage("Can't find subject with id " + id);
+            response.setMessage("Can't find subject with id "+id);
             response.setSuccess(false);
-            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(response,HttpStatus.BAD_REQUEST);
         }
         response.setStatus(HttpStatus.OK.value());
         response.setMessage("Save Subject successfully");
         response.setSuccess(true);
-        response.getData().put("SubjectInfo", subject);
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        response.getData().put("SubjectInfo",subject);
+        return new ResponseEntity<>(response,HttpStatus.OK);
     }
-
     @DeleteMapping("/delete")
-    public ResponseEntity<SuccessResponse> deleteSubject(@RequestBody List<String> listSubjectId, HttpServletRequest httpServletRequest) {
+    public ResponseEntity<SuccessResponse> deleteSubject(@RequestBody List<String> listSubjectId,HttpServletRequest httpServletRequest)
+    {
         String authorizationHeader = httpServletRequest.getHeader(AUTHORIZATION);
         SuccessResponse response = new SuccessResponse();
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
@@ -148,7 +182,7 @@ public class SubjectController {
             response.setStatus(HttpStatus.OK.value());
             response.setMessage("Delete Subject successfully");
             response.setSuccess(true);
-            return new ResponseEntity<>(response, HttpStatus.OK);
+            return new ResponseEntity<>(response,HttpStatus.OK);
         } else throw new BadCredentialsException("access token is missing");
     }
 

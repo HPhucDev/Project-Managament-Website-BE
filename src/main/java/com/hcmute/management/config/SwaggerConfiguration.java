@@ -17,7 +17,7 @@ import java.util.List;
 @Configuration
 @EnableSwagger2
 public class SwaggerConfiguration {
-    //swagger URL: http://localhost:8080/swagger-ui/index.html#/
+    //swagger URL: http://localhost:5000/swagger-ui/index.html#/
     public static final String AUTHORIZATION_HEADER = "Authorization";
 
     @Bean

@@ -56,11 +56,11 @@ public class UserEntity {
     private boolean active;
 
     @JsonIgnore
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
     @JoinTable(name = "\"user_role\"", joinColumns = @JoinColumn(name = "\"user_id\""), inverseJoinColumns = @JoinColumn(name = "\"role_id\""))
     private Set<RoleEntity> roles;
     @JsonIgnore
-    @OneToOne(mappedBy = "groupLeader", targetEntity = SubjectEntity.class)
+    @OneToOne(mappedBy = "groupLeader",targetEntity = SubjectEntity.class)
     private SubjectEntity subjectLeader;
     @JsonIgnore
     @ManyToOne()
@@ -71,11 +71,42 @@ public class UserEntity {
     @JsonIgnore
     private LecturerEntity lecturer;
 
+    public LecturerEntity getLecturer() {
+        return lecturer;
+    }
+
+    public void setLecturer(LecturerEntity lecturer) {
+        this.lecturer = lecturer;
+    }
+
     public UserEntity(String password, String phone) {
         this.password = password;
         this.phone = phone;
     }
 
+    public SubjectEntity getSubjectLeader() {
+        return subjectLeader;
+    }
+
+    public void setSubjectLeader(SubjectEntity subjectLeader) {
+        this.subjectLeader = subjectLeader;
+    }
+
+    public SubjectEntity getSubject() {
+        return subject;
+    }
+
+    public void setSubject(SubjectEntity subject) {
+        this.subject = subject;
+    }
+
+    public LecturerEntity getLecturer() {
+        return lecturer;
+    }
+
+    public void setLecturer(LecturerEntity lecturer) {
+        this.lecturer = lecturer;
+    }
 
     public String getId() {
         return id;

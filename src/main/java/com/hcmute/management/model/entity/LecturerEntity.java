@@ -14,36 +14,18 @@ public class LecturerEntity {
     private String id;
     private String qualification;
     private String position;
-    @Column(name = "\"full_name\"")
-    private String fullName;
 
-    @Column(name = "\"email\"")
-    private String email;
-
-    @JsonIgnore
-    @Column(name = "\"password\"")
-    private String password;
-
-    @Column(name = "\"gender\"")
-    private String gender;
-
-    @Column(name = "\"phone\"")
-    private String phone;
-
-    @Column(name = "\"status\"")
-    private boolean status;
-
-    private boolean active;
-    @OneToOne
-    @JoinColumn(name="user_id")
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name="user",referencedColumnName = "user_id")
     private UserEntity user;
 
     public  LecturerEntity (){}
 
-    public LecturerEntity(String id, String qualification, String position) {
+    public LecturerEntity(String id, String qualification, String position, UserEntity user) {
         this.id = id;
         this.qualification = qualification;
         this.position = position;
+        this.user = user;
     }
 
     public String getId() {
@@ -71,61 +53,6 @@ public class LecturerEntity {
         this.position = position;
     }
 
-    public String getFullName() {
-        return fullName;
-    }
-
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getGender() {
-        return gender;
-    }
-
-    public void setGender(String gender) {
-        this.gender = gender;
-    }
-
-    public String getPhone() {
-        return phone;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
-
-    public boolean isStatus() {
-        return status;
-    }
-
-    public void setStatus(boolean status) {
-        this.status = status;
-    }
-
-    public boolean isActive() {
-        return active;
-    }
-
-    public void setActive(boolean active) {
-        this.active = active;
-    }
 
     public UserEntity getUser() {
         return user;
