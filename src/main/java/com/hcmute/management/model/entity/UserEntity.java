@@ -32,7 +32,7 @@ public class UserEntity {
     @JsonIgnore
     @Column(name = "\"password\"")
     private String password;
-    @OneToOne(mappedBy = "user")
+    @OneToOne(mappedBy = "user",targetEntity = StudentEntity.class)
     @JsonIgnore
     private StudentEntity student;
 
@@ -67,7 +67,7 @@ public class UserEntity {
     @JoinColumn(name = "\"subject\"")
     private SubjectEntity subject;
 
-    @OneToOne(mappedBy = "user")
+    @OneToOne(mappedBy = "user",targetEntity = LecturerEntity.class)
     @JsonIgnore
     private LecturerEntity lecturer;
 
@@ -100,13 +100,7 @@ public class UserEntity {
         this.subject = subject;
     }
 
-    public LecturerEntity getLecturer() {
-        return lecturer;
-    }
 
-    public void setLecturer(LecturerEntity lecturer) {
-        this.lecturer = lecturer;
-    }
 
     public String getId() {
         return id;

@@ -11,12 +11,22 @@ import javax.persistence.*;
 @Table(name="\"lecturer\"")
 public class LecturerEntity {
     @Id
+    @Column(name = "\"id\"")
+    @GeneratedValue(
+            generator = "UUID"
+    )
+    @GenericGenerator(
+            name = "UUID",
+            strategy = "org.hibernate.id.UUIDGenerator"
+    )
     private String id;
+    @Column(name ="\"qualification\"")
     private String qualification;
+    @Column(name = "\"position\"")
     private String position;
 
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name="user",referencedColumnName = "user_id")
+    @JoinColumn(name="\"user\"")
     private UserEntity user;
 
     public  LecturerEntity (){}

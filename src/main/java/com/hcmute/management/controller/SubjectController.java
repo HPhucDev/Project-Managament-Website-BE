@@ -84,7 +84,7 @@ public class SubjectController {
         }
 
         response.setStatus(HttpStatus.OK.value());
-        response.setMessage("Save Subject successfully");
+        response.setMessage("Get Subject successfully");
         response.setSuccess(true);
         response.getData().put("ListSubjectInfo",listSubject);
         response.setEmpty(false);
@@ -146,7 +146,7 @@ public class SubjectController {
             response.setStatus(HttpStatus.OK.value());
             response.setMessage("Save Subject successfully");
             response.setSuccess(true);
-            response.getData().put("SubjectInfo",subject);
+            response.getData().put("subjectInfo",subject);
             return new ResponseEntity<>(response,HttpStatus.OK);
         } else throw new BadCredentialsException("access token is missing");
     }
@@ -165,7 +165,7 @@ public class SubjectController {
         response.setStatus(HttpStatus.OK.value());
         response.setMessage("Save Subject successfully");
         response.setSuccess(true);
-        response.getData().put("SubjectInfo",subject);
+        response.getData().put("subjectInfo",subject);
         return new ResponseEntity<>(response,HttpStatus.OK);
     }
     @DeleteMapping("/delete")
