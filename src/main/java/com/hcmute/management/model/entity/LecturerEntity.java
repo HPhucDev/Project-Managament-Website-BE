@@ -18,7 +18,7 @@ public class LecturerEntity {
     @Column(name = "\"position\"")
     private String position;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne()
     @JoinColumn(name="\"user\"")
     private UserEntity user;
 

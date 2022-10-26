@@ -45,10 +45,10 @@ public class SubjectEntity {
     private String subjectType;
     @Column(name = "\"year\"")
     private String year;
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne()
     @JoinColumn(name = "\"group_leader\"")
     private UserEntity groupLeader;
-    @OneToMany(mappedBy = "subject", targetEntity = UserEntity.class, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "subject", targetEntity = UserEntity.class)
     private List<UserEntity> groupMember;
     @Column(name = "\"status\"")
     private int status;
