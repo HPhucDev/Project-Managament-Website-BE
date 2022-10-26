@@ -12,13 +12,6 @@ import javax.persistence.*;
 public class LecturerEntity {
     @Id
     @Column(name = "\"id\"")
-    @GeneratedValue(
-            generator = "UUID"
-    )
-    @GenericGenerator(
-            name = "UUID",
-            strategy = "org.hibernate.id.UUIDGenerator"
-    )
     private String id;
     @Column(name ="\"qualification\"")
     private String qualification;
