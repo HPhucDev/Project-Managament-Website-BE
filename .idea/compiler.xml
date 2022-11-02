@@ -10,9 +10,6 @@
         <module name="Project_management" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="Project_management" target="11" />
-    </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">

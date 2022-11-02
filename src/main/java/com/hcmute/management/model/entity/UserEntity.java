@@ -71,13 +71,6 @@ public class UserEntity {
     @JsonIgnore
     private LecturerEntity lecturer;
 
-    public LecturerEntity getLecturer() {
-        return lecturer;
-    }
-
-    public void setLecturer(LecturerEntity lecturer) {
-        this.lecturer = lecturer;
-    }
 
     public UserEntity(String password, String phone) {
         this.password = password;
