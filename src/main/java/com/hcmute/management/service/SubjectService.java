@@ -15,5 +15,5 @@ public interface SubjectService {
     SubjectEntity getSubjectById(String id);
 
     void deleteById(List<String> listId);
-    List<SubjectEntity> findAllSubjectPaging(int pageNo, int pageSize);
+    Page<SubjectEntity> findAllSubjectPaging(int pageNo, int pageSize);
 }
