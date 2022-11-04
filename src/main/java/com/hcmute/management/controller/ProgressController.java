@@ -7,7 +7,6 @@ import com.hcmute.management.model.entity.UserEntity;
 import com.hcmute.management.model.payload.SuccessResponse;
 import com.hcmute.management.model.payload.request.Progress.AddNewProgressRequest;
 import com.hcmute.management.model.payload.request.Progress.UpdateProgressRequest;
-import com.hcmute.management.model.payload.request.Student.UpdateStudentRequest;
 import com.hcmute.management.security.JWT.JwtUtils;
 import com.hcmute.management.service.ProgressService;
 import lombok.RequiredArgsConstructor;

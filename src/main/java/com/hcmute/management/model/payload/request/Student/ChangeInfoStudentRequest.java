@@ -14,7 +14,7 @@ import java.util.Date;
 @NoArgsConstructor
 @Setter
 @Getter
-public class UpdateStudentRequest {
+public class ChangeInfoStudentRequest {
     @NotEmpty(message = "Họ và tên không được để trống")
     private String fullname;
     @NotNull(message = "Ngày tháng năm không được để trống")

@@ -4,7 +4,7 @@ import com.hcmute.management.model.entity.ClassEntity;
 import com.hcmute.management.model.entity.StudentEntity;
 import com.hcmute.management.model.entity.UserEntity;
 import com.hcmute.management.model.payload.request.Student.AddNewStudentRequest;
-import com.hcmute.management.model.payload.request.Student.UpdateStudentRequest;
+import com.hcmute.management.model.payload.request.Student.ChangeInfoStudentRequest;
 import com.hcmute.management.repository.ClassRepository;
 import com.hcmute.management.repository.StudentRepository;
 import com.hcmute.management.repository.UserRepository;
@@ -45,7 +45,8 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public StudentEntity saveStudent(AddNewStudentRequest addNewStudentRequest, UserEntity user) {
+    public StudentEntity saveStudent(AddNewStudentRequest addNewStudentRequest) {
+        UserEntity user = userRepository.findById(addNewStudentRequest.getUserid()).get();
         user.setFullName(addNewStudentRequest.getFullname());
         user.setGender(addNewStudentRequest.getSex());
         StudentEntity student = new StudentEntity();
@@ -65,7 +66,7 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public StudentEntity changeInf(UpdateStudentRequest changeInfoStudentRequest, UserEntity user) {
+    public StudentEntity changeInf(ChangeInfoStudentRequest changeInfoStudentRequest, UserEntity user) {
         StudentEntity student = studentRepository.findByUser(user);
         if(student == null)
         {

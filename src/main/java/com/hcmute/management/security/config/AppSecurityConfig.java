@@ -57,9 +57,15 @@ public class AppSecurityConfig  {
         ;
         http
                 .authorizeRequests()
-                .antMatchers(HttpMethod.GET,"/api/user/**").hasAnyAuthority(UserPermission.USER_READ.getPermission())
-                .antMatchers("/api/admin/**").hasAnyAuthority(UserPermission.ADMIN_READ.getPermission(),UserPermission.ADMIN_WRITE.getPermission())
-                .antMatchers("/**").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/**").permitAll()
+                .antMatchers("/api/authenticate/**").permitAll()
+                .antMatchers("/v2/api-docs/**").permitAll()
+                .antMatchers("/swagger-ui/**").permitAll()
+                .antMatchers("/swagger-resources/**").permitAll()
+                .antMatchers("/swagger-ui.html").permitAll()
+                .antMatchers("/webjars/**").permitAll()
+                .anyRequest()
+                .authenticated()
                 .and()
                 .oauth2Login()
                 .authorizationEndpoint()
@@ -70,12 +76,22 @@ public class AppSecurityConfig  {
                 .userService(customOauth2Service)
                 .and()
                 .successHandler(oAuth2Handler)
-
-
-
+//                .authorizeRequests()
+//                .antMatchers(HttpMethod.GET,"/api/user/**").hasAnyAuthority(UserPermission.USER_READ.getPermission())
+//                .antMatchers("/api/admin/**").hasAnyAuthority(UserPermission.ADMIN_READ.getPermission(),UserPermission.ADMIN_WRITE.getPermission())
+//                .anyRequest().authenticated();
+//    //                .antMatchers("/**").permitAll()
+//    //                .and()
+//    //                .oauth2Login()
+//    //                .authorizationEndpoint()
+//    //                .baseUri("/oauth2/authorization")
+//    //                .authorizationRequestRepository(cookieAuthorizationRequestRepository())
+//    //                .and()
+//    //                .userInfoEndpoint()
+//    //                .userService(customOauth2Service)
+//    //                .and()
+//    //                .successHandler(oAuth2Handler)
         ;
-
-
         http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
         return http.build();
 

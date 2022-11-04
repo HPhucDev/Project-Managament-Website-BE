@@ -40,8 +40,7 @@ public class JwtUtils {
         String access_token = JWT.create()
                 .withSubject(userPrincipal.getId().toString())
                 .withExpiresAt(new Date(System.currentTimeMillis()+ jwtExpirationMs))
-                .withClaim("roleNames",userPrincipal.getRoles().stream().collect(Collectors.toList()))
-                .withClaim("rolePermissions",userPrincipal.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()))
+                .withClaim("roles",userPrincipal.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()))
                 .sign(algorithm);
         return access_token;
 
@@ -88,8 +87,7 @@ public class JwtUtils {
         return JWT.create()
                 .withSubject(userPrincipal.getId().toString())
                 .withExpiresAt(new Date(System.currentTimeMillis()+ refreshJwtExpirationMs))
-                .withClaim("roleNames",userPrincipal.getRoles().stream().collect(Collectors.toList()))
-                .withClaim("rolePermissions",userPrincipal.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()))
+                .withClaim("roles",userPrincipal.getRoles().stream().collect(Collectors.toList()))
                 .sign(algorithm);
     }
 

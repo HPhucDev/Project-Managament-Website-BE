@@ -100,13 +100,6 @@ public class UserEntity {
         this.subject = subject;
     }
 
-    public LecturerEntity getLecturer() {
-        return lecturer;
-    }
-
-    public void setLecturer(LecturerEntity lecturer) {
-        this.lecturer = lecturer;
-    }
 
     public String getId() {
         return id;

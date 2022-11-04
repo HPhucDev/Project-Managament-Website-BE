@@ -129,10 +129,10 @@ public class SubjectController {
             SubjectEntity subject = subjectService.getSubjectById(id);
             if (subject==null)
             {
-                response.setStatus(HttpStatus.BAD_REQUEST.value());
-                response.setMessage("Can't find subject with id "+id);
-                response.setSuccess(false);
-                return new ResponseEntity<>(response,HttpStatus.BAD_REQUEST);
+                    response.setStatus(HttpStatus.BAD_REQUEST.value());
+                    response.setMessage("Can't find subject with id "+id);
+                    response.setSuccess(false);
+                    return new ResponseEntity<>(response,HttpStatus.BAD_REQUEST);
             }
             subject=SubjectMapping.updateRequestToEntity(subject,updateSubjectRequest);
             if (subject.getEndDate().compareTo(subject.getStartDate())<=0)
