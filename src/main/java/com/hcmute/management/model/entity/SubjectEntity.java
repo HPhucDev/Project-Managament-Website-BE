@@ -1,6 +1,7 @@
 package com.hcmute.management.model.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import io.swagger.annotations.ApiModelProperty;
 import org.aspectj.apache.bcel.classfile.Module;
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.rest.core.annotation.RestResource;
@@ -44,21 +45,21 @@ public class SubjectEntity {
     private String subjectType;
     @Column(name = "\"year\"")
     private String year;
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne()
     @JoinColumn(name = "\"group_leader\"")
     private UserEntity groupLeader;
-    @OneToMany(mappedBy = "subject", targetEntity = UserEntity.class, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "subject", targetEntity = UserEntity.class)
     private List<UserEntity> groupMember;
     @Column(name = "\"status\"")
     private int status;
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss", shape = JsonFormat.Shape.STRING)
+    @ApiModelProperty(required = true, example = "2021-08-20T00:00:00")
     @Column(name = "\"start_date\"")
     private LocalDateTime startDate;
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss", shape = JsonFormat.Shape.STRING)
+    @ApiModelProperty(required = true, example = "2021-08-20T00:00:00")
     @Column(name = "\"end_Date\"")
     private LocalDateTime endDate;
-
-    @OneToOne(mappedBy = "subject")
-    @JsonIgnore
-    private ProgressEntity progress;
 
     public String getId() {
         return id;

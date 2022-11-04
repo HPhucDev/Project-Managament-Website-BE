@@ -49,7 +49,6 @@ public class LecturerController {
         SuccessResponse response = new SuccessResponse();
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             String accessToken = authorizationHeader.substring("Bearer ".length());
-
             if (jwtUtils.validateExpiredToken(accessToken) == true) {
                 //throw new BadCredentialsException("access token is  expired");
                 response.setStatus(HttpStatus.UNAUTHORIZED.value());
