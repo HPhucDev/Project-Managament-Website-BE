@@ -17,5 +17,7 @@ public interface StudentService {
     StudentEntity findByUserId(UserEntity user);
     StudentEntity saveStudent(AddNewStudentRequest addNewStudentRequest);
     void deleteStudent(String id);
-    StudentEntity changeInf(ChangeInfoStudentRequest changeInfoStudentRequest, UserEntity user);
+    StudentEntity changeInf(ChangeInfoStudentRequest changeInfoStudentRequest, String user);
+
+    StudentEntity findStudentbyUserId(String userid);
 }
