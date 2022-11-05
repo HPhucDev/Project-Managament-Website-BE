@@ -47,10 +47,10 @@ public class SubjectServiceImpl implements SubjectService {
     }
 
     @Override
-    public List<SubjectEntity> findAllSubjectPaging(int pageNo, int pageSize) {
+    public Page<SubjectEntity> findAllSubjectPaging(int pageNo, int pageSize) {
         Pageable paging =null;
         paging= PageRequest.of(pageNo,pageSize);
         Page<SubjectEntity> pageResult=subjectRepository.findAllSubject(paging);
-        return pageResult.toList();
+        return pageResult;
     }
 }

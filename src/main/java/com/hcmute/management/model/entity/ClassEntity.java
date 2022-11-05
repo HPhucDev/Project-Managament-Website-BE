@@ -22,7 +22,7 @@ public class ClassEntity {
 
     @Column(name = "\"class_name\"")
     private String classname;
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "classes")
+    @OneToMany( fetch = FetchType.EAGER, mappedBy = "classes")
     @JsonIgnore
     private Set<StudentEntity> listStudent;
 

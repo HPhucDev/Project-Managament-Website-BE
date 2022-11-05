@@ -1,0 +1,117 @@
+package com.hcmute.management.model.entity;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.springframework.data.rest.core.annotation.RestResource;
+
+import javax.persistence.*;
+import java.util.Date;
+
+@RestResource(exported = false)
+@Entity
+@Table(name = "\"progress\"")
+public class ProgressEntity {
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "\"id\"")
+    @Id
+    private int id;
+
+    @Column(name = "\"description\"")
+    private String description;
+
+    @Column(name ="\"status\"")
+    private String status;
+
+    @Column(name = "\"create_date\"")
+    private Date createdate;
+
+    @Column(name = "\"modifier_date\"")
+    private Date modiferdate;
+
+    @Column(name = "\"time_submit\"")
+    private Date timesubmit;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "project_id", referencedColumnName = "project_id")
+    private SubjectEntity subject;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "student_id", referencedColumnName = "id")
+    private StudentEntity student;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public Date getCreatedate() {
+        return createdate;
+    }
+
+    public void setCreatedate(Date createdate) {
+        this.createdate = createdate;
+    }
+
+    public Date getModiferdate() {
+        return modiferdate;
+    }
+
+    public void setModiferdate(Date modiferdate) {
+        this.modiferdate = modiferdate;
+    }
+
+    public Date getTimesubmit() {
+        return timesubmit;
+    }
+
+    public void setTimesubmit(Date timesubmit) {
+        this.timesubmit = timesubmit;
+    }
+
+    public SubjectEntity getSubject() {
+        return subject;
+    }
+
+    public void setSubject(SubjectEntity subject) {
+        this.subject = subject;
+    }
+
+    public StudentEntity getStudent() {
+        return student;
+    }
+
+    public void setStudent(StudentEntity student) {
+        this.student = student;
+    }
+
+    public ProgressEntity(String description, String status, Date createdate, Date modiferdate, Date timesubmit, SubjectEntity subject, StudentEntity student) {
+        this.description = description;
+        this.status = status;
+        this.createdate = createdate;
+        this.modiferdate = modiferdate;
+        this.timesubmit = timesubmit;
+        this.subject = subject;
+        this.student = student;
+    }
+
+    public ProgressEntity() {
+    }
+}

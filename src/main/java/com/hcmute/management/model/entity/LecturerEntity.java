@@ -11,12 +11,15 @@ import javax.persistence.*;
 @Table(name="\"lecturer\"")
 public class LecturerEntity {
     @Id
+    @Column(name = "\"id\"")
     private String id;
+    @Column(name ="\"qualification\"")
     private String qualification;
+    @Column(name = "\"position\"")
     private String position;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name="user",referencedColumnName = "user_id")
+    @OneToOne()
+    @JoinColumn(name="\"user\"")
     private UserEntity user;
 
     public  LecturerEntity (){}

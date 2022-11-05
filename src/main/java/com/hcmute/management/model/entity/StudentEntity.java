@@ -20,7 +20,7 @@ public class StudentEntity {
         this.id = id;
     }
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne()
     @JoinColumn(name = "user_id", referencedColumnName = "user_id")
     private UserEntity user;
 
