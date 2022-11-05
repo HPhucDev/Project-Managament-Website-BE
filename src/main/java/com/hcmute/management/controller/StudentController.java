@@ -10,7 +10,7 @@ import com.hcmute.management.model.payload.request.Student.AddNewStudentRequest;
 import com.hcmute.management.model.payload.request.Student.ChangeInfoStudentRequest;
 import com.hcmute.management.model.payload.request.Student.DeleteStudentRequest;
 import com.hcmute.management.model.payload.response.ErrorResponse;
-import com.hcmute.management.model.payload.response.MessageResponse;
+
 import com.hcmute.management.repository.StudentRepository;
 import com.hcmute.management.security.JWT.JwtUtils;
 import com.hcmute.management.service.StudentService;

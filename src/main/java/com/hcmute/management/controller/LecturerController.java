@@ -1,5 +1,6 @@
 package com.hcmute.management.controller;
 
+import com.hcmute.management.common.AppUserRole;
 import com.hcmute.management.handler.AuthenticateHandler;
 import com.hcmute.management.handler.MethodArgumentNotValidException;
 import com.hcmute.management.mapping.LecturerMapping;
@@ -73,7 +74,7 @@ public class LecturerController {
         }
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         UserEntity addNewUser =new UserEntity(passwordEncoder.encode(id),id);
-        addNewUser=userService.register(addNewUser,"USER");
+        addNewUser=userService.register(addNewUser, AppUserRole.ROLE_LECTURER);
         LecturerEntity lecturer=lecturerService.saveLecturer(addNewLecturerRequest,addNewUser);
         return new ResponseEntity<>(lecturer, HttpStatus.OK);
             }  catch (BadCredentialsException e) {
@@ -89,33 +90,33 @@ public class LecturerController {
         map.put("content",listLecturer);
         return new ResponseEntity<>(map,HttpStatus.OK);
     }
-    @GetMapping("/getallpaging")
-    public ResponseEntity<Object>getAllLecturerPaging(@RequestParam(defaultValue = "0") int page,
-                                                              @RequestParam(defaultValue = "5") int size){
-        List<LecturerEntity> listLecturer = lecturerService.findAllLecturerPaging(page,size);
-        int totalElements = lecturerService.getAllLecturer().size();
-        PagingResponse response = new PagingResponse();
-        if (listLecturer.size()==0)
-        {
-            response.setStatus(HttpStatus.NOT_FOUND.value());
-            response.setMessage("List Lecturer is empty");
-            response.setSuccess(false);
-            response.setEmpty(true);
-            return new ResponseEntity<>(response,HttpStatus.NOT_FOUND);
-        }
-
-        response.setStatus(HttpStatus.OK.value());
-        response.setMessage("Get all Lecturer successfully");
-        response.setSuccess(true);
-        response.getData().put("listLecturerInfo",listLecturer);
-        response.setEmpty(false);
-        response.setFirst(page==0);
-        response.setSize(size);
-        response.setTotalPages(totalElements%size==0 ? totalElements/size : totalElements/size+1);
-        response.setLast( page == response.getTotalPages()-1);
-        response.setTotalElements(totalElements);
-        return new ResponseEntity<>(response,HttpStatus.OK);
-    }
+//    @GetMapping("/getallpaging")
+//    public ResponseEntity<Object>getAllLecturerPaging(@RequestParam(defaultValue = "0") int page,
+//                                                              @RequestParam(defaultValue = "5") int size){
+//        List<LecturerEntity> listLecturer = lecturerService.findAllLecturerPaging(page,size);
+//        int totalElements = lecturerService.getAllLecturer().size();
+//        PagingResponse response = new PagingResponse();
+//        if (listLecturer.size()==0)
+//        {
+//            response.setStatus(HttpStatus.NOT_FOUND.value());
+//            response.setMessage("List Lecturer is empty");
+//            response.setSuccess(false);
+//            response.setEmpty(true);
+//            return new ResponseEntity<>(response,HttpStatus.NOT_FOUND);
+//        }
+//
+//        response.setStatus(HttpStatus.OK.value());
+//        response.setMessage("Get all Lecturer successfully");
+//        response.setSuccess(true);
+//        response.getData().put("listLecturerInfo",listLecturer);
+//        response.setEmpty(false);
+//        response.setFirst(page==0);
+//        response.setSize(size);
+//        response.setTotalPages(totalElements%size==0 ? totalElements/size : totalElements/size+1);
+//        response.setLast( page == response.getTotalPages()-1);
+//        response.setTotalElements(totalElements);
+//        return new ResponseEntity<>(response,HttpStatus.OK);
+//    }
     @PatchMapping("")
     @ApiOperation("Update")
     public ResponseEntity<Object> updateLecturer(@Valid @RequestBody UpdateLecturerRequest updateLecturerRequest, BindingResult errors, HttpServletRequest req) throws Exception {
