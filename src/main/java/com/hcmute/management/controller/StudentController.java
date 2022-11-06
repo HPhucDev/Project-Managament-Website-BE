@@ -392,7 +392,7 @@ public class StudentController {
             }
         }throw new BadCredentialsException("access token is missing");
     }
-    @DeleteMapping("/DeleteGroupLeader/{id}")
+    @DeleteMapping("/deleteGroupLeader/{id}")
     public ResponseEntity<SuccessResponse> deleteGroupLeader(@PathVariable("id") String id,HttpServletRequest req)
     {
         String authorizationHeader = req.getHeader(AUTHORIZATION);

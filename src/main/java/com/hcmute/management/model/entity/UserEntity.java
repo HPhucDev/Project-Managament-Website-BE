@@ -70,6 +70,16 @@ public class UserEntity {
     @OneToOne(mappedBy = "user",targetEntity = LecturerEntity.class)
     @JsonIgnore
     private LecturerEntity lecturer;
+    @Column(name = "\"image_link\"")
+    private String imgLink;
+
+    public String getImgLink() {
+        return imgLink;
+    }
+
+    public void setImgLink(String imgLink) {
+        this.imgLink = imgLink;
+    }
 
     public LecturerEntity getLecturer() {
         return lecturer;
