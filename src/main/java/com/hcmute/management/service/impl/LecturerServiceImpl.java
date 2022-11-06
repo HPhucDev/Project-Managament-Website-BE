@@ -37,8 +37,8 @@ public class LecturerServiceImpl implements LecturerService {
     }
 
     @Override
-    public LecturerEntity updateLecturer(UpdateLecturerRequest updateLecturerRequest, UserEntity user, String id) {
-        LecturerEntity lecturer= getLecturerById(id);
+    public LecturerEntity updateLecturer(UpdateLecturerRequest updateLecturerRequest, UserEntity user) {
+        LecturerEntity lecturer= findByUser(user);
         user.setFullName(updateLecturerRequest.getFullName());
         user.setGender(updateLecturerRequest.getGender());
         lecturer.setUser(userRepository.save(user));
@@ -47,7 +47,7 @@ public class LecturerServiceImpl implements LecturerService {
         return lecturerRepository.save(lecturer);
     }
     @Override
-    public LecturerEntity findByUserId(UserEntity user) {
+    public LecturerEntity findByUser(UserEntity user) {
         LecturerEntity lecturer = lecturerRepository.findByUser(user);
         if(lecturer != null)
             return lecturer;
@@ -68,10 +68,15 @@ public class LecturerServiceImpl implements LecturerService {
     }
 
     @Override
-    public void deleteById(List<String> ListId) {
+    public void deleteByListId(List<String> ListId) {
         for(String id:ListId){
             lecturerRepository.deleteById(id);
         }
+    }
+
+    @Override
+    public void deleteById(String id) {
+        lecturerRepository.deleteById(id);
     }
 
     @Override

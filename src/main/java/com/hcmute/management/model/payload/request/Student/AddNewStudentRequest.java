@@ -4,6 +4,7 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -14,23 +15,25 @@ import java.util.Date;
 @Setter
 @Getter
 public class AddNewStudentRequest {
-    @NotEmpty(message = "Mã số sinh viên không được để trống")
+    @NotEmpty(message = "can not be empty")
     private String mssv;
-    @NotEmpty(message = "Họ và tên không được để trống")
+    @NotEmpty(message = "can not be empty")
     private String fullname;
-    @NotNull(message = "Ngày tháng năm không được để trống")
+    @NotNull(message = "can not be empty")
     private Date birthday;
-    @NotEmpty(message = "Giới tính không được để trống")
+    @NotEmpty(message = "can not be empty")
     private String sex;
-    @NotEmpty(message = "Địa chỉ không được để trống")
+    @NotEmpty(message = "can not be empty")
     private String address;
-    @NotEmpty(message = "Năm học không được để trống")
+    @NotEmpty(message = "can not be empty")
+    @DateTimeFormat(pattern = "yyyy")
     private Date schoolyear;
-    @NotEmpty(message = "Chuyên ngành không được để trống")
+    @NotEmpty(message = "can not be empty")
     private String major;
-    @NotEmpty(message =  "Chương trình đào tạo không được để trống")
+    @NotEmpty(message =  "can not be empty")
     private String educationprogram;
-    @NotNull(message = "Mã lớp học không được để trống")
+    @NotNull(message = "Mã lớp học can not be empty")
     private int  classid;
-
+    @NotNull(message = "Phone number can not be empty")
+    private String phone;
 }

@@ -4,13 +4,13 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.hcmute.management.common.AppUserRole;
 import com.hcmute.management.model.entity.RoleEntity;
 import com.hcmute.management.model.entity.UserEntity;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class AppUserDetail implements UserDetails {
     private static final long serialVersionUID = 1L;
@@ -20,30 +20,24 @@ public class AppUserDetail implements UserDetails {
     private String email;
     @JsonIgnore
     private String password;
-    @JsonIgnore
+    @Autowired
     private Collection<? extends GrantedAuthority> authorities;
     private Collection<String> roles;
     public AppUserDetail(String id, String username, String email, String password,
-                         Collection<? extends GrantedAuthority> authorities, Collection<String> roles, Boolean active, Boolean isAccountNonLocked) {
+                         Collection<? extends GrantedAuthority> authorities) {
         this.id = id;
         this.username = username;
         this.email = email;
         this.password = password;
         this.authorities = authorities;
-        this.roles = roles;
     }
     public static AppUserDetail build(UserEntity user) {
-        Set<GrantedAuthority> authorities = new HashSet<>();
+
         Set<String> roleNames = new HashSet<>();
 
-        for(RoleEntity role : user.getRoles()){
-            roleNames.add(role.getName());
-            for(AppUserRole item : AppUserRole.values()){
-                if(role.getName().equals(item.name())){
-                    authorities.addAll(item.getGrantedAuthorities());
-                }
-            }
-        }
+        List<GrantedAuthority> authorities = user.getRoles().stream()
+                .map(role -> new SimpleGrantedAuthority(role.getName().name()))
+                .collect(Collectors.toList());
 
 
         return new AppUserDetail(
@@ -51,11 +45,9 @@ public class AppUserDetail implements UserDetails {
                 user.getPhone(),
                 user.getEmail(),
                 user.getPassword(),
-                authorities,
-                roleNames,
-                user.isActive(),
-                user.isStatus());
+                authorities);
     }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return authorities;

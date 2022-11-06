@@ -81,13 +81,6 @@ public class UserEntity {
         this.imgLink = imgLink;
     }
 
-    public LecturerEntity getLecturer() {
-        return lecturer;
-    }
-
-    public void setLecturer(LecturerEntity lecturer) {
-        this.lecturer = lecturer;
-    }
 
     public UserEntity(String password, String phone) {
         this.password = password;

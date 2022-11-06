@@ -13,10 +13,11 @@ import java.util.List;
 @Service
 public interface LecturerService {
     LecturerEntity saveLecturer(AddNewLecturerRequest addNewLecturerRequest, UserEntity user);
-    LecturerEntity updateLecturer(UpdateLecturerRequest updateLecturerRequest,UserEntity user,String id);
+    LecturerEntity updateLecturer(UpdateLecturerRequest updateLecturerRequest,UserEntity user);
     List<LecturerEntity> getAllLecturer();
     LecturerEntity getLecturerById(String id);
-    void deleteById(List<String> ListId);
+    void deleteByListId(List<String> ListId);
+    void deleteById(String id);
     List <LecturerEntity>findAllLecturerPaging(int pageNo,int pagSize);
-    public LecturerEntity findByUserId(UserEntity user);
+    public LecturerEntity findByUser(UserEntity user);
 }

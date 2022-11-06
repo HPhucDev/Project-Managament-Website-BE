@@ -28,6 +28,4 @@ public class AddNewLecturerRequest {
     private String gender;
     @NotEmpty(message = "Địa chỉ không được để trống")
     private String address;
-    @NotEmpty(message ="UserId không được để trống")
-    private String userid;
 }

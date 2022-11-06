@@ -12,4 +12,6 @@ public interface StudentRepository extends JpaRepository<StudentEntity, String> 
     @Modifying
     @Query(value =  "Delete from students where id = ?", nativeQuery = true)
     void deleteById(String id);
+
+    StudentEntity findByUserId(String userid);
 }
