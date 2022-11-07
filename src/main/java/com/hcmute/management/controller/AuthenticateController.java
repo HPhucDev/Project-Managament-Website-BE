@@ -1,7 +1,9 @@
 package com.hcmute.management.controller;
 
+import com.hcmute.management.common.AppUserRole;
 import com.hcmute.management.mapping.UserMapping;
 import com.hcmute.management.model.entity.UserEntity;
+
 import com.hcmute.management.model.payload.SuccessResponse;
 import com.hcmute.management.model.payload.request.Authenticate.AddNewUserRequest;
 import com.hcmute.management.model.payload.request.Authenticate.PhoneLoginRequest;
@@ -62,7 +64,7 @@ public class AuthenticateController {
         }
 
         try{
-            user=userService.register(user,"USER");
+            user=userService.register(user, AppUserRole.ROLE_STUDENT);
             if (user==null)
             {
                 response.setStatus(HttpStatus.CONFLICT.value());
