@@ -5,6 +5,7 @@ import com.hcmute.management.model.entity.UserEntity;
 import com.hcmute.management.model.payload.request.Lecturer.AddNewLecturerRequest;
 import com.hcmute.management.model.payload.request.Lecturer.UpdateLecturerRequest;
 import org.apache.catalina.User;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -18,6 +19,6 @@ public interface LecturerService {
     LecturerEntity getLecturerById(String id);
     void deleteByListId(List<String> ListId);
     void deleteById(String id);
-    List <LecturerEntity>findAllLecturerPaging(int pageNo,int pagSize);
+    Page<LecturerEntity> findAllLecturerPaging(int pageNo, int pagSize);
     public LecturerEntity findByUser(UserEntity user);
 }

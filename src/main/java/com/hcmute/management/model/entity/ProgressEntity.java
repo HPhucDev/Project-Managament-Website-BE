@@ -5,6 +5,7 @@ import org.springframework.data.rest.core.annotation.RestResource;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.Set;
 
 @RestResource(exported = false)
 @Entity
@@ -37,6 +38,10 @@ public class ProgressEntity {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "student_id", referencedColumnName = "id")
     private StudentEntity student;
+
+    @OneToMany(mappedBy = "progressComment",targetEntity = CommentEntity.class,cascade = CascadeType.ALL)
+    @JsonIgnore
+    private Set<CommentEntity> comment;
 
     public int getId() {
         return id;

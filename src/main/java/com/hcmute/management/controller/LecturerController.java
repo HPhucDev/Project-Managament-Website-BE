@@ -20,8 +20,10 @@ import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -31,10 +33,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 import static com.google.common.net.HttpHeaders.AUTHORIZATION;
 
@@ -56,6 +55,7 @@ public class LecturerController {
 
     @PostMapping("")
     @ApiOperation("Add")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<Object> addLecturer(@RequestBody @Valid AddNewLecturerRequest addNewLecturerRequest, BindingResult errors, HttpServletRequest req) throws Exception {
         if (errors.hasErrors()) {
             throw new MethodArgumentNotValidException(errors);
@@ -90,33 +90,29 @@ public class LecturerController {
         map.put("content",listLecturer);
         return new ResponseEntity<>(map,HttpStatus.OK);
     }
-//    @GetMapping("/getallpaging")
-//    public ResponseEntity<Object>getAllLecturerPaging(@RequestParam(defaultValue = "0") int page,
-//                                                              @RequestParam(defaultValue = "5") int size){
-//        List<LecturerEntity> listLecturer = lecturerService.findAllLecturerPaging(page,size);
-//        int totalElements = lecturerService.getAllLecturer().size();
-//        PagingResponse response = new PagingResponse();
-//        if (listLecturer.size()==0)
-//        {
-//            response.setStatus(HttpStatus.NOT_FOUND.value());
-//            response.setMessage("List Lecturer is empty");
-//            response.setSuccess(false);
-//            response.setEmpty(true);
-//            return new ResponseEntity<>(response,HttpStatus.NOT_FOUND);
-//        }
-//
-//        response.setStatus(HttpStatus.OK.value());
-//        response.setMessage("Get all Lecturer successfully");
-//        response.setSuccess(true);
-//        response.getData().put("listLecturerInfo",listLecturer);
-//        response.setEmpty(false);
-//        response.setFirst(page==0);
-//        response.setSize(size);
-//        response.setTotalPages(totalElements%size==0 ? totalElements/size : totalElements/size+1);
-//        response.setLast( page == response.getTotalPages()-1);
-//        response.setTotalElements(totalElements);
-//        return new ResponseEntity<>(response,HttpStatus.OK);
-//    }
+    @GetMapping("/paging")
+    @ApiOperation("Get All")
+    public ResponseEntity<PagingResponse> getAllLecturerPaging(@RequestParam(defaultValue = "0") int page,
+                                                          @RequestParam(defaultValue = "5") int size)
+    {
+        Page<LecturerEntity> pageLecturer = lecturerService.findAllLecturerPaging(page,size);
+        List<LecturerEntity> listLecturer = pageLecturer.toList();
+        int totalElements = lecturerService.getAllLecturer().size();
+        PagingResponse pagingResponse = new PagingResponse();
+        Map<String,Object> map = new HashMap<>();
+        List<Object> Result = Arrays.asList(listLecturer.toArray());
+        pagingResponse.setTotalPages(pageLecturer.getTotalPages());
+        pagingResponse.setEmpty(listLecturer.size()==0);
+        pagingResponse.setFirst(page==0);
+        pagingResponse.setLast(page == pageLecturer.getTotalPages()-1);
+        pagingResponse.getPageable().put("pageNumber",page);
+        pagingResponse.getPageable().put("pageSize",size);
+        pagingResponse.setSize(size);
+        pagingResponse.setNumberOfElements(listLecturer.size());
+        pagingResponse.setTotalElements((int) pageLecturer.getTotalElements());
+        pagingResponse.setContent(Result);
+        return new ResponseEntity<>(pagingResponse ,HttpStatus.OK);
+    }
     @PatchMapping("")
     @ApiOperation("Update")
     public ResponseEntity<Object> updateLecturer(@Valid @RequestBody UpdateLecturerRequest updateLecturerRequest, BindingResult errors, HttpServletRequest req) throws Exception {
@@ -170,7 +166,7 @@ public class LecturerController {
             {
                 return new ResponseEntity<>(new ErrorResponse(E404,"LECTURER_NOT_FOUND","Can't find Lecturer with id provided+"+id),HttpStatus.NOT_FOUND);
             }
-            if(user.equals(lecturer.getUser())){
+            if(user==lecturer.getUser()){
                 return new ResponseEntity<>(new ErrorResponse(E400,"YOU_CAN_NOT_DELETE_YOUR_ACCOUNT","You can't delete your account"),HttpStatus.BAD_REQUEST);
             }
             lecturerService.deleteById(id);
