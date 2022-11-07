@@ -5,9 +5,9 @@ import com.hcmute.management.common.AppUserRole;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.rest.core.annotation.RestResource;
-
 import javax.persistence.*;
-import java.util.UUID;
+import java.util.List;
+
 
 @RestResource(exported = false)
 @Entity
@@ -24,6 +24,17 @@ public class RoleEntity {
             strategy = "org.hibernate.id.UUIDGenerator"
     )
     private String id;
+    @JsonIgnore
+    @ManyToMany(mappedBy="roles")
+    private List<UserEntity> users;
+
+    public List<UserEntity> getUsers() {
+        return users;
+    }
+
+    public void setUsers(List<UserEntity> users) {
+        this.users = users;
+    }
 
     public String getId() {
         return id;
