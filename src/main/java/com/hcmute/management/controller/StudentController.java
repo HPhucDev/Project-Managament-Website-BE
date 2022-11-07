@@ -105,12 +105,12 @@ public class StudentController {
             if (jwtUtils.validateExpiredToken(accessToken)) {
                 throw new BadCredentialsException("access token is expired");
             }
-                if (studentService.findById(addNewStudentRequest.getMssv()) == null) {
-                    StudentEntity newStudent = studentService.saveStudent(addNewStudentRequest);
-                    return new ResponseEntity<>(newStudent, HttpStatus.OK);
-                } else {
-                    return new ResponseEntity<>(new ErrorResponse(E400,"STUDENT_EXISTED","Student is existed"), HttpStatus.BAD_REQUEST);
-                }
+            if (studentService.findById(addNewStudentRequest.getMssv()) == null) {
+                StudentEntity newStudent = studentService.saveStudent(addNewStudentRequest);
+                return new ResponseEntity<>(newStudent, HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(new ErrorResponse(E400,"STUDENT_EXISTED","Student is existed"), HttpStatus.BAD_REQUEST);
+            }
 
         }
         throw new BadCredentialsException("access token is missing");

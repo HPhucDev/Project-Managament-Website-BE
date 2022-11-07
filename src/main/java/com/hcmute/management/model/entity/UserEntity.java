@@ -71,6 +71,9 @@ public class UserEntity {
     @JsonIgnore
     private LecturerEntity lecturer;
 
+    @OneToMany(mappedBy = "userComment",targetEntity = CommentEntity.class,cascade = CascadeType.ALL)
+    @JsonIgnore
+    private Set<CommentEntity> comment;
 
     public UserEntity(String password, String phone) {
         this.password = password;
