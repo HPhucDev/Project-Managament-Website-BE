@@ -23,7 +23,7 @@ public class ChangeInfoStudentRequest {
     private String sex;
     @NotEmpty(message = "Địa chỉ không được để trống")
     private String address;
-    @NotEmpty(message = "Năm học không được để trống")
+    @NotNull(message = "Năm học không được để trống")
     @DateTimeFormat(pattern = "yyyy")
     private Date schoolyear;
     @NotEmpty(message = "Chuyên ngành không được để trống")
