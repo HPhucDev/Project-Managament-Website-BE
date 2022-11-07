@@ -29,8 +29,8 @@ import java.util.Set;
 public class StudentServiceImpl implements StudentService {
     final StudentRepository studentRepository;
     final UserRepository userRepository;
-    final ClassRepository classRepository;
     final RoleRepository roleRepository;
+    final ClassRepository classRepository;
     @Override
     public List<StudentEntity> findAllStudent() {
         List<StudentEntity> studentEntityList = studentRepository.findAll();
@@ -78,6 +78,8 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public void deleteStudent(String id) {
+        StudentEntity student = studentRepository.findById(id).get();
+        UserEntity user = userRepository.findById(student.getUser().getId()).get();
         studentRepository.deleteById(id);
     }
 

@@ -12,7 +12,6 @@ import com.hcmute.management.model.payload.response.ErrorResponse;
 import com.hcmute.management.model.payload.response.PagingResponse;
 import com.hcmute.management.security.JWT.JwtUtils;
 import com.hcmute.management.service.SubjectService;
-import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,20 +31,19 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.google.common.net.HttpHeaders.AUTHORIZATION;
 
 @ComponentScan
 @RestController
 @RequestMapping("/api/subject")
 @RequiredArgsConstructor
 public class SubjectController {
+    @Autowired
+    JwtUtils jwtUtils;
     private final SubjectService subjectService;
     private final AuthenticateHandler authenticateHandler;
     public static String E400="Bad request";
     public static String E404="Not found";
     public static String E401="Unauthorize";
-    @Autowired
-    JwtUtils jwtUtils;
     @PostMapping("")
     @ApiOperation("Create")
     public ResponseEntity<Object> addSubject(@RequestBody @Valid AddNewSubjectRequest addNewSubjectRequest, BindingResult errors, HttpServletRequest httpServletRequest) throws Exception

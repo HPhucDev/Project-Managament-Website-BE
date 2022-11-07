@@ -7,14 +7,11 @@ import com.hcmute.management.repository.RoleRepository;
 import com.hcmute.management.repository.UserRepository;
 import com.hcmute.management.service.UserService;
 import lombok.RequiredArgsConstructor;
-import net.bytebuddy.description.NamedElement;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
-import java.util.UUID;
 
 @Service
 @Transactional
@@ -46,5 +43,10 @@ private final UserRepository userRepository;
         if(user.isEmpty())
             return null;
         return user.get();
+    }
+
+    @Override
+    public void delete(UserEntity uuid) {
+        userRepository.delete(uuid);
     }
 }

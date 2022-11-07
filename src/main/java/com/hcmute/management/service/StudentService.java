@@ -14,6 +14,7 @@ import java.util.List;
 public interface StudentService {
     List<StudentEntity> findAllStudent();
     StudentEntity findById(String id);
+
     StudentEntity findByUserId(UserEntity user);
     StudentEntity saveStudent(AddNewStudentRequest addNewStudentRequest);
     void deleteStudent(String id);
