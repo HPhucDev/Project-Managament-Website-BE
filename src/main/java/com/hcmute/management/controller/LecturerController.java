@@ -99,7 +99,6 @@ public class LecturerController {
         List<LecturerEntity> listLecturer = pageLecturer.toList();
         int totalElements = lecturerService.getAllLecturer().size();
         PagingResponse pagingResponse = new PagingResponse();
-        Map<String,Object> map = new HashMap<>();
         List<Object> Result = Arrays.asList(listLecturer.toArray());
         pagingResponse.setTotalPages(pageLecturer.getTotalPages());
         pagingResponse.setEmpty(listLecturer.size()==0);

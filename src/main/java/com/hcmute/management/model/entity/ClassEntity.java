@@ -16,9 +16,15 @@ import java.util.Set;
 @RestResource(exported = false)
 public class ClassEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "\"id\"")
-    private int id;
+    @GeneratedValue(
+            generator = "UUID"
+    )
+    @GenericGenerator(
+            name = "UUID",
+            strategy = "org.hibernate.id.UUIDGenerator"
+    )
+    private String id;
 
     @Column(name = "\"class_name\"")
     private String classname;
@@ -26,11 +32,11 @@ public class ClassEntity {
     @JsonIgnore
     private Set<StudentEntity> listStudent;
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 

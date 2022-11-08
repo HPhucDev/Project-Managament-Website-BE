@@ -134,7 +134,7 @@ public class CommentController {
     }
     @GetMapping("/getByProgress/{stayId}")
     @ApiOperation("Get by Progress Id")
-    public ResponseEntity<Object> getCommentByProgressId(@PathVariable("ProgressId")int id) {
+    public ResponseEntity<Object> getCommentByProgressId(@PathVariable("ProgressId")String  id) {
         ProgressEntity foundProgress=progressService.findById(id);
         if(foundProgress==null){
             return new ResponseEntity<>(new ErrorResponse(E404,"PROGRESS_NOT_FOUND","Can't find Progress with id provided"),HttpStatus.NOT_FOUND);

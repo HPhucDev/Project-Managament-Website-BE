@@ -46,7 +46,7 @@ public class ProgressServiceImpl implements ProgressService {
     }
 
     @Override
-    public ProgressEntity findById(int id) {
+    public ProgressEntity findById(String id) {
         Optional<ProgressEntity> progress = progressRepository.findById(id);
         if (progress.isEmpty())
             return null;
@@ -54,7 +54,7 @@ public class ProgressServiceImpl implements ProgressService {
     }
 
     @Override
-    public ProgressEntity updateProgress(UpdateProgressRequest updateProgressRequest, int id) {
+    public ProgressEntity updateProgress(UpdateProgressRequest updateProgressRequest, String id) {
         StudentEntity student = studentRepository.findById(updateProgressRequest.getStudentId()).get();
         SubjectEntity subject = subjectRepository.findById(updateProgressRequest.getSubjectId()).get();
         ProgressEntity progress = ProgressMapping.updateProgressToEntity(updateProgressRequest);
@@ -65,8 +65,8 @@ public class ProgressServiceImpl implements ProgressService {
     }
 
     @Override
-    public void deleteById(List<Integer> listid) {
-        for (int id : listid) {
+    public void deleteById(List<String> listid) {
+        for (String id : listid) {
             progressRepository.deleteById(id);
         }
     }

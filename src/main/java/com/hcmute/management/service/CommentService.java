@@ -18,7 +18,7 @@ import java.util.List;
 public interface CommentService {
     CommentEntity saveComment(AddNewCommentRequest addNewCommentRequest, UserEntity user);
     List<CommentEntity> findAllComment();
-    List<CommentEntity> getCommentByProgressId(int id);
+    List<CommentEntity> getCommentByProgressId(String id);
     CommentEntity findById(String id);
     CommentEntity updateComment(UpdateCommentRequest updateCommentRequest,UserEntity user);
     Page<CommentEntity> findAllCommentPaging(int pageNo, int pagSize);

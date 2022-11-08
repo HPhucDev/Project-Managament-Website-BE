@@ -66,7 +66,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public List<CommentEntity> getCommentByProgressId(int id) {
+    public List<CommentEntity> getCommentByProgressId(String id) {
         ProgressEntity progress=progressService.findById(id);
         List<CommentEntity> listComment =commentRepository.findByProgressComment(progress);
         return listComment;
