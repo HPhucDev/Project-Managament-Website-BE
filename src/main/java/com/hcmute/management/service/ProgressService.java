@@ -14,8 +14,8 @@ public interface ProgressService {
     ProgressEntity saveProgress(AddNewProgressRequest progressRequest);
     List<ProgressEntity> findAllProgress();
 
-    ProgressEntity findById(int id);
-    ProgressEntity updateProgress(UpdateProgressRequest updateProgressRequest, int id);
+    ProgressEntity findById(String id);
+    ProgressEntity updateProgress(UpdateProgressRequest updateProgressRequest, String id);
 
-    void deleteById(List<Integer> listid);
+    void deleteById(List<String> listid);
 }

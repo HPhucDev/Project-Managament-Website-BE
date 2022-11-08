@@ -1,24 +1,32 @@
 package com.hcmute.management.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.rest.core.annotation.RestResource;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.Set;
 
 @RestResource(exported = false)
 @Entity
 @Table(name = "\"progress\"")
 public class ProgressEntity {
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "\"id\"")
     @Id
-    private int id;
+    @Column(name = "\"project_id\"")
+    @GeneratedValue(
+            generator = "UUID"
+    )
+    @GenericGenerator(
+            name = "UUID",
+            strategy = "org.hibernate.id.UUIDGenerator"
+    )
+    private String id;
 
     @Column(name = "\"description\"")
     private String description;
 
-    @Column(name ="\"status\"")
+    @Column(name = "\"status\"")
     private String status;
 
     @Column(name = "\"create_date\"")
@@ -30,19 +38,26 @@ public class ProgressEntity {
     @Column(name = "\"time_submit\"")
     private Date timesubmit;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @Column(name = "\"week\"")
+    private int week;
+
+    @OneToOne()
     @JoinColumn(name = "project_id", referencedColumnName = "project_id")
     private SubjectEntity subject;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne()
     @JoinColumn(name = "student_id", referencedColumnName = "id")
     private StudentEntity student;
 
-    public int getId() {
+    @OneToMany(mappedBy = "progressComment", targetEntity = CommentEntity.class, cascade = CascadeType.ALL)
+    @JsonIgnore
+    private Set<CommentEntity> comment;
+
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -102,14 +117,34 @@ public class ProgressEntity {
         this.student = student;
     }
 
-    public ProgressEntity(String description, String status, Date createdate, Date modiferdate, Date timesubmit, SubjectEntity subject, StudentEntity student) {
+    public int getWeek() {
+        return week;
+    }
+
+    public void setWeek(int week) {
+        this.week = week;
+    }
+
+
+    public Set<CommentEntity> getComment() {
+        return comment;
+    }
+
+    public void setComment(Set<CommentEntity> comment) {
+        this.comment = comment;
+    }
+
+    public ProgressEntity(String id, String description, String status, Date createdate, Date modiferdate, Date timesubmit, int week, SubjectEntity subject, StudentEntity student, Set<CommentEntity> comment) {
+        this.id = id;
         this.description = description;
         this.status = status;
         this.createdate = createdate;
         this.modiferdate = modiferdate;
         this.timesubmit = timesubmit;
+        this.week = week;
         this.subject = subject;
         this.student = student;
+        this.comment = comment;
     }
 
     public ProgressEntity() {

@@ -30,6 +30,6 @@ public class ChangeInfoStudentRequest {
     private String major;
     @NotEmpty(message =  "Chương trình đào tạo không được để trống")
     private String educationprogram;
-    @NotNull(message = "Mã lớp học không được để trống")
-    private int classid;
+    @NotEmpty(message = "Mã lớp học không được để trống")
+    private String classid;
 }

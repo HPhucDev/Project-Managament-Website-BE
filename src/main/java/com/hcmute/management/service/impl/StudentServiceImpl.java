@@ -1,10 +1,7 @@
 package com.hcmute.management.service.impl;
 
 import com.hcmute.management.common.AppUserRole;
-import com.hcmute.management.model.entity.ClassEntity;
-import com.hcmute.management.model.entity.RoleEntity;
-import com.hcmute.management.model.entity.StudentEntity;
-import com.hcmute.management.model.entity.UserEntity;
+import com.hcmute.management.model.entity.*;
 import com.hcmute.management.model.payload.request.Student.AddNewStudentRequest;
 import com.hcmute.management.model.payload.request.Student.ChangeInfoStudentRequest;
 import com.hcmute.management.repository.ClassRepository;
@@ -13,6 +10,9 @@ import com.hcmute.management.repository.StudentRepository;
 import com.hcmute.management.repository.UserRepository;
 import com.hcmute.management.service.StudentService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -112,5 +112,12 @@ public class StudentServiceImpl implements StudentService {
         if(student != null)
             return student;
         else return null;
+    }
+
+    @Override
+    public Page<StudentEntity> search(int pageNo, int pagSize) {
+        Pageable paging = PageRequest.of(pageNo,pagSize);
+        Page<StudentEntity> pageResult =studentRepository.findAllStudentPaging(paging);
+        return pageResult;
     }
 }

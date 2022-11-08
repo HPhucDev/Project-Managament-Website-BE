@@ -33,7 +33,7 @@ public class AddNewStudentRequest {
     @NotEmpty(message =  "can not be empty")
     private String educationprogram;
     @NotNull(message = "Mã lớp học can not be empty")
-    private int  classid;
+    private String  classid;
     @NotNull(message = "Phone number can not be empty")
     private String phone;
 }

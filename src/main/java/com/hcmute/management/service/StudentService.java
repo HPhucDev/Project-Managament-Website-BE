@@ -1,9 +1,11 @@
 package com.hcmute.management.service;
 
+import com.hcmute.management.model.entity.LecturerEntity;
 import com.hcmute.management.model.entity.StudentEntity;
 import com.hcmute.management.model.entity.UserEntity;
 import com.hcmute.management.model.payload.request.Student.AddNewStudentRequest;
 import com.hcmute.management.model.payload.request.Student.ChangeInfoStudentRequest;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
@@ -21,4 +23,5 @@ public interface StudentService {
     StudentEntity changeInf(ChangeInfoStudentRequest changeInfoStudentRequest, String user);
 
     StudentEntity findStudentbyUserId(String userid);
+    Page<StudentEntity> search(int pageNo, int pagSize);
 }

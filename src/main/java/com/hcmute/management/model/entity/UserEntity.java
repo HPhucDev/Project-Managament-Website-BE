@@ -71,25 +71,9 @@ public class UserEntity {
     @JsonIgnore
     private LecturerEntity lecturer;
 
-    public LecturerEntity getLecturer() {
-        return lecturer;
-    }
-
-    public void setLecturer(LecturerEntity lecturer) {
-        this.lecturer = lecturer;
-    }
-
-    @Column(name = "\"image_link\"")
-    private String imgLink;
-
-    public String getImgLink() {
-        return imgLink;
-    }
-
-    public void setImgLink(String imgLink) {
-        this.imgLink = imgLink;
-    }
-
+    @OneToMany(mappedBy = "userComment",targetEntity = CommentEntity.class,cascade = CascadeType.ALL)
+    @JsonIgnore
+    private Set<CommentEntity> comment;
 
     public UserEntity(String password, String phone) {
         this.password = password;

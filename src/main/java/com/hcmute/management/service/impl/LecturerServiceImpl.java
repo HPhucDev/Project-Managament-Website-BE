@@ -80,11 +80,11 @@ public class LecturerServiceImpl implements LecturerService {
     }
 
     @Override
-    public List<LecturerEntity> findAllLecturerPaging(int pageNo, int pagSize) {
+    public Page<LecturerEntity> findAllLecturerPaging(int pageNo, int pagSize) {
         Pageable paging =null;
         paging= PageRequest.of(pageNo,pagSize);
         Page<LecturerEntity> pageResult =lecturerRepository.findAllLecturer(paging);
-        return pageResult.toList();
+        return pageResult;
     }
-
 }
+
