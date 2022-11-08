@@ -53,6 +53,17 @@ public class ProgressEntity {
     @JsonIgnore
     private Set<CommentEntity> comment;
 
+    @OneToMany(mappedBy = "progress",targetEntity = AttachmentEntity.class,cascade = CascadeType.ALL)
+    private Set<AttachmentEntity> attachments;
+
+    public Set<AttachmentEntity> getAttachments() {
+        return attachments;
+    }
+
+    public void setAttachments(Set<AttachmentEntity> attachments) {
+        this.attachments = attachments;
+    }
+
     public String getId() {
         return id;
     }
