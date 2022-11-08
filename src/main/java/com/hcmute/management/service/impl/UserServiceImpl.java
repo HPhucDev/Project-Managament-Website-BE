@@ -1,5 +1,6 @@
 package com.hcmute.management.service.impl;
 
+import com.hcmute.management.common.AppUserRole;
 import com.hcmute.management.handler.FileNotImageException;
 import com.hcmute.management.model.entity.RoleEntity;
 import com.hcmute.management.model.entity.UserEntity;
@@ -8,6 +9,7 @@ import com.hcmute.management.repository.UserRepository;
 import com.hcmute.management.service.ImageStorageService;
 import com.hcmute.management.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.apache.catalina.User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -21,22 +23,12 @@ public class UserServiceImpl implements UserService {
 private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final ImageStorageService imageStorageService;
-
     @Override
-    public UserEntity register(UserEntity user, String role) {
-        Optional<RoleEntity> roleEntity=roleRepository.findByName(role);
-        if (roleEntity.isEmpty())
-            return null;
-        else {
-            if(user.getRoles()==null){
-            Set<RoleEntity> RoleSet=new HashSet<>();
-            RoleSet.add(roleEntity.get());
-            user.setRoles(RoleSet);
-        }
-            else
-                user.getRoles().add(roleEntity.get());
-
-        }
+    public UserEntity register(UserEntity user, AppUserRole role) {
+        RoleEntity roleEntity = roleRepository.findByName(role);
+        Set<RoleEntity> roles = new HashSet<>();
+        roles.add(roleEntity);
+        user.setRoles(roles);
         return userRepository.save(user);
     }
 
@@ -54,6 +46,11 @@ private final UserRepository userRepository;
         if(user.isEmpty())
             return null;
         return user.get();
+    }
+
+    @Override
+    public void delete(UserEntity user) {
+        userRepository.delete(user);
     }
 
     @Override

@@ -30,6 +30,8 @@ public class AddNewSubjectRequest {
     private String product;
     @NotEmpty(message ="Description "+EMPTY_MESSAGE)
     private String description;
+    @NotEmpty(message = "Lecturer id "+EMPTY_MESSAGE)
+    private String lecturerId;
     @Max(value = 4,message = "Group cannot have more than 4 student")
     @Min(value = 0)
     private int groupCap;

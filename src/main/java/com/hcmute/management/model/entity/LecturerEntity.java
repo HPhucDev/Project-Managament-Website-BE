@@ -5,6 +5,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.rest.core.annotation.RestResource;
 
 import javax.persistence.*;
+import java.util.Set;
 
 @Entity
 @RestResource(exported = false)
@@ -21,6 +22,18 @@ public class LecturerEntity {
     @OneToOne()
     @JoinColumn(name="\"user\"")
     private UserEntity user;
+
+    @OneToMany(mappedBy = "lecturer",targetEntity = SubjectEntity.class,cascade = CascadeType.ALL)
+    @JsonIgnore
+    private Set<SubjectEntity> subjects;
+
+    public Set<SubjectEntity> getSubjects() {
+        return subjects;
+    }
+
+    public void setSubjects(Set<SubjectEntity> subjects) {
+        this.subjects = subjects;
+    }
 
     public  LecturerEntity (){}
 

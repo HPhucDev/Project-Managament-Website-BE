@@ -16,4 +16,6 @@ public interface SubjectService {
 
     void deleteById(List<String> listId);
     Page<SubjectEntity> findAllSubjectPaging(int pageNo, int pageSize);
+
+    Page<SubjectEntity> searchByCriteria(String keyWord,String status,int pageNo,int pageSize,String sort,String order);
 }

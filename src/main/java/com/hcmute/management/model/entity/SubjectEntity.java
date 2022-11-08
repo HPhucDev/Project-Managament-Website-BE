@@ -61,6 +61,17 @@ public class SubjectEntity {
     @Column(name = "\"end_Date\"")
     private LocalDateTime endDate;
 
+    public LecturerEntity getLecturer() {
+        return lecturer;
+    }
+
+    public void setLecturer(LecturerEntity lecturer) {
+        this.lecturer = lecturer;
+    }
+
+    @ManyToOne()
+    @JoinColumn(name = "\"lecturer\"")
+    private LecturerEntity lecturer;
     public String getId() {
         return id;
     }

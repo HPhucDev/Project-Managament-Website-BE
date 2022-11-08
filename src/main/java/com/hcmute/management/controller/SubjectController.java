@@ -1,8 +1,12 @@
 package com.hcmute.management.controller;
 
+import com.hcmute.management.common.OrderByEnum;
+import com.hcmute.management.common.SubjectSort;
+import com.hcmute.management.common.SubjectStatus;
 import com.hcmute.management.handler.AuthenticateHandler;
 import com.hcmute.management.handler.MethodArgumentNotValidException;
 import com.hcmute.management.mapping.SubjectMapping;
+import com.hcmute.management.model.entity.LecturerEntity;
 import com.hcmute.management.model.entity.SubjectEntity;
 import com.hcmute.management.model.entity.UserEntity;
 import com.hcmute.management.model.payload.SuccessResponse;
@@ -11,6 +15,8 @@ import com.hcmute.management.model.payload.request.Subject.UpdateSubjectRequest;
 import com.hcmute.management.model.payload.response.ErrorResponse;
 import com.hcmute.management.model.payload.response.PagingResponse;
 import com.hcmute.management.security.JWT.JwtUtils;
+import com.hcmute.management.service.EmailService;
+import com.hcmute.management.service.LecturerService;
 import com.hcmute.management.service.SubjectService;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -41,6 +47,8 @@ public class SubjectController {
     JwtUtils jwtUtils;
     private final SubjectService subjectService;
     private final AuthenticateHandler authenticateHandler;
+    private final EmailService emailService;
+    private final LecturerService lecturerService;
     public static String E400="Bad request";
     public static String E404="Not found";
     public static String E401="Unauthorize";
@@ -61,8 +69,17 @@ public class SubjectController {
             {
                 return new ResponseEntity<>(new ErrorResponse(E400,"INVALID_START_END_DATE","Invalid start or end date"), HttpStatus.BAD_REQUEST);
             }
+            LecturerEntity lecturer =lecturerService.getLecturerById(addNewSubjectRequest.getLecturerId());
+            if (lecturer==null)
+            {
+                return new ResponseEntity<>(new ErrorResponse(E404,"LECTURE_NOT_FOUND","Can't find lecture with id provided"), HttpStatus.BAD_REQUEST);
+
+            }
             else {
+                subject.setLecturer(user.getLecturer());
+                subject.setStatus(3);
                 subject = subjectService.saveSubject(subject);
+                emailService.sendSubjectConfirmEmail(subject);
                 return new ResponseEntity<>(subject,HttpStatus.OK);
             }
 
@@ -161,5 +178,35 @@ public class SubjectController {
 
         }
     }
+    @GetMapping("/search")
+    @ApiOperation("Search by Criteria")
+    public ResponseEntity<Object> searchByCriteria(
+            @RequestParam(required = false,name = "KeyWord") String searchKey,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size,
+            @RequestParam(defaultValue = "NULL") SubjectStatus subjectStatus,
+            @RequestParam(defaultValue = "LECTURER") SubjectSort sort,
+            @RequestParam(defaultValue = "DESCENDING")OrderByEnum order
+            )
+    {
+        System.out.println(subjectStatus);
+        Page<SubjectEntity> pageSubject = subjectService.searchByCriteria(searchKey,subjectStatus.getStatus(),page,size, sort.getName(), order.getName());
+        List<SubjectEntity> listSubject = pageSubject.toList();
+        PagingResponse pagingResponse = new PagingResponse();
+        Map<String,Object> map = new HashMap<>();
+        List<Object> Result = Arrays.asList(listSubject.toArray());
+        pagingResponse.setTotalPages(pageSubject.getTotalPages());
+        pagingResponse.setEmpty(listSubject.size()==0);
+        pagingResponse.setFirst(page==0);
+        pagingResponse.setLast(page == pageSubject.getTotalPages()-1);
+        pagingResponse.getPageable().put("pageNumber",page);
+        pagingResponse.getPageable().put("pageSize",size);
+        pagingResponse.setSize(size);
+        pagingResponse.setNumberOfElements(listSubject.size());
+        pagingResponse.setTotalElements((int) pageSubject.getTotalElements());
+        pagingResponse.setContent(Result);
+        return new ResponseEntity<>(pagingResponse ,HttpStatus.OK);
+    }
+
 
 }
