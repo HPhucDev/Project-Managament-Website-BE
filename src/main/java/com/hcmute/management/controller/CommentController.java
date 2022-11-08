@@ -62,7 +62,7 @@ public class CommentController {
 
 
             ProgressEntity findProgress =progressService.findById(addNewCommentRequest.getProgressid());
-            if(findProgress!=null){
+            if(findProgress==null){
                 return new ResponseEntity<>(new ErrorResponse(E400,"PROGRESS_NOT_FOUND","Can't find Progress with id provided"),HttpStatus.BAD_REQUEST);
             }
             CommentEntity comment =commentService.saveComment(addNewCommentRequest,user);
@@ -132,7 +132,7 @@ public class CommentController {
         map.put("content",listComment);
         return new ResponseEntity<>(map,HttpStatus.OK);
     }
-    @GetMapping("/getByProgress/{stayId}")
+    @GetMapping("/getByProgress/{progressId}")
     @ApiOperation("Get by Progress Id")
     public ResponseEntity<Object> getCommentByProgressId(@PathVariable("ProgressId")String  id) {
         ProgressEntity foundProgress=progressService.findById(id);
