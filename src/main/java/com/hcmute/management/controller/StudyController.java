@@ -101,7 +101,7 @@ public class StudyController {
                 StudentEntity student = studentService.changeInf(changeInfoStudentRequest, userid);
                 return new ResponseEntity<>(student, HttpStatus.OK);
             } else
-                return new ResponseEntity<>(new ErrorResponse(E400, "STUDENT_ID_EXISTED", "Student id existed"), HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>(new ErrorResponse(E400, "USER_ID_NOT_FOUND", "User id existed"), HttpStatus.NOT_FOUND);
         }
         throw new BadCredentialsException("Access token is missing");
     }
