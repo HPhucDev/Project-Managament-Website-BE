@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.BindingResult;
@@ -45,6 +46,7 @@ public class StudyController {
 
     @GetMapping("/{id}")
     @ApiOperation("Get by id")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<Object> getStudentById(@PathVariable String id) {
         StudentEntity student = studentService.findById(id);
         if (student == null) {

@@ -30,11 +30,18 @@ public class ProgressServiceImpl implements ProgressService {
 
     @Override
     public ProgressEntity saveProgress(AddNewProgressRequest progressRequest) {
-        StudentEntity student = studentRepository.findById(progressRequest.getStudentId()).get();
-        SubjectEntity subject = subjectRepository.findById(progressRequest.getSubjectId()).get();
+        Optional<StudentEntity> student = studentRepository.findById(progressRequest.getStudentId());
+        Optional<SubjectEntity> subject = subjectRepository.findById(progressRequest.getSubjectId());
+        if(student.isEmpty()) {
+            throw new RuntimeException("STUDENT_NOT_FOUND");
+        }
+        if(subject.isEmpty()) {
+            throw  new RuntimeException("SUBJECT_NOT_FOUND");
+        }
+
         ProgressEntity progress = ProgressMapping.addProgressToEntity(progressRequest);
-        progress.setStudent(student);
-        progress.setSubject(subject);
+        progress.setStudent(student.get());
+        progress.setSubject(subject.get());
         return progressRepository.save(progress);
 
     }

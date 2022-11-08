@@ -24,7 +24,9 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import static com.google.common.net.HttpHeaders.AUTHORIZATION;
@@ -69,45 +71,28 @@ public class ProgressController {
 
     @GetMapping("")
     @ApiOperation("Get all")
-    public ResponseEntity<SuccessResponse> getAllProgress() {
+    public ResponseEntity<Object> getAllProgress() {
         List<ProgressEntity> listProgress = progressService.findAllProgress();
-        if (listProgress.size() == 0) {
-            SuccessResponse response = new SuccessResponse();
-            response.setStatus(HttpStatus.FOUND.value());
-            response.setMessage("List progress is Empty");
-            response.setSuccess(false);
-            return new ResponseEntity<>(response, HttpStatus.FOUND);
-        }
-        SuccessResponse response = new SuccessResponse();
-        response.setStatus(HttpStatus.OK.value());
-        response.setMessage("Query Successfully");
-        response.setSuccess(true);
-        response.getData().put("list Student", listProgress);
-        return new ResponseEntity<>(response, HttpStatus.OK);
+
+            Map<String, Object> map = new HashMap<>();
+            map.put("Content", listProgress);
+            return new ResponseEntity<>(map, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
     @ApiOperation("Get by id")
-    public ResponseEntity<SuccessResponse> getProgressById(@PathVariable("id") String id) {
+    public ResponseEntity<Object> getProgressById(@PathVariable("id") String id) {
         ProgressEntity progress = progressService.findById(id);
         if (progress == null) {
-            SuccessResponse response = new SuccessResponse();
-            response.setStatus(HttpStatus.FOUND.value());
-            response.setMessage("Progress is Not Found");
-            response.setSuccess(false);
-            return new ResponseEntity<>(response, HttpStatus.FOUND);
+            return new ResponseEntity<>(new ErrorResponse(E404,"PROGRESS_NOT_FOUND", "Progress not found"), HttpStatus.NOT_FOUND);
         }
-        SuccessResponse response = new SuccessResponse();
-        response.setStatus(HttpStatus.OK.value());
-        response.setMessage("Query Successfully");
-        response.setSuccess(true);
-        response.getData().put("Student: ", progress);
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return new ResponseEntity<>(progress, HttpStatus.OK);
     }
 
-    @PutMapping("/update/{id}")
+    @PutMapping("/{id}")
+    @ApiOperation("Update")
     @ResponseBody
-    public ResponseEntity<SuccessResponse> updateProgress(HttpServletRequest req, @RequestBody @Valid UpdateProgressRequest updateProgressRequest, @PathVariable("id") String id) {
+    public ResponseEntity<Object> updateProgress(HttpServletRequest req, @RequestBody @Valid UpdateProgressRequest updateProgressRequest, @PathVariable("id") String id) {
         String authorizationHeader = req.getHeader(AUTHORIZATION);
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             String accessToken = authorizationHeader.substring("Bearer ".length());
@@ -117,24 +102,16 @@ public class ProgressController {
             ProgressEntity progress = new ProgressEntity();
             if (progressService.findById(id) != null) {
                 progress = progressService.updateProgress(updateProgressRequest, id);
-                SuccessResponse response = new SuccessResponse();
-                response.setMessage("Change progress successfully");
-                response.setSuccess(true);
-                response.setStatus(HttpStatus.OK.value());
-                response.getData().put("Student", progress);
-                return new ResponseEntity<>(response, HttpStatus.OK);
+                return new ResponseEntity<>(progress, HttpStatus.OK);
             } else {
-                SuccessResponse response = new SuccessResponse();
-                response.setStatus(HttpStatus.FOUND.value());
-                response.setMessage("Progress isn't existed");
-                response.setSuccess(false);
-                return new ResponseEntity<>(response, HttpStatus.FOUND);
+                return new ResponseEntity<>(new ErrorResponse(E404, "PROGRESS_NOT_FOUND","Progress not found"), HttpStatus.NOT_FOUND);
             }
         }
         throw new BadCredentialsException("access token is missing");
     }
 
-    @DeleteMapping("/delete")
+    @DeleteMapping("")
+    @ApiOperation("Delete")
     public ResponseEntity<SuccessResponse> deleteProgress(@RequestBody List<String> listProgressId, HttpServletRequest httpServletRequest) {
         String authorizationHeader = httpServletRequest.getHeader(AUTHORIZATION);
         SuccessResponse response = new SuccessResponse();
@@ -144,10 +121,7 @@ public class ProgressController {
                 throw new BadCredentialsException("access token is  expired");
             }
             progressService.deleteById(listProgressId);
-            response.setStatus(HttpStatus.OK.value());
-            response.setMessage("Delete Subject successfully");
-            response.setSuccess(true);
-            return new ResponseEntity<>(response, HttpStatus.OK);
+            return new ResponseEntity<>(HttpStatus.OK);
         } else throw new BadCredentialsException("access token is missing");
     }
 
