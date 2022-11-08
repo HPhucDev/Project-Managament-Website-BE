@@ -19,7 +19,7 @@ public class AddNewProgressRequest {
     @NotEmpty(message = "Mô tả không được để trống")
     private String description;
 
-   // @NotEmpty(message = "")
+    // @NotEmpty(message = "")
     private String status;
     @NotNull(message = "Ngày tháng năm không được để trống")
     @Past(message = "Ngày tháng năm không được vượt quá hôm nay")
@@ -39,9 +39,8 @@ public class AddNewProgressRequest {
 
     @NotEmpty(message = "Id không được để trống")
     private String studentId;
-
-
-
+    @NotNull(message = "Week can not be null")
+    private int week;
 
 
 }
