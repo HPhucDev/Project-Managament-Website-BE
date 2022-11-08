@@ -41,11 +41,11 @@ public class ProgressEntity {
     @Column(name = "\"week\"")
     private int week;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne()
     @JoinColumn(name = "project_id", referencedColumnName = "project_id")
     private SubjectEntity subject;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne()
     @JoinColumn(name = "student_id", referencedColumnName = "id")
     private StudentEntity student;
 
