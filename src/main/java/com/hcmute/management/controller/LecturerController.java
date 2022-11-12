@@ -5,6 +5,7 @@ import com.hcmute.management.handler.AuthenticateHandler;
 import com.hcmute.management.handler.MethodArgumentNotValidException;
 import com.hcmute.management.mapping.LecturerMapping;
 import com.hcmute.management.model.entity.LecturerEntity;
+import com.hcmute.management.model.entity.RoleEntity;
 import com.hcmute.management.model.entity.SubjectEntity;
 import com.hcmute.management.model.entity.UserEntity;
 import com.hcmute.management.model.payload.SuccessResponse;
@@ -168,7 +169,13 @@ public class LecturerController {
             if(user==lecturer.getUser()){
                 return new ResponseEntity<>(new ErrorResponse(E400,"YOU_CAN_NOT_DELETE_YOUR_ACCOUNT","You can't delete your account"),HttpStatus.BAD_REQUEST);
             }
+            UserEntity deleteUser = userService.findById(lecturer.getUser().getId());
+            for (RoleEntity role : deleteUser.getRoles()) {
+                role.setUsers(null);
+            }
             lecturerService.deleteById(id);
+            deleteUser.getRoles().clear();
+            userService.delete(deleteUser);
             return new ResponseEntity<>(HttpStatus.OK);
         }catch (BadCredentialsException e) {
             return new ResponseEntity<>(new ErrorResponse(E401,"UNAUTHORIZED","Unauthorized, please login again"), HttpStatus.UNAUTHORIZED);
