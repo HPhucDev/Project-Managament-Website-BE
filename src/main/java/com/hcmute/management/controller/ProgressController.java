@@ -1,5 +1,6 @@
 package com.hcmute.management.controller;
 
+import com.hcmute.management.handler.FileNotImageException;
 import com.hcmute.management.handler.MethodArgumentNotValidException;
 import com.hcmute.management.model.entity.ProgressEntity;
 import com.hcmute.management.model.entity.StudentEntity;
@@ -9,6 +10,7 @@ import com.hcmute.management.model.payload.request.Progress.AddNewProgressReques
 import com.hcmute.management.model.payload.request.Progress.UpdateProgressRequest;
 import com.hcmute.management.model.payload.response.ErrorResponse;
 import com.hcmute.management.security.JWT.JwtUtils;
+import com.hcmute.management.service.AttachmentService;
 import com.hcmute.management.service.ProgressService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -16,10 +18,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -38,6 +43,7 @@ import static com.google.common.net.HttpHeaders.AUTHORIZATION;
 public class ProgressController {
 
     private final ProgressService progressService;
+    private final AttachmentService attachmentService;
 
     @Autowired
     JwtUtils jwtUtils;
@@ -46,9 +52,10 @@ public class ProgressController {
     public static String E404 = "Not found";
     public static String E401 = "Unauthorize";
 
-    @PostMapping("")
+    @PostMapping(value = "",consumes = {"multipart/form-data"})
     @ApiOperation("Create")
-    public ResponseEntity<Object> addProgress(@RequestBody @Valid AddNewProgressRequest addNewProgressRequest, BindingResult errors, HttpServletRequest httpServletRequest) throws Exception {
+    @Transactional()
+    public ResponseEntity<Object> addProgress(@Valid AddNewProgressRequest addNewProgressRequest, @RequestPart MultipartFile[] files, BindingResult errors, HttpServletRequest httpServletRequest) throws Exception {
         if (errors.hasErrors()) {
             throw new MethodArgumentNotValidException(errors);
         }
@@ -60,11 +67,15 @@ public class ProgressController {
             if (jwtUtils.validateExpiredToken(accessToken) == true) {
                 throw new BadCredentialsException("access token is  expired");
             }
-            if (addNewProgressRequest.getModiferdate().compareTo(addNewProgressRequest.getCreatedate()) <= 0) {
-                return new ResponseEntity<>(new ErrorResponse(E400,"MODIFY_DATE_OR_START_DATE_NOT_VALID","Modify Date or StartDate not valid"), HttpStatus.BAD_REQUEST);
-            } else {
-                ProgressEntity progress = progressService.saveProgress(addNewProgressRequest);
-                return new ResponseEntity<>(progress, HttpStatus.OK);
+             else {
+                 try {
+                     ProgressEntity progress = progressService.saveProgress(addNewProgressRequest);
+                     attachmentService.uploadFile(files, progress);
+                     return new ResponseEntity<>(progress, HttpStatus.OK);
+                 }catch (FileNotImageException fileNotImageException)
+                 {
+                     return new ResponseEntity<>(new ErrorResponse("Unsupported Media Type","FILE_NOT_IMAGE",fileNotImageException.getMessage()),HttpStatus.UNSUPPORTED_MEDIA_TYPE);
+                 }
             }
         } else throw new BadCredentialsException("access token is missing");
     }

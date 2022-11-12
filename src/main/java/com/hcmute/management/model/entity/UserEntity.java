@@ -74,6 +74,24 @@ public class UserEntity {
     @OneToMany(mappedBy = "userComment",targetEntity = CommentEntity.class,cascade = CascadeType.ALL)
     @JsonIgnore
     private Set<CommentEntity> comment;
+    @Column(name = "\"imageLink\"")
+    private String imgLink;
+
+    public String getImgLink() {
+        return imgLink;
+    }
+
+    public void setImgLink(String imgLink) {
+        this.imgLink = imgLink;
+    }
+
+    public LecturerEntity getLecturer() {
+        return lecturer;
+    }
+
+    public void setLecturer(LecturerEntity lecturer) {
+        this.lecturer = lecturer;
+    }
 
     public UserEntity(String password, String phone) {
         this.password = password;

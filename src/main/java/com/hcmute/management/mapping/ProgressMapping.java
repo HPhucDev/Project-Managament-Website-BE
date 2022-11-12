@@ -10,8 +10,8 @@ public class ProgressMapping {
         progress.setDescription(addNewProgressRequest.getDescription());
         progress.setCreatedate(addNewProgressRequest.getCreatedate());
         progress.setStatus(addNewProgressRequest.getStatus());
-        progress.setModiferdate(addNewProgressRequest.getModiferdate());
         progress.setTimesubmit(addNewProgressRequest.getTimesubmit());
+        progress.setWeek(addNewProgressRequest.getWeek());
         return progress;
     }
     public static ProgressEntity updateProgressToEntity(UpdateProgressRequest updateProgressRequest) {

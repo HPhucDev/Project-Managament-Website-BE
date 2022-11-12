@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -51,6 +52,13 @@ public class SubjectServiceImpl implements SubjectService {
         Pageable paging =null;
         paging= PageRequest.of(pageNo,pageSize);
         Page<SubjectEntity> pageResult=subjectRepository.findAllSubject(paging);
+        return pageResult;
+    }
+
+    @Override
+    public Page<SubjectEntity> searchByCriteria(String keyWord, String status, int pageNo, int pageSize, String sort, String order) {
+        Pageable paging = PageRequest.of(pageNo,pageSize, order=="asc"? Sort.by(sort).ascending() : Sort.by(sort).descending());
+        Page<SubjectEntity> pageResult = subjectRepository.searchByCriteria(keyWord,status,paging);
         return pageResult;
     }
 }
