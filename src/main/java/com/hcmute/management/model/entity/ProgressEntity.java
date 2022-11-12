@@ -53,7 +53,7 @@ public class ProgressEntity {
     @JsonIgnore
     private Set<CommentEntity> comment;
 
-    @OneToMany(mappedBy = "progress",targetEntity = AttachmentEntity.class,cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "progress",targetEntity = AttachmentEntity.class,cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     private Set<AttachmentEntity> attachments;
 
     public Set<AttachmentEntity> getAttachments() {
@@ -145,18 +145,6 @@ public class ProgressEntity {
         this.comment = comment;
     }
 
-    public ProgressEntity(String id, String description, String status, Date createdate, Date modiferdate, Date timesubmit, int week, SubjectEntity subject, StudentEntity student, Set<CommentEntity> comment) {
-        this.id = id;
-        this.description = description;
-        this.status = status;
-        this.createdate = createdate;
-        this.modiferdate = modiferdate;
-        this.timesubmit = timesubmit;
-        this.week = week;
-        this.subject = subject;
-        this.student = student;
-        this.comment = comment;
-    }
 
     public ProgressEntity() {
     }

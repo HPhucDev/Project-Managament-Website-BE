@@ -67,7 +67,7 @@ public class StudyController {
     @PostMapping("")
     @ResponseBody
     @ApiOperation("Create")
-    private ResponseEntity<Object> createStudent(HttpServletRequest httpServletRequest, @RequestBody AddNewStudentRequest addNewStudentRequest, BindingResult bindingResult) throws Exception {
+    public ResponseEntity<Object> createStudent(HttpServletRequest httpServletRequest, @RequestBody AddNewStudentRequest addNewStudentRequest, BindingResult bindingResult) throws Exception {
         if (bindingResult.hasErrors()) {
             throw new MethodArgumentNotValidException(bindingResult);
         }
