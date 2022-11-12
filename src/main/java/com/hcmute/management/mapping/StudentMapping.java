@@ -9,6 +9,7 @@ public class StudentMapping {
         studentEntity.setSchool_year(addNewStudentRequest.getSchoolyear());
         studentEntity.setEducation_program(addNewStudentRequest.getEducationprogram());
         studentEntity.setMajor(addNewStudentRequest.getMajor());
+        studentEntity.setId(addNewStudentRequest.getMssv());
         return studentEntity;
     }
 }
