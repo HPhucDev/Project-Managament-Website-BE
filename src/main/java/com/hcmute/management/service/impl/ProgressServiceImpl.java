@@ -1,6 +1,7 @@
 package com.hcmute.management.service.impl;
 
 import com.hcmute.management.mapping.ProgressMapping;
+import com.hcmute.management.model.entity.AttachmentEntity;
 import com.hcmute.management.model.entity.ProgressEntity;
 import com.hcmute.management.model.entity.StudentEntity;
 import com.hcmute.management.model.entity.SubjectEntity;
@@ -14,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
@@ -40,6 +42,7 @@ public class ProgressServiceImpl implements ProgressService {
         }
 
         ProgressEntity progress = ProgressMapping.addProgressToEntity(progressRequest);
+        progress.setAttachments(new HashSet<>());
         progress.setStudent(student.get());
         progress.setSubject(subject.get());
         return progressRepository.save(progress);
