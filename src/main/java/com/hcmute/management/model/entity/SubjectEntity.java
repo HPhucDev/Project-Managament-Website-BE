@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiModelProperty;
 import org.aspectj.apache.bcel.classfile.Module;
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.rest.core.annotation.RestResource;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -53,13 +54,26 @@ public class SubjectEntity {
     @Column(name = "\"status\"")
     private int status;
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss", shape = JsonFormat.Shape.STRING)
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     @ApiModelProperty(required = true, example = "2021-08-20T00:00:00")
     @Column(name = "\"start_date\"")
     private LocalDateTime startDate;
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss", shape = JsonFormat.Shape.STRING)
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     @ApiModelProperty(required = true, example = "2021-08-20T00:00:00")
     @Column(name = "\"end_Date\"")
     private LocalDateTime endDate;
+
+    @Column(name = "\"attachment\"")
+    private String attachmentLink;
+
+    public String getAttachmentLink() {
+        return attachmentLink;
+    }
+
+    public void setAttachmentLink(String attachmentLink) {
+        this.attachmentLink = attachmentLink;
+    }
 
     public LecturerEntity getLecturer() {
         return lecturer;

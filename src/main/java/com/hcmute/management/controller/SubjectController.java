@@ -23,19 +23,21 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.domain.Page;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.io.UnsupportedEncodingException;
+import java.time.LocalDateTime;
+import java.util.*;
 
 
 @ComponentScan
@@ -52,9 +54,14 @@ public class SubjectController {
     public static String E400="Bad request";
     public static String E404="Not found";
     public static String E401="Unauthorize";
-    @PostMapping("")
+    @PostMapping(value = "",consumes = {"multipart/form-data"})
     @ApiOperation("Create")
-    public ResponseEntity<Object> addSubject(@RequestBody @Valid AddNewSubjectRequest addNewSubjectRequest, BindingResult errors, HttpServletRequest httpServletRequest) throws Exception
+    public ResponseEntity<Object> addSubject(@RequestPart MultipartFile file,
+                                             @Valid AddNewSubjectRequest addNewSubjectRequest,
+                                             BindingResult errors,
+                                             HttpServletRequest httpServletRequest,
+                                             @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
+                                             @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate) throws Exception
     {
         if (errors.hasErrors())
         {
@@ -65,6 +72,8 @@ public class SubjectController {
         {
             user = authenticateHandler.authenticateUser(httpServletRequest);
             SubjectEntity subject= SubjectMapping.addSubjectToEntity(addNewSubjectRequest);
+            subject.setStartDate(startDate);
+            subject.setEndDate(endDate);
             if (subject.getEndDate().compareTo(subject.getStartDate())<=0)
             {
                 return new ResponseEntity<>(new ErrorResponse(E400,"INVALID_START_END_DATE","Invalid start or end date"), HttpStatus.BAD_REQUEST);
@@ -77,12 +86,16 @@ public class SubjectController {
             }
             else {
                 subject.setLecturer(user.getLecturer());
-                subject.setStatus(3);
-                subject = subjectService.saveSubject(subject);
+                subject.setStatus(Integer.valueOf(SubjectStatus.PENDING.getStatus()));
+                String uuid = String.valueOf(UUID.randomUUID());
+                subject.setId(uuid);
+
+                String url = subjectService.uploadSubjectFile(file,subject);
+                subject.setAttachmentLink(url);
+                subject=subjectService.saveSubject(subject);
                 emailService.sendSubjectConfirmEmail(subject);
                 return new ResponseEntity<>(subject,HttpStatus.OK);
             }
-
         }catch (BadCredentialsException e)
         {
             return new ResponseEntity<>(new ErrorResponse(E401,"UNAUTHORIZED","Unauthorized, please login again"), HttpStatus.UNAUTHORIZED);
@@ -122,9 +135,15 @@ public class SubjectController {
         map.put("content",listSubject);
         return new ResponseEntity<>(map,HttpStatus.OK);
     }
-    @PatchMapping("/{id}")
+    @PatchMapping(value = "/{id}",consumes = {"multipart/form-data"})
     @ApiOperation("Update")
-    public ResponseEntity<Object> updateSubject(@Valid @RequestBody UpdateSubjectRequest updateSubjectRequest,BindingResult errors,HttpServletRequest httpServletRequest,@PathVariable("id") String id) throws Exception {
+    public ResponseEntity<Object> updateSubject(@Valid UpdateSubjectRequest updateSubjectRequest,
+                                                @RequestPart MultipartFile file,
+                                                BindingResult errors,
+                                                HttpServletRequest httpServletRequest,
+                                                @PathVariable("id") String id,
+                                                @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
+                                                @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate) throws Exception {
         if (errors.hasErrors()) {
             throw new MethodArgumentNotValidException(errors);
         }
@@ -139,10 +158,14 @@ public class SubjectController {
 
             }
             subject=SubjectMapping.updateRequestToEntity(subject,updateSubjectRequest);
+            subject.setStartDate(startDate);
+            subject.setEndDate(endDate);
             if (subject.getEndDate().compareTo(subject.getStartDate())<=0)
             {
                 return new ResponseEntity<>(new ErrorResponse(E400,"INVALID_START_END_DATE","Invalid start or end date"), HttpStatus.BAD_REQUEST);
             }
+            String url = subjectService.uploadSubjectFile(file,subject);
+            subject.setAttachmentLink(url);
             subject=subjectService.saveSubject(subject);
             return new ResponseEntity<>(subject,HttpStatus.OK);
         } catch (BadCredentialsException e)
@@ -207,6 +230,58 @@ public class SubjectController {
         pagingResponse.setContent(Result);
         return new ResponseEntity<>(pagingResponse ,HttpStatus.OK);
     }
+    @PostMapping("/approve/{subjectId}")
+    @ApiOperation("Approve Subject")
+    public ResponseEntity<Object> approveSubject(@PathVariable("subjectId") String id,HttpServletRequest req)
+    {
+        UserEntity user;
+        try
+        {
+            user = authenticateHandler.authenticateUser(req);
+            SubjectEntity subject = subjectService.getSubjectById(id);
+            if (subject == null)
+            {
+                return new ResponseEntity<>(new ErrorResponse(E404,"SUBJECT_NOT_FOUND","Can't find subject with id provided"), HttpStatus.NOT_FOUND);
+            }
+            if (subject.getStatus()!=Integer.valueOf(SubjectStatus.PENDING.getStatus()))
+            {
+                return new ResponseEntity<>(new ErrorResponse(E400,"INVALID_SUBJECT_STATUS","Subject status is invalid"), HttpStatus.BAD_REQUEST);
 
+            }
+                subject.setStatus(Integer.valueOf(SubjectStatus.UNASSIGNED.getStatus()));
+                subject = subjectService.saveSubject(subject);
+                return new ResponseEntity<>(subject,HttpStatus.OK);
+        } catch (BadCredentialsException e)
+        {
+            return new ResponseEntity<>(new ErrorResponse(E401,"UNAUTHORIZED","Unauthorized, please login again"), HttpStatus.UNAUTHORIZED);
+        }
+    }
+    @PostMapping("/deny/{subjectId}")
+    @ApiOperation("Deny Subject")
+    public ResponseEntity<Object> approveSubject(@PathVariable("subjectId") String id,@RequestParam String description, HttpServletRequest req) throws Exception
+    {
+        UserEntity user;
+        try
+        {
+            user = authenticateHandler.authenticateUser(req);
+            SubjectEntity subject = subjectService.getSubjectById(id);
+            if (subject == null)
+            {
+                return new ResponseEntity<>(new ErrorResponse(E404,"SUBJECT_NOT_FOUND","Can't find subject with id provided"), HttpStatus.NOT_FOUND);
+            }
+            if (subject.getStatus()!=Integer.valueOf(SubjectStatus.PENDING.getStatus()))
+            {
+                return new ResponseEntity<>(new ErrorResponse(E400,"INVALID_SUBJECT_STATUS","Subject status is invalid"), HttpStatus.BAD_REQUEST);
+
+            }
+            subject.setStatus(Integer.valueOf(SubjectStatus.NEED_CHECKED.getStatus()));
+            subject = subjectService.saveSubject(subject);
+            emailService.sendSubjectCheckedEmail(subject,description);
+            return new ResponseEntity<>(subject,HttpStatus.OK);
+        } catch (BadCredentialsException e)
+        {
+            return new ResponseEntity<>(new ErrorResponse(E401,"UNAUTHORIZED","Unauthorized, please login again"), HttpStatus.UNAUTHORIZED);
+        }
+    }
 
 }
