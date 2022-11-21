@@ -11,7 +11,7 @@ import javax.validation.constraints.NotEmpty;
 @Data
 public class PhoneLoginRequest {
     @NotEmpty
-    String phone;
+    String userName;
     @NotEmpty
     String password;
 }

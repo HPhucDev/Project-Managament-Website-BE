@@ -3,6 +3,7 @@ package com.hcmute.management.handler;
 import com.hcmute.management.repository.HttpCookieOAuth2AuthorizationRequestRepository;
 import com.hcmute.management.security.JWT.JwtUtils;
 import com.hcmute.management.datechecker.CookieUtils;
+import com.hcmute.management.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +29,7 @@ public class OAuth2Handler extends SimpleUrlAuthenticationSuccessHandler {
     @Autowired
     JwtUtils jwtUtils;
     @Autowired
-//    UserService userService;
+    UserService userService;
 
     private final HttpCookieOAuth2AuthorizationRequestRepository httpCookieOAuth2AuthorizationRequestRepository;
 

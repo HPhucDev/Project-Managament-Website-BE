@@ -32,6 +32,17 @@ public class UserEntity {
     @JsonIgnore
     @Column(name = "\"password\"")
     private String password;
+    @OneToOne(mappedBy = "user",targetEntity = StudentEntity.class)
+    @JsonIgnore
+    private StudentEntity student;
+
+    public StudentEntity getStudent() {
+        return student;
+    }
+
+    public void setStudent(StudentEntity student) {
+        this.student = student;
+    }
 
     @Column(name = "\"gender\"")
     private String gender;
@@ -48,11 +59,62 @@ public class UserEntity {
     @ManyToMany(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
     @JoinTable(name = "\"user_role\"", joinColumns = @JoinColumn(name = "\"user_id\""), inverseJoinColumns = @JoinColumn(name = "\"role_id\""))
     private Set<RoleEntity> roles;
+    @JsonIgnore
+    @OneToOne(mappedBy = "groupLeader",targetEntity = SubjectEntity.class)
+    private SubjectEntity subjectLeader;
+    @JsonIgnore
+    @ManyToOne()
+    @JoinColumn(name = "\"subject\"")
+    private SubjectEntity subject;
+
+    @OneToOne(mappedBy = "user",targetEntity = LecturerEntity.class)
+    @JsonIgnore
+    private LecturerEntity lecturer;
+
+    @OneToMany(mappedBy = "userComment",targetEntity = CommentEntity.class,cascade = CascadeType.ALL)
+    @JsonIgnore
+    private Set<CommentEntity> comment;
+    @Column(name = "\"imageLink\"")
+    private String imgLink;
+
+    public String getImgLink() {
+        return imgLink;
+    }
+
+    public void setImgLink(String imgLink) {
+        this.imgLink = imgLink;
+    }
+
+    public LecturerEntity getLecturer() {
+        return lecturer;
+    }
+
+    public void setLecturer(LecturerEntity lecturer) {
+        this.lecturer = lecturer;
+    }
 
     public UserEntity(String password, String phone) {
         this.password = password;
         this.phone = phone;
     }
+
+    public SubjectEntity getSubjectLeader() {
+        return subjectLeader;
+    }
+
+    public void setSubjectLeader(SubjectEntity subjectLeader) {
+        this.subjectLeader = subjectLeader;
+    }
+
+    public SubjectEntity getSubject() {
+        return subject;
+    }
+
+    public void setSubject(SubjectEntity subject) {
+        this.subject = subject;
+    }
+
+
 
     public String getId() {
         return id;

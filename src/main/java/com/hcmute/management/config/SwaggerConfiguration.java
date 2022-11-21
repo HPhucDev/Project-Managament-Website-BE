@@ -13,11 +13,12 @@ import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 import java.util.List;
+import java.util.function.Predicate;
 
 @Configuration
 @EnableSwagger2
 public class SwaggerConfiguration {
-    //swagger URL: http://localhost:8080/swagger-ui/index.html#/
+    //swagger URL: http://localhost:5000/swagger-ui/index.html#/
     public static final String AUTHORIZATION_HEADER = "Authorization";
 
     @Bean
@@ -28,6 +29,7 @@ public class SwaggerConfiguration {
                 .select()
                 .apis(RequestHandlerSelectors.any())
                 .paths(PathSelectors.any())
+                .paths(Predicate.not(PathSelectors.regex("/error.*")))
                 .build();
     }
     private ApiKey apiKey() {

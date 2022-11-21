@@ -1,7 +1,9 @@
 package com.hcmute.management.controller;
 
+import com.hcmute.management.common.AppUserRole;
 import com.hcmute.management.mapping.UserMapping;
 import com.hcmute.management.model.entity.UserEntity;
+
 import com.hcmute.management.model.payload.SuccessResponse;
 import com.hcmute.management.model.payload.request.Authenticate.AddNewUserRequest;
 import com.hcmute.management.model.payload.request.Authenticate.PhoneLoginRequest;
@@ -62,7 +64,7 @@ public class AuthenticateController {
         }
 
         try{
-            user=userService.register(user,"USER");
+            user=userService.register(user, AppUserRole.ROLE_ADMIN);
             if (user==null)
             {
                 response.setStatus(HttpStatus.CONFLICT.value());
@@ -85,11 +87,11 @@ public class AuthenticateController {
         if(errors.hasErrors()) {
             return null;
         }
-        if(userService.findByPhone(user.getPhone())==null) {
-            return SendErrorValid("Phone", user.getPhone()+"not found","No account found" );
+        if(userService.findByPhone(user.getUserName())==null) {
+            return SendErrorValid("Phone", user.getUserName()+"not found","No account found" );
         }
 
-        UserEntity loginUser=userService.findByPhone(user.getPhone());
+        UserEntity loginUser=userService.findByPhone(user.getUserName());
         if(!passwordEncoder.matches(user.getPassword(),loginUser.getPassword())) {
             return SendErrorValid("password", user.getPassword()+"not found","Wrong password" );
         }

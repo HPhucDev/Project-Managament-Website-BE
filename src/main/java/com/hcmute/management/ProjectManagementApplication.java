@@ -11,7 +11,6 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @SpringBootApplication()
 @RequiredArgsConstructor
 public class ProjectManagementApplication {
-
     public static void main(String[] args) {
         SpringApplication.run(ProjectManagementApplication.class, args);
     }
