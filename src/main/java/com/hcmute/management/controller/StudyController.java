@@ -136,9 +136,9 @@ public class StudyController {
         throw new BadCredentialsException("Access token is missing");
     }
 
-    @PostMapping("/addGroupLeader/{id}")
+    @PostMapping("/addGroupLeader/{subjectId}")
     @ApiOperation("Add Group Leader")
-    public ResponseEntity<Object> addGroupLeader(@PathVariable("id") String id, HttpServletRequest request) {
+    public ResponseEntity<Object> addGroupLeader(@PathVariable("subjectId") String id, HttpServletRequest request) {
         String authorizationHeader = request.getHeader(AUTHORIZATION);
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             String accessToken = authorizationHeader.substring("Bearer ".length());
@@ -174,9 +174,9 @@ public class StudyController {
         throw new BadCredentialsException("Access token is missing");
     }
 
-    @PostMapping("/addGroupMember/{id}")
+    @PostMapping("/addGroupMember/{subjectId}")
     @ApiOperation("Add Group Member")
-    public ResponseEntity<Object> addGroupMember(@RequestParam(value = "listMember") List<String> listMember, @PathVariable("id") String id, HttpServletRequest req) {
+    public ResponseEntity<Object> addGroupMember(@RequestParam(value = "listMember") List<String> listMember, @PathVariable("subjectId") String id, HttpServletRequest req) {
         String authorizationHeader = req.getHeader(AUTHORIZATION);
         SuccessResponse response = new SuccessResponse();
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {

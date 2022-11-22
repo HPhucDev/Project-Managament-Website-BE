@@ -258,7 +258,7 @@ public class SubjectController {
     }
     @PostMapping("/deny/{subjectId}")
     @ApiOperation("Deny Subject")
-    public ResponseEntity<Object> approveSubject(@PathVariable("subjectId") String id,@RequestParam String description, HttpServletRequest req) throws Exception
+    public ResponseEntity<Object> denySubject(@PathVariable("subjectId") String id,@RequestParam String description, HttpServletRequest req) throws Exception
     {
         UserEntity user;
         try
