@@ -29,6 +29,7 @@ public class LecturerServiceImpl implements LecturerService {
         LecturerEntity lecturer= new LecturerEntity();
         user.setFullName(addNewLecturerRequest.getFullName());
         user.setGender(addNewLecturerRequest.getGender());
+        user.setEmail(addNewLecturerRequest.getEmail());
         lecturer.setId(addNewLecturerRequest.getId());
         lecturer.setUser(userRepository.save(user));
         lecturer.setQualification(addNewLecturerRequest.getQualification());
@@ -41,6 +42,7 @@ public class LecturerServiceImpl implements LecturerService {
         LecturerEntity lecturer= findByUser(user);
         user.setFullName(updateLecturerRequest.getFullName());
         user.setGender(updateLecturerRequest.getGender());
+        user.setEmail(updateLecturerRequest.getEmail());
         lecturer.setUser(userRepository.save(user));
         lecturer.setQualification(updateLecturerRequest.getQualification());
         lecturer.setPosition(updateLecturerRequest.getPosition());
