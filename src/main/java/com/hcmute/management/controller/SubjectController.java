@@ -102,29 +102,29 @@ public class SubjectController {
 
         }
     }
-    @GetMapping("/paging")
-    @ApiOperation("Get All")
-    public ResponseEntity<PagingResponse> getAllSubjectPaging(@RequestParam(defaultValue = "0") int page,
-                                                              @RequestParam(defaultValue = "5") int size)
-    {
-        Page<SubjectEntity> pageSubject = subjectService.findAllSubjectPaging(page,size);
-        List<SubjectEntity> listSubject = pageSubject.toList();
-        int totalElements = subjectService.getAllSubject().size();
-        PagingResponse pagingResponse = new PagingResponse();
-        Map<String,Object> map = new HashMap<>();
-        List<Object> Result = Arrays.asList(listSubject.toArray());
-        pagingResponse.setTotalPages(pageSubject.getTotalPages());
-        pagingResponse.setEmpty(listSubject.size()==0);
-        pagingResponse.setFirst(page==0);
-        pagingResponse.setLast(page == pageSubject.getTotalPages()-1);
-        pagingResponse.getPageable().put("pageNumber",page);
-        pagingResponse.getPageable().put("pageSize",size);
-        pagingResponse.setSize(size);
-        pagingResponse.setNumberOfElements(listSubject.size());
-        pagingResponse.setTotalElements((int) pageSubject.getTotalElements());
-        pagingResponse.setContent(Result);
-        return new ResponseEntity<>(pagingResponse ,HttpStatus.OK);
-    }
+//    @GetMapping("/paging")
+//    @ApiOperation("Get All")
+//    public ResponseEntity<PagingResponse> getAllSubjectPaging(@RequestParam(defaultValue = "0") int page,
+//                                                              @RequestParam(defaultValue = "5") int size)
+//    {
+//        Page<SubjectEntity> pageSubject = subjectService.findAllSubjectPaging(page,size);
+//        List<SubjectEntity> listSubject = pageSubject.toList();
+//        int totalElements = subjectService.getAllSubject().size();
+//        PagingResponse pagingResponse = new PagingResponse();
+//        Map<String,Object> map = new HashMap<>();
+//        List<Object> Result = Arrays.asList(listSubject.toArray());
+//        pagingResponse.setTotalPages(pageSubject.getTotalPages());
+//        pagingResponse.setEmpty(listSubject.size()==0);
+//        pagingResponse.setFirst(page==0);
+//        pagingResponse.setLast(page == pageSubject.getTotalPages()-1);
+//        pagingResponse.getPageable().put("pageNumber",page);
+//        pagingResponse.getPageable().put("pageSize",size);
+//        pagingResponse.setSize(size);
+//        pagingResponse.setNumberOfElements(listSubject.size());
+//        pagingResponse.setTotalElements((int) pageSubject.getTotalElements());
+//        pagingResponse.setContent(Result);
+//        return new ResponseEntity<>(pagingResponse ,HttpStatus.OK);
+//    }
     @GetMapping("")
     @ApiOperation("Get All")
     public ResponseEntity<Object> getAll()
@@ -204,9 +204,9 @@ public class SubjectController {
     @GetMapping("/search")
     @ApiOperation("Search by Criteria")
     public ResponseEntity<Object> searchByCriteria(
-            @RequestParam(required = false,name = "KeyWord") String searchKey,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "5") int size,
+            @RequestParam(required = false,name = "searchText") String searchKey,
+            @RequestParam(defaultValue = "0",name = "pageIndex") int page,
+            @RequestParam(defaultValue = "5",name = "pageSize") int size,
             @RequestParam(defaultValue = "NULL") SubjectStatus subjectStatus,
             @RequestParam(defaultValue = "LECTURER") SubjectSort sort,
             @RequestParam(defaultValue = "DESCENDING")OrderByEnum order

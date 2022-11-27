@@ -64,7 +64,7 @@ public class AuthenticateController {
         }
 
         try{
-            user=userService.register(user, AppUserRole.ROLE_ADMIN);
+            user=userService.register(user, AppUserRole.ROLE_STUDENT);
             if (user==null)
             {
                 response.setStatus(HttpStatus.CONFLICT.value());
