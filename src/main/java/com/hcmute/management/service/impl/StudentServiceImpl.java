@@ -63,7 +63,7 @@ public class StudentServiceImpl implements StudentService {
         user.setRoles(roles);
         user.setFullName(addNewStudentRequest.getFullname());
         user.setGender(addNewStudentRequest.getSex());
-        user.setPhone(addNewStudentRequest.getPhone());
+        user.setUserName(addNewStudentRequest.getPhone());
         user.setPassword(passwordEncoder.encode(addNewStudentRequest.getMssv()));
         StudentEntity student = new StudentEntity();
         student.setId(addNewStudentRequest.getMssv());

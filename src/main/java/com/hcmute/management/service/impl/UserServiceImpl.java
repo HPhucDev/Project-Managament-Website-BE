@@ -33,8 +33,8 @@ private final UserRepository userRepository;
     }
 
     @Override
-    public UserEntity findByPhone(String phone) {
-        Optional<UserEntity> user = userRepository.findByPhone(phone);
+    public UserEntity findByUserName(String userName) {
+        Optional<UserEntity> user = userRepository.findByUserName(userName);
         if (user.isEmpty())
             return null;
         return user.get();

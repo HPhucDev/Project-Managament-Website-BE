@@ -12,7 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 public interface UserService {
 UserEntity register(UserEntity user, AppUserRole role);
 
-UserEntity findByPhone(String phone);
+UserEntity findByUserName(String userName);
 
     UserEntity findById(String uuid);
     void delete(UserEntity user);

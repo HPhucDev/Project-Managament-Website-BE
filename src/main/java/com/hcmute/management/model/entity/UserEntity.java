@@ -47,8 +47,8 @@ public class UserEntity {
     @Column(name = "\"gender\"")
     private String gender;
 
-    @Column(name = "\"phone\"")
-    private String phone;
+    @Column(name = "\"user_name\"")
+    private String userName;
 
     @Column(name = "\"status\"")
     private boolean status;
@@ -93,9 +93,9 @@ public class UserEntity {
         this.lecturer = lecturer;
     }
 
-    public UserEntity(String password, String phone) {
+    public UserEntity(String password, String userName) {
         this.password = password;
-        this.phone = phone;
+        this.userName = userName;
     }
 
     public SubjectEntity getSubjectLeader() {
@@ -156,12 +156,12 @@ public class UserEntity {
         this.gender = gender;
     }
 
-    public String getPhone() {
-        return phone;
+    public String getUserName() {
+        return userName;
     }
 
-    public void setPhone(String phone) {
-        this.phone = phone;
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     public boolean isStatus() {

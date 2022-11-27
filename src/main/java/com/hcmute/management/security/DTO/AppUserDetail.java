@@ -42,7 +42,7 @@ public class AppUserDetail implements UserDetails {
 
         return new AppUserDetail(
                 user.getId(),
-                user.getPhone(),
+                user.getUserName(),
                 user.getEmail(),
                 user.getPassword(),
                 authorities);

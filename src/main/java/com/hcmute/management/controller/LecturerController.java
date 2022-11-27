@@ -69,7 +69,7 @@ public class LecturerController {
         if(findLecturerById!=null){
             return new ResponseEntity<>(new ErrorResponse(E400,"ID_EXISTS","Id has been used"),HttpStatus.BAD_REQUEST);
         }
-        UserEntity foundUser =userService.findByPhone(id);
+        UserEntity foundUser =userService.findByUserName(id);
         if(foundUser!=null){
             return new ResponseEntity<>(new ErrorResponse(E400,"PHONE_EXISTS","Phone has been used by another Lecturer"),HttpStatus.BAD_REQUEST);
         }
