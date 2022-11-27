@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
@@ -26,4 +27,6 @@ public class UpdateLecturerRequest {
     private String gender;
     @NotEmpty(message = "Địa chỉ không được để trống")
     private String address;
+    @Email
+    private String email;
 }
