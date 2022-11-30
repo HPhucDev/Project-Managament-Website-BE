@@ -62,9 +62,9 @@ public class SubjectServiceImpl implements SubjectService {
     }
 
     @Override
-    public Page<SubjectEntity> searchByCriteria(String keyWord, String status, int pageNo, int pageSize, String sort, String order) {
+    public Page<SubjectEntity> searchByCriteria(String keyWord, String status, int pageNo, int pageSize,String lecturer,String major,String sort, String order) {
         Pageable paging = PageRequest.of(pageNo,pageSize, order=="asc"? Sort.by(sort).ascending() : Sort.by(sort).descending());
-        Page<SubjectEntity> pageResult = subjectRepository.searchByCriteria(keyWord,status,paging);
+        Page<SubjectEntity> pageResult = subjectRepository.searchByCriteria(keyWord,status,lecturer,major,paging);
         return pageResult;
     }
 

@@ -1,5 +1,6 @@
 package com.hcmute.management.controller;
 
+import com.hcmute.management.common.MajorEnum;
 import com.hcmute.management.common.OrderByEnum;
 import com.hcmute.management.common.SubjectSort;
 import com.hcmute.management.common.SubjectStatus;
@@ -208,12 +209,14 @@ public class SubjectController {
             @RequestParam(defaultValue = "0",name = "pageIndex") int page,
             @RequestParam(defaultValue = "5",name = "pageSize") int size,
             @RequestParam(defaultValue = "NULL") SubjectStatus subjectStatus,
-            @RequestParam(defaultValue = "LECTURER") SubjectSort sort,
+            @RequestParam(required = false) String lectureId,
+            @RequestParam(defaultValue = "NULL") MajorEnum major,
+            @RequestParam(defaultValue = "START_DATE") SubjectSort sort,
             @RequestParam(defaultValue = "DESCENDING")OrderByEnum order
             )
     {
         System.out.println(subjectStatus);
-        Page<SubjectEntity> pageSubject = subjectService.searchByCriteria(searchKey,subjectStatus.getStatus(),page,size, sort.getName(), order.getName());
+        Page<SubjectEntity> pageSubject = subjectService.searchByCriteria(searchKey,subjectStatus.getStatus(),page,size,lectureId,major.getName(), sort.getName(), order.getName());
         List<SubjectEntity> listSubject = pageSubject.toList();
         PagingResponse pagingResponse = new PagingResponse();
         Map<String,Object> map = new HashMap<>();

@@ -87,11 +87,11 @@ public class AuthenticateController {
         if(errors.hasErrors()) {
             return null;
         }
-        if(userService.findByUserName(user.getUserName())==null) {
-            return SendErrorValid("Phone", user.getUserName()+"not found","No account found" );
+        if(userService.findByUserName(user.getUsername())==null) {
+            return SendErrorValid("Phone", user.getUsername()+"not found","No account found" );
         }
 
-        UserEntity loginUser=userService.findByUserName(user.getUserName());
+        UserEntity loginUser=userService.findByUserName(user.getUsername());
         if(!passwordEncoder.matches(user.getPassword(),loginUser.getPassword())) {
             return SendErrorValid("password", user.getPassword()+"not found","Wrong password" );
         }

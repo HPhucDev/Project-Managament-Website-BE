@@ -18,4 +18,6 @@ UserEntity findByUserName(String userName);
     void delete(UserEntity user);
 UserEntity addUserImage(MultipartFile file,UserEntity user) throws FileNotImageException;
 String uploadFile(MultipartFile file,String name);
+
+UserEntity saveUser(UserEntity user);
 }

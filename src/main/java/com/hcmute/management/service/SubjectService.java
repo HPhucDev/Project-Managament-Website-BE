@@ -18,7 +18,7 @@ public interface SubjectService {
     void deleteById(List<String> listId);
     Page<SubjectEntity> findAllSubjectPaging(int pageNo, int pageSize);
 
-    Page<SubjectEntity> searchByCriteria(String keyWord,String status,int pageNo,int pageSize,String sort,String order);
+    Page<SubjectEntity> searchByCriteria(String keyWord,String status,int pageNo,int pageSize,String lecture,String major,String sort,String order);
 
     String uploadSubjectFile(MultipartFile file,SubjectEntity subject);
 }
