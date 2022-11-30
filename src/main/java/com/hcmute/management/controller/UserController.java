@@ -69,4 +69,15 @@ public class UserController {
         String url = userService.uploadFile(file,"demo");
         return new ResponseEntity<>(url,HttpStatus.OK);
     }
+    @GetMapping("/userInfo")
+    @ApiOperation("Get User Info")
+    public ResponseEntity<Object> getUserInfo(HttpServletRequest req) {
+        UserEntity user;
+        try {
+            user = authenticateHandler.authenticateUser(req);
+            return new ResponseEntity<>(user, HttpStatus.OK);
+        } catch (BadCredentialsException e) {
+            return new ResponseEntity<>(new ErrorResponse(E401, "UNAUTHORIZED", "Unauthorized, please login again"), HttpStatus.UNAUTHORIZED);
+        }
+    }
 }
