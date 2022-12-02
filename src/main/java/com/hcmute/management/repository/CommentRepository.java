@@ -17,7 +17,7 @@ import java.util.List;
 public interface CommentRepository extends JpaRepository<CommentEntity,String> {
     CommentEntity findByUserComment(UserEntity user);
     List<CommentEntity> findByProgressComment(ProgressEntity progress);
-    @Query(value = "select * from comment",
+    @Query(value = "select * from  order by time asc",
             countQuery = "select count(*) from comment",
             nativeQuery = true)
     Page<CommentEntity> findAllComment(Pageable pageable);

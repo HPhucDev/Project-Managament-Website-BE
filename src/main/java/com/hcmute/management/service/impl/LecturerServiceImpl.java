@@ -88,5 +88,11 @@ public class LecturerServiceImpl implements LecturerService {
         Page<LecturerEntity> pageResult =lecturerRepository.findAllLecturer(paging);
         return pageResult;
     }
+    @Override
+    public Page<Object> searchByCriteria(String keyWord, int pageNo, int pageSize, String order) {
+        Pageable paging = PageRequest.of(pageNo,pageSize);
+        Page<Object> pageResult = lecturerRepository.searchByCriteria(keyWord,paging);
+        return pageResult;
+    }
 }
 

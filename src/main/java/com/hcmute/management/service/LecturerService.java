@@ -21,4 +21,5 @@ public interface LecturerService {
     void deleteById(String id);
     Page<LecturerEntity> findAllLecturerPaging(int pageNo, int pagSize);
     public LecturerEntity findByUser(UserEntity user);
+    Page<Object> searchByCriteria(String keyWord, int pageNo, int pageSize, String order);
 }

@@ -1,6 +1,7 @@
 package com.hcmute.management.controller;
 
 import com.hcmute.management.common.AppUserRole;
+import com.hcmute.management.common.OrderByEnum;
 import com.hcmute.management.handler.AuthenticateHandler;
 import com.hcmute.management.handler.MethodArgumentNotValidException;
 import com.hcmute.management.mapping.LecturerMapping;
@@ -93,8 +94,8 @@ public class LecturerController {
     }
     @GetMapping("/paging")
     @ApiOperation("Get All")
-    public ResponseEntity<PagingResponse> getAllLecturerPaging(@RequestParam(defaultValue = "0") int page,
-                                                          @RequestParam(defaultValue = "5") int size)
+    public ResponseEntity<PagingResponse> getAllLecturerPaging(@RequestParam(defaultValue = "0",name = "pageIndex") int page,
+                                                          @RequestParam(defaultValue = "5",name = "pageSize") int size)
     {
         Page<LecturerEntity> pageLecturer = lecturerService.findAllLecturerPaging(page,size);
         List<LecturerEntity> listLecturer = pageLecturer.toList();
@@ -113,6 +114,34 @@ public class LecturerController {
         pagingResponse.setContent(Result);
         return new ResponseEntity<>(pagingResponse ,HttpStatus.OK);
     }
+
+    @GetMapping("/search")
+    @ApiOperation("Search by Criteria (error)")
+    public ResponseEntity<Object> searchByCriteria(
+            @RequestParam(required = false,name = "searchText") String searchKey,
+            @RequestParam(defaultValue = "0",name = "pageIndex") int page,
+            @RequestParam(defaultValue = "5",name = "pageSize") int size,
+            @RequestParam(defaultValue = "DESCENDING") OrderByEnum order
+    )
+    {
+        Page<Object> pageLecturer = lecturerService.searchByCriteria(searchKey,page,size,order.getName());
+        List<Object> listLecturer = pageLecturer.toList();
+        PagingResponse pagingResponse = new PagingResponse();
+        Map<String,Object> map = new HashMap<>();
+        List<Object> Result = Arrays.asList(listLecturer.toArray());
+        pagingResponse.setTotalPages(pageLecturer.getTotalPages());
+        pagingResponse.setEmpty(listLecturer.size()==0);
+        pagingResponse.setFirst(page==0);
+        pagingResponse.setLast(page == pageLecturer.getTotalPages()-1);
+        pagingResponse.getPageable().put("pageNumber",page);
+        pagingResponse.getPageable().put("pageSize",size);
+        pagingResponse.setSize(size);
+        pagingResponse.setNumberOfElements(listLecturer.size());
+        pagingResponse.setTotalElements((int) pageLecturer.getTotalElements());
+        pagingResponse.setContent(Result);
+        return new ResponseEntity<>(pagingResponse ,HttpStatus.OK);
+    }
+
     @PatchMapping("")
     @ApiOperation("Update")
     public ResponseEntity<Object> updateLecturer(@Valid @RequestBody UpdateLecturerRequest updateLecturerRequest, BindingResult errors, HttpServletRequest req) throws Exception {
@@ -155,31 +184,31 @@ public class LecturerController {
             return new ResponseEntity<>(new ErrorResponse(E401,"UNAUTHORIZED","Unauthorized, please login again"), HttpStatus.UNAUTHORIZED);
         }
     }
-    @DeleteMapping("/{id}")
-    @ApiOperation("Delete by id")
-    public ResponseEntity<Object>deleteLecturerById(@PathVariable("id") String id,HttpServletRequest req){
-        UserEntity user;
-        try {
-            user = authenticateHandler.authenticateUser(req);
-            LecturerEntity lecturer =lecturerService.getLecturerById(id);
-            if(lecturer==null)
-            {
-                return new ResponseEntity<>(new ErrorResponse(E404,"LECTURER_NOT_FOUND","Can't find Lecturer with id provided+"+id),HttpStatus.NOT_FOUND);
-            }
-            if(user==lecturer.getUser()){
-                return new ResponseEntity<>(new ErrorResponse(E400,"YOU_CAN_NOT_DELETE_YOUR_ACCOUNT","You can't delete your account"),HttpStatus.BAD_REQUEST);
-            }
-            UserEntity deleteUser = userService.findById(lecturer.getUser().getId());
-            for (RoleEntity role : deleteUser.getRoles()) {
-                role.setUsers(null);
-            }
-            lecturerService.deleteById(id);
-            deleteUser.getRoles().clear();
-            userService.delete(deleteUser);
-            return new ResponseEntity<>(HttpStatus.OK);
-        }catch (BadCredentialsException e) {
-            return new ResponseEntity<>(new ErrorResponse(E401,"UNAUTHORIZED","Unauthorized, please login again"), HttpStatus.UNAUTHORIZED);
-        }
-    }
+//    @DeleteMapping("/{id}")
+//    @ApiOperation("Delete by id")
+//    public ResponseEntity<Object>deleteLecturerById(@PathVariable("id") String id,HttpServletRequest req){
+//        UserEntity user;
+//        try {
+//            user = authenticateHandler.authenticateUser(req);
+//            LecturerEntity lecturer =lecturerService.getLecturerById(id);
+//            if(lecturer==null)
+//            {
+//                return new ResponseEntity<>(new ErrorResponse(E404,"LECTURER_NOT_FOUND","Can't find Lecturer with id provided+"+id),HttpStatus.NOT_FOUND);
+//            }
+//            if(user==lecturer.getUser()){
+//                return new ResponseEntity<>(new ErrorResponse(E400,"YOU_CAN_NOT_DELETE_YOUR_ACCOUNT","You can't delete your account"),HttpStatus.BAD_REQUEST);
+//            }
+//            UserEntity deleteUser = userService.findById(lecturer.getUser().getId());
+//            for (RoleEntity role : deleteUser.getRoles()) {
+//                role.setUsers(null);
+//            }
+//            lecturerService.deleteById(id);
+//            deleteUser.getRoles().clear();
+//            userService.delete(deleteUser);
+//            return new ResponseEntity<>(HttpStatus.OK);
+//        }catch (BadCredentialsException e) {
+//            return new ResponseEntity<>(new ErrorResponse(E401,"UNAUTHORIZED","Unauthorized, please login again"), HttpStatus.UNAUTHORIZED);
+//        }
+//    }
 
 }
