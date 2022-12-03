@@ -20,8 +20,6 @@ public class SubjectMapping {
         subject.setSubjectType(addNewSubjectRequest.getSubjectType());
         subject.setYear(addNewSubjectRequest.getYear());
         subject.setStatus(0);
-        subject.setStartDate(addNewSubjectRequest.getStartDate());
-        subject.setEndDate(addNewSubjectRequest.getEndDate());
         return subject;
     }
     public static SubjectEntity updateRequestToEntity(SubjectEntity subject, UpdateSubjectRequest updateSubjectRequest)
@@ -39,8 +37,6 @@ public class SubjectMapping {
         subject.setSubjectType(updateSubjectRequest.getSubjectType());
         subject.setYear(updateSubjectRequest.getYear());
         subject.setStatus(updateSubjectRequest.getStatus());
-        subject.setStartDate(updateSubjectRequest.getStartDate());
-        subject.setEndDate(updateSubjectRequest.getEndDate());
         return subject;
     }
 }

@@ -9,6 +9,6 @@ public class UserMapping {
     public static UserEntity registerToEntity(AddNewUserRequest registerRequest) {
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         registerRequest.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
-        return new UserEntity( registerRequest.getPassword(),registerRequest.getPhone());
+        return new UserEntity( registerRequest.getPassword(),registerRequest.getUsername());
     }
 }

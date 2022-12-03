@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,7 +33,7 @@ public class CommentServiceImpl implements CommentService {
         CommentEntity comment =new CommentEntity();
         comment.setMessage(addNewCommentRequest.getMessage());
         comment.setProgressComment(progressService.findById(addNewCommentRequest.getProgressid()));
-        comment.setTime(LocalDateTime.now());
+        comment.setTime(LocalDateTime.now(ZoneId.of("GMT+07:00")));
         comment.setUserComment(user);
         return commentRepository.save(comment);
     }

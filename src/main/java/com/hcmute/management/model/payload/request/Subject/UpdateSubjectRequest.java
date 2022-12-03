@@ -41,7 +41,5 @@ public class UpdateSubjectRequest {
     private String subjectType;
     @NotEmpty(message = "Year "+EMPTY_MESSAGE)
     private String year;
-    private LocalDateTime startDate;
-    private LocalDateTime endDate;
     private int status;
 }

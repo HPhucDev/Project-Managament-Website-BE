@@ -20,7 +20,7 @@ public class LecturerEntity {
     private String position;
 
     @OneToOne()
-    @JoinColumn(name="\"user\"")
+    @JoinColumn(name="\"user\"",referencedColumnName = "user_id")
     private UserEntity user;
 
     @OneToMany(mappedBy = "lecturer",targetEntity = SubjectEntity.class,cascade = CascadeType.ALL)

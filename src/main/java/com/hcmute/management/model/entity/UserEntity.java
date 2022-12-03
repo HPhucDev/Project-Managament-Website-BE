@@ -1,10 +1,14 @@
 package com.hcmute.management.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.swagger.annotations.ApiModelProperty;
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.rest.core.annotation.RestResource;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.UUID;
 
@@ -47,8 +51,8 @@ public class UserEntity {
     @Column(name = "\"gender\"")
     private String gender;
 
-    @Column(name = "\"phone\"")
-    private String phone;
+    @Column(name = "\"user_name\"")
+    private String userName;
 
     @Column(name = "\"status\"")
     private boolean status;
@@ -66,18 +70,6 @@ public class UserEntity {
     @ManyToOne()
     @JoinColumn(name = "\"subject\"")
     private SubjectEntity subject;
-    @JsonIgnore
-    @ManyToOne()
-    @JoinColumn(name = "\"subjectLecture\"")
-    private SubjectEntity subjectLecture;
-
-    public SubjectEntity getSubjectLecture() {
-        return subjectLecture;
-    }
-
-    public void setSubjectLecture(SubjectEntity subjectLecture) {
-        this.subjectLecture = subjectLecture;
-    }
 
     @OneToOne(mappedBy = "user",targetEntity = LecturerEntity.class)
     @JsonIgnore
@@ -89,16 +81,19 @@ public class UserEntity {
     @Column(name = "\"imageLink\"")
     private String imgLink;
 
-    public String getUsername() {
-        return username;
+    @Column
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss", shape = JsonFormat.Shape.STRING)
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    @ApiModelProperty(required = true, example = "2021-08-20T00:00:00")
+    private LocalDateTime birthDay;
+
+    public LocalDateTime getBirthDay() {
+        return birthDay;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setBirthDay(LocalDateTime birthDay) {
+        this.birthDay = birthDay;
     }
-
-    @Column(name ="\"usename\"")
-    private String username;
 
     public String getImgLink() {
         return imgLink;
@@ -116,9 +111,9 @@ public class UserEntity {
         this.lecturer = lecturer;
     }
 
-    public UserEntity(String password, String phone) {
+    public UserEntity(String password, String userName) {
         this.password = password;
-        this.phone = phone;
+        this.userName = userName;
     }
 
     public SubjectEntity getSubjectLeader() {
@@ -179,12 +174,12 @@ public class UserEntity {
         this.gender = gender;
     }
 
-    public String getPhone() {
-        return phone;
+    public String getUserName() {
+        return userName;
     }
 
-    public void setPhone(String phone) {
-        this.phone = phone;
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     public boolean isStatus() {

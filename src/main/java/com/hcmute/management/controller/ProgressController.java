@@ -1,9 +1,11 @@
 package com.hcmute.management.controller;
 
+import com.hcmute.management.handler.AuthenticateHandler;
 import com.hcmute.management.handler.FileNotImageException;
 import com.hcmute.management.handler.MethodArgumentNotValidException;
 import com.hcmute.management.model.entity.ProgressEntity;
 import com.hcmute.management.model.entity.StudentEntity;
+import com.hcmute.management.model.entity.SubjectEntity;
 import com.hcmute.management.model.entity.UserEntity;
 import com.hcmute.management.model.payload.SuccessResponse;
 import com.hcmute.management.model.payload.request.Progress.AddNewProgressRequest;
@@ -12,6 +14,7 @@ import com.hcmute.management.model.payload.response.ErrorResponse;
 import com.hcmute.management.security.JWT.JwtUtils;
 import com.hcmute.management.service.AttachmentService;
 import com.hcmute.management.service.ProgressService;
+import com.hcmute.management.service.SubjectService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -44,7 +47,8 @@ public class ProgressController {
 
     private final ProgressService progressService;
     private final AttachmentService attachmentService;
-
+    private final AuthenticateHandler authenticateHandler;
+    private final SubjectService subjectService;
     @Autowired
     JwtUtils jwtUtils;
 
@@ -56,19 +60,18 @@ public class ProgressController {
     @ApiOperation("Create")
     @Transactional()
     public ResponseEntity<Object> addProgress(@Valid AddNewProgressRequest addNewProgressRequest, @RequestPart MultipartFile[] files, BindingResult errors, HttpServletRequest httpServletRequest) throws Exception {
-        if (errors.hasErrors()) {
-            throw new MethodArgumentNotValidException(errors);
-        }
-        String authorizationHeader = httpServletRequest.getHeader(AUTHORIZATION);
-        SuccessResponse response = new SuccessResponse();
-        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-            String accessToken = authorizationHeader.substring("Bearer ".length());
-
-            if (jwtUtils.validateExpiredToken(accessToken) == true) {
-                throw new BadCredentialsException("access token is  expired");
-            }
-             else {
-                 try {
+       UserEntity user;
+       try {
+           user = authenticateHandler.authenticateUser(httpServletRequest);
+           SubjectEntity subject = subjectService.getSubjectById(addNewProgressRequest.getSubjectId());
+           if (user==null || subject==null || user.getSubject()==null) {
+               return new ResponseEntity<>(new ErrorResponse(E400,"INVALID_REQUEST","Your request is invalid, please check and try again"), HttpStatus.BAD_REQUEST);
+           }
+           if (user.getSubjectLeader()!=subject && user.getSubject()!=subject)
+           {
+               return new ResponseEntity<>(new ErrorResponse(E400,"INVALID_USER","You are not assign to this subject"), HttpStatus.BAD_REQUEST);
+           }
+           try {
                      ProgressEntity progress = progressService.saveProgress(addNewProgressRequest);
                      attachmentService.uploadFile(files, progress);
                      return new ResponseEntity<>(progress, HttpStatus.OK);
@@ -76,8 +79,10 @@ public class ProgressController {
                  {
                      return new ResponseEntity<>(new ErrorResponse("Unsupported Media Type","FILE_NOT_IMAGE",fileNotImageException.getMessage()),HttpStatus.UNSUPPORTED_MEDIA_TYPE);
                  }
-            }
-        } else throw new BadCredentialsException("access token is missing");
+            } catch (BadCredentialsException e)
+       {
+           return new ResponseEntity<>(new ErrorResponse(E401,"UNAUTHORIZED","Unauthorized, please login again"), HttpStatus.UNAUTHORIZED);
+       }
     }
 
     @GetMapping("")

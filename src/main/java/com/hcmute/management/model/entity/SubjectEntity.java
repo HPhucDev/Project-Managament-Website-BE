@@ -37,8 +37,6 @@ public class SubjectEntity {
     private String description;
     @Column(name = "\"group_cap\"")
     private int groupCap;
-    @Column(name ="\"group_lecture_cap\"")
-    private int groupLectureCap;
     @Column(name = "\"reg_from_other_major\"")
     private Boolean regFromOtherMajor;
     @Column(name = "\"major\"")
@@ -52,39 +50,29 @@ public class SubjectEntity {
     private UserEntity groupLeader;
     @OneToMany(mappedBy = "subject", targetEntity = UserEntity.class)
     private List<UserEntity> groupMember;
-    @OneToMany(mappedBy = "subjectLecture", targetEntity = UserEntity.class)
-    private List<UserEntity> groupLectureMember;
-
-    public List<UserEntity> getGroupLectureMember() {
-        return groupLectureMember;
-    }
-
-    public void setGroupLectureMember(List<UserEntity> groupLectureMember) {
-        this.groupLectureMember = groupLectureMember;
-    }
-
-    public int getGroupLectureCap() {
-        return groupLectureCap;
-    }
-
-    public void setGroupLectureCap(int groupLectureCap) {
-        this.groupLectureCap = groupLectureCap;
-    }
-
     @Column(name = "\"status\"")
     private int status;
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss", shape = JsonFormat.Shape.STRING)
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     @ApiModelProperty(required = true, example = "2021-08-20T00:00:00")
     @Column(name = "\"start_date\"")
     private LocalDateTime startDate;
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss", shape = JsonFormat.Shape.STRING)
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     @ApiModelProperty(required = true, example = "2021-08-20T00:00:00")
     @Column(name = "\"end_Date\"")
     private LocalDateTime endDate;
 
-    @ManyToOne()
-    @JoinColumn(name = "\"lecturer\"")
-    private LecturerEntity lecturer;
+    @Column(name = "\"attachment\"")
+    private String attachmentLink;
+
+    public String getAttachmentLink() {
+        return attachmentLink;
+    }
+
+    public void setAttachmentLink(String attachmentLink) {
+        this.attachmentLink = attachmentLink;
+    }
 
     public LecturerEntity getLecturer() {
         return lecturer;
@@ -94,6 +82,9 @@ public class SubjectEntity {
         this.lecturer = lecturer;
     }
 
+    @ManyToOne()
+    @JoinColumn(name = "\"lecturer\"")
+    private LecturerEntity lecturer;
     public String getId() {
         return id;
     }

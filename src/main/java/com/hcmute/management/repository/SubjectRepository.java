@@ -12,6 +12,6 @@ public interface SubjectRepository extends JpaRepository<SubjectEntity,String> {
     countQuery = "select count(*) from subject",
     nativeQuery = true)
     Page<SubjectEntity> findAllSubject(Pageable pageable);
-    @Query(value = "Select * from subject where (concat(name,major,subject_type) like concat('%',?1,'%') or ?1 is null) and (status=?2 or ?2='null'  )",nativeQuery = true)
-    Page<SubjectEntity> searchByCriteria(String keyWord,String status,Pageable pageable);
+    @Query(value = "Select * from subject where (concat(name,major,subject_type) like concat('%',?1,'%') or ?1 is null) and (status=?2 or ?2='null') and (lecturer=?3 or ?3 is null) and (major=?4 or ?4 is null)",nativeQuery = true)
+    Page<SubjectEntity> searchByCriteria(String keyWord,String status,String lectureId,String major,Pageable pageable);
 }

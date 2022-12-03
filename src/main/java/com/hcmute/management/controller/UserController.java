@@ -3,6 +3,7 @@ package com.hcmute.management.controller;
 import com.hcmute.management.handler.AuthenticateHandler;
 import com.hcmute.management.handler.FileNotImageException;
 import com.hcmute.management.model.entity.UserEntity;
+import com.hcmute.management.model.payload.request.User.AddUserInfoRequest;
 import com.hcmute.management.model.payload.response.ErrorResponse;
 import com.hcmute.management.service.UserService;
 import io.swagger.annotations.ApiOperation;
@@ -26,9 +27,9 @@ import static com.hcmute.management.controller.SubjectController.E401;
 public class UserController {
     private final UserService userService;
     private final AuthenticateHandler authenticateHandler;
-    @PostMapping(value = "/image",consumes = {"multipart/form-data"})
-    @ApiOperation("Create")
-    public ResponseEntity<Object> addUserAvatar(@RequestPart MultipartFile file, HttpServletRequest req)
+    @PostMapping(value = "/userInfo",consumes = {"multipart/form-data"})
+    @ApiOperation("Create User Info")
+    public ResponseEntity<Object> addUserInfo(AddUserInfoRequest addUserInfoRequest, @RequestPart(required = false,name = "imageFile") MultipartFile file, HttpServletRequest req)
     {
         UserEntity user;
         try
@@ -36,7 +37,16 @@ public class UserController {
             user = authenticateHandler.authenticateUser(req);
             try
             {
-                user = userService.addUserImage(file,user);
+                user.setFullName(addUserInfoRequest.getFullName());
+                user.setGender(addUserInfoRequest.getGender());
+                user.setEmail(addUserInfoRequest.getEmail());
+                if (file!=null) {
+                    user = userService.addUserImage(file, user);
+                }
+                else
+                {
+                    user = userService.saveUser(user);
+                }
                 return new ResponseEntity<>(user,HttpStatus.OK);
             }catch (FileNotImageException fileNotImageException)
             {
@@ -58,5 +68,16 @@ public class UserController {
         System.out.println(file.getContentType());
         String url = userService.uploadFile(file,"demo");
         return new ResponseEntity<>(url,HttpStatus.OK);
+    }
+    @GetMapping("/userInfo")
+    @ApiOperation("Get User Info")
+    public ResponseEntity<Object> getUserInfo(HttpServletRequest req) {
+        UserEntity user;
+        try {
+            user = authenticateHandler.authenticateUser(req);
+            return new ResponseEntity<>(user, HttpStatus.OK);
+        } catch (BadCredentialsException e) {
+            return new ResponseEntity<>(new ErrorResponse(E401, "UNAUTHORIZED", "Unauthorized, please login again"), HttpStatus.UNAUTHORIZED);
+        }
     }
 }

@@ -58,4 +58,28 @@ public class EmailServiceImpl implements EmailService {
         emailSender.send(message);
     }
 
+    @Override
+    public void sendSubjectCheckedEmail(SubjectEntity subjects,String description) throws MessagingException, UnsupportedEncodingException {
+        String toAddress =subjects.getLecturer().getUser().getEmail();
+        String senderName="fithcmute@gmail.com";
+        String subject = "Your subject request need some check";
+        String content = "Dear [[name]]<br>"
+                + "You have recently submit a new subject that need some check:[[subjectName]]<br>"
+                + "[[message]]<br>"
+                + "Thank you,<br>"
+                + "UTEManagement.";
+        MimeMessage message = emailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message,true, CharEncoding.UTF_8);
+        helper.setFrom("dilawabms900@gmail.com",senderName);
+        helper.setTo(toAddress);
+        helper.setSubject(subject);
+        String subjectName=subjects.getName();
+        String name = subjects.getLecturer().getUser().getFullName();
+        content = content.replace("[[name]]", name);
+        content = content.replace("[[subjectName]]", subjectName);
+        content = content.replace("[[message]]",description);
+        helper.setText(content,true);
+        emailSender.send(message);
+    }
+
 }

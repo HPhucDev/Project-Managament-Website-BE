@@ -56,15 +56,15 @@ public class AuthenticateController {
     public ResponseEntity<SuccessResponse> registerAccount(@RequestBody @Valid AddNewUserRequest request) {
         UserEntity user= UserMapping.registerToEntity(request);
         SuccessResponse response=new SuccessResponse();
-        if(userService.findByPhone(user.getPhone())!=null){
+        if(userService.findByUserName(user.getUserName())!=null){
             response.setStatus(HttpStatus.CONFLICT.value());
-            response.setMessage("Phone number has been used");
+            response.setMessage("User name has been used");
             response.setSuccess(false);
             return new ResponseEntity<>(response,HttpStatus.CONFLICT);
         }
 
         try{
-            user=userService.register(user, AppUserRole.ROLE_ADMIN);
+            user=userService.register(user, AppUserRole.ROLE_STUDENT);
             if (user==null)
             {
                 response.setStatus(HttpStatus.CONFLICT.value());
@@ -75,7 +75,7 @@ public class AuthenticateController {
             response.setStatus(HttpStatus.OK.value());
             response.setMessage("add user successful");
             response.setSuccess(true);
-            response.getData().put("phone",user.getPhone());
+            response.getData().put("phone",user.getUserName());
         }
         catch (Exception e){
             e.printStackTrace();
@@ -87,11 +87,11 @@ public class AuthenticateController {
         if(errors.hasErrors()) {
             return null;
         }
-        if(userService.findByPhone(user.getUserName())==null) {
-            return SendErrorValid("Phone", user.getUserName()+"not found","No account found" );
+        if(userService.findByUserName(user.getUsername())==null) {
+            return SendErrorValid("Phone", user.getUsername()+"not found","No account found" );
         }
 
-        UserEntity loginUser=userService.findByPhone(user.getUserName());
+        UserEntity loginUser=userService.findByUserName(user.getUsername());
         if(!passwordEncoder.matches(user.getPassword(),loginUser.getPassword())) {
             return SendErrorValid("password", user.getPassword()+"not found","Wrong password" );
         }

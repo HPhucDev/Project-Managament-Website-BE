@@ -1,9 +1,6 @@
 package com.hcmute.management.service.impl;
 
 import com.hcmute.management.common.AppUserRole;
-import com.hcmute.management.common.OrderByEnum;
-import com.hcmute.management.common.StudentSort;
-import com.hcmute.management.mapping.StudentMapping;
 import com.hcmute.management.model.entity.*;
 import com.hcmute.management.model.payload.request.Student.AddNewStudentRequest;
 import com.hcmute.management.model.payload.request.Student.ChangeInfoStudentRequest;
@@ -13,7 +10,6 @@ import com.hcmute.management.repository.StudentRepository;
 import com.hcmute.management.repository.UserRepository;
 import com.hcmute.management.service.StudentService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -31,13 +27,9 @@ import java.util.Set;
 @Transactional
 @RequiredArgsConstructor
 public class StudentServiceImpl implements StudentService {
-    @Autowired
     final StudentRepository studentRepository;
-    @Autowired
     final UserRepository userRepository;
-    @Autowired
     final RoleRepository roleRepository;
-    @Autowired
     final ClassRepository classRepository;
     @Override
     public List<StudentEntity> findAllStudent() {
@@ -71,14 +63,17 @@ public class StudentServiceImpl implements StudentService {
         user.setRoles(roles);
         user.setFullName(addNewStudentRequest.getFullname());
         user.setGender(addNewStudentRequest.getSex());
-        user.setPhone(addNewStudentRequest.getPhone());
-        user.setUsername(addNewStudentRequest.getMssv());
+        user.setUserName(addNewStudentRequest.getPhone());
         user.setPassword(passwordEncoder.encode(addNewStudentRequest.getMssv()));
-        StudentEntity student = StudentMapping.addStudentToEntity(addNewStudentRequest);
+        StudentEntity student = new StudentEntity();
+        student.setId(addNewStudentRequest.getMssv());
         student.setUser(userRepository.save(user));
+        student.setMajor(addNewStudentRequest.getMajor());
+        student.setEducation_program(addNewStudentRequest.getEducationprogram());
+        student.setSchool_year(addNewStudentRequest.getSchoolyear());
         ClassEntity classEntity = classRepository.findById(addNewStudentRequest.getClassid()).get();
         student.setClasses(classEntity);
-        return studentRepository.save(student);
+         return studentRepository.save(student);
    }
 
     @Override
@@ -120,8 +115,9 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public List<StudentEntity> search(String keyword, String keywordType, OrderByEnum orderBy, StudentSort order, int pageindex, int pagesize) {
-        List<StudentEntity> list = studentRepository.search(keyword,keywordType,orderBy,order,pageindex,pagesize);
-        return list;
+    public Page<StudentEntity> search(int pageNo, int pagSize) {
+        Pageable paging = PageRequest.of(pageNo,pagSize);
+        Page<StudentEntity> pageResult =studentRepository.findAllStudentPaging(paging);
+        return pageResult;
     }
 }

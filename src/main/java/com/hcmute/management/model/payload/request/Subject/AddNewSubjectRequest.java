@@ -4,7 +4,8 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.apache.tomcat.util.bcel.Const;
+
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.Constraint;
 import javax.validation.constraints.Max;
@@ -13,6 +14,7 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Date;
 
 @Getter
 @Setter
@@ -43,6 +45,4 @@ public class AddNewSubjectRequest {
     private String subjectType;
     @NotEmpty(message = "Year "+EMPTY_MESSAGE)
     private String year;
-    private LocalDateTime startDate;
-    private LocalDateTime endDate;
 }

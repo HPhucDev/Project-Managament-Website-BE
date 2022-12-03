@@ -14,4 +14,6 @@ import java.io.UnsupportedEncodingException;
 public interface EmailService {
     void sendSimpleMessage(String to,String subject,String text);
     void sendSubjectConfirmEmail(SubjectEntity subject)throws MessagingException, UnsupportedEncodingException;
+
+    void sendSubjectCheckedEmail(SubjectEntity subject,String description)throws MessagingException,UnsupportedEncodingException;
 }
