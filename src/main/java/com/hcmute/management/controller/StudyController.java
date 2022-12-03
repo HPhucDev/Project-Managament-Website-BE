@@ -1,5 +1,7 @@
 package com.hcmute.management.controller;
 
+import com.hcmute.management.common.OrderByEnum;
+import com.hcmute.management.common.StudentSort;
 import com.hcmute.management.handler.MethodArgumentNotValidException;
 import com.hcmute.management.model.entity.*;
 import com.hcmute.management.model.payload.SuccessResponse;
@@ -357,22 +359,21 @@ public class StudyController {
 
     @GetMapping("/search")
     @ApiOperation("Search by Criteria")
-    public ResponseEntity<Object> search(@RequestParam(defaultValue = "0") int page,
-                                         @RequestParam(defaultValue = "5") int size) {
-        Page<StudentEntity> studentEntityPage = studentService.search(page, size);
-        List<StudentEntity> listStudent = studentEntityPage.toList();
-        int totalElements = studentService.findAllStudent().size();
-        int totalPage = totalElements % size == 0 ? totalElements / size : totalElements / size + 1;
+    public ResponseEntity<Object> search(@RequestParam(defaultValue = "0") int pageIndex,
+                                         @RequestParam(defaultValue = "5") int pageSize, @RequestParam(defaultValue = "DESCENDING") OrderByEnum order, @RequestParam(defaultValue = "MAJOR")StudentSort studentSort, @RequestParam(defaultValue = "") String searchText, @RequestParam(defaultValue = "id") String searchTextType) {
+        List<StudentEntity> listStudent = studentService.search(searchText,searchTextType,order,studentSort,pageIndex,pageSize);
+        int totalElements = listStudent.size();
+        int totalPage = totalElements % pageSize == 0 ? totalElements / pageSize : totalElements / pageSize + 1;
         PagingResponse pagingResponse = new PagingResponse();
         Map<String, Object> map = new HashMap<>();
         List<Object> Result = Arrays.asList(listStudent.toArray());
         pagingResponse.setTotalPages(totalPage);
         pagingResponse.setEmpty(listStudent.size() == 0);
-        pagingResponse.setFirst(page == 0);
-        pagingResponse.setLast(page == totalPage - 1);
-        pagingResponse.getPageable().put("pageNumber", page);
-        pagingResponse.getPageable().put("pageSize", size);
-        pagingResponse.setSize(size);
+        pagingResponse.setFirst(pageIndex == 0);
+        pagingResponse.setLast(pageIndex == totalPage - 1);
+        pagingResponse.getPageable().put("pageIndex", pageIndex);
+        pagingResponse.getPageable().put("pageSize", pageSize);
+        pagingResponse.setSize(pageSize);
         pagingResponse.setNumberOfElements(listStudent.size());
         pagingResponse.setTotalElements(totalElements);
         pagingResponse.setContent(Result);

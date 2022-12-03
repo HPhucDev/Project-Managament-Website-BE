@@ -66,6 +66,18 @@ public class UserEntity {
     @ManyToOne()
     @JoinColumn(name = "\"subject\"")
     private SubjectEntity subject;
+    @JsonIgnore
+    @ManyToOne()
+    @JoinColumn(name = "\"subjectLecture\"")
+    private SubjectEntity subjectLecture;
+
+    public SubjectEntity getSubjectLecture() {
+        return subjectLecture;
+    }
+
+    public void setSubjectLecture(SubjectEntity subjectLecture) {
+        this.subjectLecture = subjectLecture;
+    }
 
     @OneToOne(mappedBy = "user",targetEntity = LecturerEntity.class)
     @JsonIgnore
@@ -76,6 +88,17 @@ public class UserEntity {
     private Set<CommentEntity> comment;
     @Column(name = "\"imageLink\"")
     private String imgLink;
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    @Column(name ="\"usename\"")
+    private String username;
 
     public String getImgLink() {
         return imgLink;

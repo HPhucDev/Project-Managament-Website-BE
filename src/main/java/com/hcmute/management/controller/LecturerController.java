@@ -16,12 +16,14 @@ import com.hcmute.management.model.payload.response.PagingResponse;
 import com.hcmute.management.repository.LecturerRepository;
 import com.hcmute.management.security.JWT.JwtUtils;
 import com.hcmute.management.service.LecturerService;
+import com.hcmute.management.service.SubjectService;
 import com.hcmute.management.service.UserService;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -46,6 +48,7 @@ public class LecturerController {
     private final LecturerService lecturerService;
     private final UserService userService;
     final LecturerRepository lecturerRepository;
+    private final SubjectService subjectService;
     static String E401="Unauthorized";
     static String E404="Not Found";
     static String E400="Bad Request";
@@ -181,5 +184,4 @@ public class LecturerController {
             return new ResponseEntity<>(new ErrorResponse(E401,"UNAUTHORIZED","Unauthorized, please login again"), HttpStatus.UNAUTHORIZED);
         }
     }
-
 }

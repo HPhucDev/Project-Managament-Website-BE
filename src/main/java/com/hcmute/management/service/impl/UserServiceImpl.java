@@ -80,6 +80,14 @@ private final UserRepository userRepository;
         return url;
     }
 
+    @Override
+    public UserEntity findByUsername(String username) {
+        Optional<UserEntity> user = userRepository.findByUsername(username);
+        if (user.isEmpty())
+            return null;
+        return user.get();
+    }
+
     public boolean isImageFile(MultipartFile file) {
         return Arrays.asList(new String[] {"image/png","image/jpg","image/jpeg", "image/bmp"})
                 .contains(file.getContentType().trim().toLowerCase());

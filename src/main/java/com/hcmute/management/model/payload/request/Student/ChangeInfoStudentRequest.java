@@ -17,8 +17,6 @@ import java.util.Date;
 public class ChangeInfoStudentRequest {
     @NotEmpty(message = "Họ và tên không được để trống")
     private String fullname;
-    @NotNull(message = "Ngày tháng năm không được để trống")
-    private Date birthday;
     @NotEmpty(message = "Giới tính không được để trống")
     private String sex;
     @NotEmpty(message = "Địa chỉ không được để trống")

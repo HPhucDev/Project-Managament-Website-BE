@@ -14,6 +14,7 @@ public class SubjectMapping {
         subject.setProduct(addNewSubjectRequest.getProduct());
         subject.setDescription(addNewSubjectRequest.getDescription());
         subject.setGroupCap(addNewSubjectRequest.getGroupCap());
+        subject.setGroupLectureCap(addNewSubjectRequest.getGroupLectureCap());
         subject.setRegFromOtherMajor(addNewSubjectRequest.isRegFromOtherMajor());
         subject.setMajor(addNewSubjectRequest.getMajor());
         subject.setSubjectType(addNewSubjectRequest.getSubjectType());
@@ -32,6 +33,7 @@ public class SubjectMapping {
         subject.setProduct(updateSubjectRequest.getProduct());
         subject.setDescription(updateSubjectRequest.getDescription());
         subject.setGroupCap(updateSubjectRequest.getGroupCap());
+        subject.setGroupLectureCap(updateSubjectRequest.getGroupLectureCap());
         subject.setRegFromOtherMajor(updateSubjectRequest.isRegFromOtherMajor());
         subject.setMajor(updateSubjectRequest.getMajor());
         subject.setSubjectType(updateSubjectRequest.getSubjectType());

@@ -1,6 +1,8 @@
 package com.hcmute.management.service.impl;
 
 import com.hcmute.management.common.AppUserRole;
+import com.hcmute.management.common.OrderByEnum;
+import com.hcmute.management.common.StudentSort;
 import com.hcmute.management.mapping.StudentMapping;
 import com.hcmute.management.model.entity.*;
 import com.hcmute.management.model.payload.request.Student.AddNewStudentRequest;
@@ -70,6 +72,7 @@ public class StudentServiceImpl implements StudentService {
         user.setFullName(addNewStudentRequest.getFullname());
         user.setGender(addNewStudentRequest.getSex());
         user.setPhone(addNewStudentRequest.getPhone());
+        user.setUsername(addNewStudentRequest.getMssv());
         user.setPassword(passwordEncoder.encode(addNewStudentRequest.getMssv()));
         StudentEntity student = StudentMapping.addStudentToEntity(addNewStudentRequest);
         student.setUser(userRepository.save(user));
@@ -117,9 +120,8 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public Page<StudentEntity> search(int pageNo, int pagSize) {
-        Pageable paging = PageRequest.of(pageNo,pagSize);
-        Page<StudentEntity> pageResult =studentRepository.findAllStudentPaging(paging);
-        return pageResult;
+    public List<StudentEntity> search(String keyword, String keywordType, OrderByEnum orderBy, StudentSort order, int pageindex, int pagesize) {
+        List<StudentEntity> list = studentRepository.search(keyword,keywordType,orderBy,order,pageindex,pagesize);
+        return list;
     }
 }

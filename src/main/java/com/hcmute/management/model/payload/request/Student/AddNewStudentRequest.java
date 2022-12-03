@@ -19,8 +19,6 @@ public class AddNewStudentRequest {
     private String mssv;
     @NotEmpty(message = "fullname can not be empty")
     private String fullname;
-    @NotNull(message = "birthday can not be empty")
-    private Date birthday;
     @NotEmpty(message = "gender can not be empty")
     private String sex;
     @NotEmpty(message = "address can not be empty")

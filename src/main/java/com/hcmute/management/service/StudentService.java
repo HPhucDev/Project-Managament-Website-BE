@@ -1,5 +1,7 @@
 package com.hcmute.management.service;
 
+import com.hcmute.management.common.OrderByEnum;
+import com.hcmute.management.common.StudentSort;
 import com.hcmute.management.model.entity.LecturerEntity;
 import com.hcmute.management.model.entity.StudentEntity;
 import com.hcmute.management.model.entity.UserEntity;
@@ -23,5 +25,5 @@ public interface StudentService {
     StudentEntity changeInf(ChangeInfoStudentRequest changeInfoStudentRequest, String user);
 
     StudentEntity findStudentbyUserId(String userid);
-    Page<StudentEntity> search(int pageNo, int pagSize);
+    List<StudentEntity> search(String keyword, String keywordType, OrderByEnum orderBy, StudentSort order, int pageindex, int pagesize);
 }

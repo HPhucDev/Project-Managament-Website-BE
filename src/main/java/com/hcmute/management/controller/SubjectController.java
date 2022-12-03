@@ -73,26 +73,23 @@ public class SubjectController {
             if (lecturer==null)
             {
                 return new ResponseEntity<>(new ErrorResponse(E404,"LECTURE_NOT_FOUND","Can't find lecture with id provided"), HttpStatus.BAD_REQUEST);
-
             }
             else {
                 subject.setLecturer(user.getLecturer());
                 subject.setStatus(3);
                 subject = subjectService.saveSubject(subject);
-                emailService.sendSubjectConfirmEmail(subject);
+                //emailService.sendSubjectConfirmEmail(subject);
                 return new ResponseEntity<>(subject,HttpStatus.OK);
             }
-
         }catch (BadCredentialsException e)
         {
             return new ResponseEntity<>(new ErrorResponse(E401,"UNAUTHORIZED","Unauthorized, please login again"), HttpStatus.UNAUTHORIZED);
-
         }
     }
     @GetMapping("/paging")
     @ApiOperation("Get All")
     public ResponseEntity<PagingResponse> getAllSubjectPaging(@RequestParam(defaultValue = "0") int page,
-                                                              @RequestParam(defaultValue = "5") int size)
+                                                              @RequestParam(defaultValue = "5") int size, @RequestParam(defaultValue = "") String searchText)
     {
         Page<SubjectEntity> pageSubject = subjectService.findAllSubjectPaging(page,size);
         List<SubjectEntity> listSubject = pageSubject.toList();
@@ -175,7 +172,6 @@ public class SubjectController {
         } catch (BadCredentialsException e)
         {
             return new ResponseEntity<>(new ErrorResponse(E401,"UNAUTHORIZED","Unauthorized, please login again"), HttpStatus.UNAUTHORIZED);
-
         }
     }
     @GetMapping("/search")
