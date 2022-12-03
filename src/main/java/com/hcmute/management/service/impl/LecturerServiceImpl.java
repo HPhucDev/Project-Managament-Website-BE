@@ -1,5 +1,6 @@
 package com.hcmute.management.service.impl;
 
+import com.hcmute.management.handler.ValueDuplicateException;
 import com.hcmute.management.model.entity.LecturerEntity;
 import com.hcmute.management.model.entity.SubjectEntity;
 import com.hcmute.management.model.entity.UserEntity;
@@ -10,6 +11,7 @@ import com.hcmute.management.repository.UserRepository;
 import com.hcmute.management.service.LecturerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -25,11 +27,16 @@ public class LecturerServiceImpl implements LecturerService {
     private final LecturerRepository lecturerRepository;
     private final UserRepository userRepository;
     @Override
+    @Transactional(rollbackFor = ValueDuplicateException.class)
     public LecturerEntity saveLecturer(AddNewLecturerRequest addNewLecturerRequest, UserEntity user) {
         LecturerEntity lecturer= new LecturerEntity();
         user.setFullName(addNewLecturerRequest.getFullName());
         user.setGender(addNewLecturerRequest.getGender());
+        Optional<UserEntity> foundUser = userRepository.findByEmail(addNewLecturerRequest.getEmail());
+        if (!userRepository.findByEmail(addNewLecturerRequest.getEmail()).isEmpty())
+            throw new ValueDuplicateException("This email has already existed");
         user.setEmail(addNewLecturerRequest.getEmail());
+        user.setBirthDay(addNewLecturerRequest.getBirthday());
         lecturer.setId(addNewLecturerRequest.getId());
         lecturer.setUser(userRepository.save(user));
         lecturer.setQualification(addNewLecturerRequest.getQualification());
@@ -42,7 +49,10 @@ public class LecturerServiceImpl implements LecturerService {
         LecturerEntity lecturer= findByUser(user);
         user.setFullName(updateLecturerRequest.getFullName());
         user.setGender(updateLecturerRequest.getGender());
+        if (!userRepository.findByEmail(updateLecturerRequest.getEmail()).isEmpty() && user.getEmail()!= updateLecturerRequest.getEmail())
+            throw new ValueDuplicateException("This email has already existed");
         user.setEmail(updateLecturerRequest.getEmail());
+        user.setBirthDay(updateLecturerRequest.getBirthday());
         lecturer.setUser(userRepository.save(user));
         lecturer.setQualification(updateLecturerRequest.getQualification());
         lecturer.setPosition(updateLecturerRequest.getPosition());

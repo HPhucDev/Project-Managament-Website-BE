@@ -4,6 +4,7 @@ import com.hcmute.management.common.AppUserRole;
 import com.hcmute.management.common.OrderByEnum;
 import com.hcmute.management.handler.AuthenticateHandler;
 import com.hcmute.management.handler.MethodArgumentNotValidException;
+import com.hcmute.management.handler.ValueDuplicateException;
 import com.hcmute.management.mapping.LecturerMapping;
 import com.hcmute.management.model.entity.LecturerEntity;
 import com.hcmute.management.model.entity.RoleEntity;
@@ -31,6 +32,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -55,10 +57,10 @@ public class LecturerController {
     @Autowired
     JwtUtils jwtUtils;
 
-    @PostMapping("")
+    @PostMapping(value = "",consumes = {"multipart/form-data"})
     @ApiOperation("Add")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<Object> addLecturer(@RequestBody @Valid AddNewLecturerRequest addNewLecturerRequest, BindingResult errors, HttpServletRequest req) throws Exception {
+    public ResponseEntity<Object> addLecturer(@Valid AddNewLecturerRequest addNewLecturerRequest, @RequestPart MultipartFile file, BindingResult errors, HttpServletRequest req) throws Exception {
         if (errors.hasErrors()) {
             throw new MethodArgumentNotValidException(errors);
         }
@@ -78,10 +80,14 @@ public class LecturerController {
         UserEntity addNewUser =new UserEntity(passwordEncoder.encode(id),id);
         addNewUser=userService.register(addNewUser, AppUserRole.ROLE_LECTURER);
         LecturerEntity lecturer=lecturerService.saveLecturer(addNewLecturerRequest,addNewUser);
+        userService.addUserImage(file,addNewUser);
         return new ResponseEntity<>(lecturer, HttpStatus.OK);
             }  catch (BadCredentialsException e) {
                 return new ResponseEntity<>(new ErrorResponse(E401,"UNAUTHORIZED","Unauthorized, please login again"), HttpStatus.UNAUTHORIZED);
-
+        }
+        catch (ValueDuplicateException e)
+        {
+            return new ResponseEntity<>(new ErrorResponse(E400,"EMAIL_ALREADY_EXISTS",e.getMessage()),HttpStatus.BAD_REQUEST);
         }
     }
     @GetMapping("")
@@ -142,9 +148,10 @@ public class LecturerController {
         return new ResponseEntity<>(pagingResponse ,HttpStatus.OK);
     }
 
-    @PatchMapping("")
+    @PatchMapping(value = "",consumes = {"multipart/form-data"})
     @ApiOperation("Update")
-    public ResponseEntity<Object> updateLecturer(@Valid @RequestBody UpdateLecturerRequest updateLecturerRequest, BindingResult errors, HttpServletRequest req) throws Exception {
+    @PreAuthorize("hasRole('ROLE_LECTURER')")
+    public ResponseEntity<Object> updateLecturer(@Valid UpdateLecturerRequest updateLecturerRequest,@RequestPart MultipartFile file, BindingResult errors, HttpServletRequest req) throws Exception {
         if (errors.hasErrors()) {
             throw new MethodArgumentNotValidException(errors);
         }
@@ -157,6 +164,10 @@ public class LecturerController {
 
             }
             LecturerEntity updateLecturer=lecturerService.updateLecturer(updateLecturerRequest,user);
+            if(!file.isEmpty())
+            {
+                userService.addUserImage(file,user);
+            }
             return new ResponseEntity<>(updateLecturer, HttpStatus.OK);
         } catch (BadCredentialsException e) {
         return new ResponseEntity<>(new ErrorResponse(E401,"UNAUTHORIZED","Unauthorized, please login again"), HttpStatus.UNAUTHORIZED);

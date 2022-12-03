@@ -1,10 +1,14 @@
 package com.hcmute.management.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.swagger.annotations.ApiModelProperty;
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.rest.core.annotation.RestResource;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.UUID;
 
@@ -76,6 +80,20 @@ public class UserEntity {
     private Set<CommentEntity> comment;
     @Column(name = "\"imageLink\"")
     private String imgLink;
+
+    @Column
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss", shape = JsonFormat.Shape.STRING)
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    @ApiModelProperty(required = true, example = "2021-08-20T00:00:00")
+    private LocalDateTime birthDay;
+
+    public LocalDateTime getBirthDay() {
+        return birthDay;
+    }
+
+    public void setBirthDay(LocalDateTime birthDay) {
+        this.birthDay = birthDay;
+    }
 
     public String getImgLink() {
         return imgLink;
