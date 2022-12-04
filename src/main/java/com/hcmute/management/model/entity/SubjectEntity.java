@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiModelProperty;
 import org.aspectj.apache.bcel.classfile.Module;
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.rest.core.annotation.RestResource;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.time.LocalDate;

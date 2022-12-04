@@ -24,7 +24,7 @@ public class StudentRepositoryCustomImpl implements StudentRepositoryCustom {
     private EntityManager entityManager;
 
     @Override
-    public List<StudentEntity> search(String searchText, String searchTextType, OrderByEnum orderBy, StudentSort order, int pageindex, int pagesize) {
+    public List<StudentEntity> search(String searchText, OrderByEnum orderBy, StudentSort order, int pageindex, int pagesize) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
 
         //Create filter query and count query
@@ -40,18 +40,24 @@ public class StudentRepositoryCustomImpl implements StudentRepositoryCustom {
         List<Predicate> countPredicates = new ArrayList<>();
 
         // Filter by keyword, we have options here:  MSSV, education_program, chuyen nganh, class_id;
-        if (searchTextType != null) {
-            if (searchTextType.equals("id")) { // FIlter by id
-                predicates.add(cb.like(root.get("id"), "%" + searchText + "%"));
-            } else if (searchTextType.equals("education_program")) { //Filter by education program
-                predicates.add(cb.like(root.get("education_program"), "%" + searchText + "%"));
-            } else if (searchTextType.equals("class_id")) { //filter class _id
-                predicates.add(cb.like(root.get("class_id"), "%" + searchText + "%"));
-            } else if (searchTextType.equals("fullName")) {//filter by fullname
-                predicates.add(cb.like(
-                        cb.concat(root.get("user").get("fullName"), " "),"%" + searchText + "%"));
-            }
-        }
+//        if (searchTextType != null) {
+//            if (searchTextType.equals("id")) { // FIlter by id
+//                predicates.add(cb.like(root.get("id"), "%" + searchText + "%"));
+//            } else if (searchTextType.equals("education_program")) { //Filter by education program
+//                predicates.add(cb.like(root.get("education_program"), "%" + searchText + "%"));
+//            } else if (searchTextType.equals("class_id")) { //filter class _id
+//                predicates.add(cb.like(root.get("class_id"), "%" + searchText + "%"));
+//            } else if (searchTextType.equals("fullName")) {//filter by fullname
+//                predicates.add(cb.like(
+//                        cb.concat(root.get("user").get("fullName"), " "),"%" + searchText + "%"));
+//            }
+//        }
+        Predicate predicatesId = cb.like(root.get("id"), "%" + searchText + "%");
+        Predicate predicateedcation = cb.like(root.get("education_program"), "%" + searchText + "%");
+        Predicate predicateclass_id = cb.like(cb.concat(root.get("classes").get("classname"), " "),"%" + searchText + "%");
+        Predicate predicatename = cb.like(cb.concat(root.get("user").get("fullName"), " "),"%" + searchText + "%");
+        predicates.add(cb.or(predicatesId,predicateedcation,predicateclass_id,predicatename));
+
 
         if (orderBy.equals("asc")) {
             query.orderBy(cb.asc(root.get(order.getName())));

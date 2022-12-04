@@ -1,8 +1,10 @@
 package com.hcmute.management.controller;
 
 import com.hcmute.management.common.AppUserRole;
+import com.hcmute.management.common.OrderByEnum;
 import com.hcmute.management.handler.AuthenticateHandler;
 import com.hcmute.management.handler.MethodArgumentNotValidException;
+import com.hcmute.management.handler.ValueDuplicateException;
 import com.hcmute.management.mapping.LecturerMapping;
 import com.hcmute.management.model.entity.LecturerEntity;
 import com.hcmute.management.model.entity.RoleEntity;
@@ -30,6 +32,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -148,7 +151,7 @@ public class LecturerController {
     @PatchMapping(value = "",consumes = {"multipart/form-data"})
     @ApiOperation("Update")
     @PreAuthorize("hasRole('ROLE_LECTURER')")
-    public ResponseEntity<Object> updateLecturer(@Valid UpdateLecturerRequest updateLecturerRequest,@RequestPart MultipartFile file, BindingResult errors, HttpServletRequest req) throws Exception {
+    public ResponseEntity<Object> updateLecturer(@Valid UpdateLecturerRequest updateLecturerRequest, @RequestPart MultipartFile file, BindingResult errors, HttpServletRequest req) throws Exception {
         if (errors.hasErrors()) {
             throw new MethodArgumentNotValidException(errors);
         }

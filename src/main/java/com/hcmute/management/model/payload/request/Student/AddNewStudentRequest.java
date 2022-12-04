@@ -1,5 +1,6 @@
 package com.hcmute.management.model.payload.request.Student;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -8,6 +9,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Getter
@@ -23,8 +25,9 @@ public class AddNewStudentRequest {
     private String sex;
     @NotEmpty(message = "address can not be empty")
     private String address;
-    @NotEmpty(message = "school year can not be empty")
-    @DateTimeFormat(pattern = "yyyy")
+    @NotNull(message = "school year can not be empty")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss", shape = JsonFormat.Shape.STRING)
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private Date schoolyear;
     @NotEmpty(message = "major can not be empty")
     private String major;
@@ -34,4 +37,9 @@ public class AddNewStudentRequest {
     private String  classid;
     @NotNull(message = "Phone number can not be empty")
     private String phone;
+    @NotNull(message = "Email can not be empty")
+    private String email;
+    @NotNull(message = "Ngày tháng năm không được để trống")
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+    private LocalDateTime birthday;
 }

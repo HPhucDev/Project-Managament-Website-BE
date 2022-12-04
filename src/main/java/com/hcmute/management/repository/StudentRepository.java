@@ -29,5 +29,5 @@ public interface StudentRepository extends JpaRepository<StudentEntity, String>,
             nativeQuery = true)
     Page<StudentEntity> findAllStudentPaging(Pageable pageable);
 
-    List<StudentEntity> search(String searchText, String searchTextType, OrderByEnum orderBy, StudentSort order, int pageindex, int pagesize);
+    List<StudentEntity> search(String searchText, OrderByEnum orderBy, StudentSort order, int pageindex, int pagesize);
 }

@@ -9,7 +9,7 @@ import lombok.Getter;
 public enum StudentSort {
     EDUCATION_PROGRAM("education_program"),
     MAJOR("major"),
-    CLASS_ID("classes"),
+    CLASS("classes"),
     SCHOOL_YEAR("school_year");
     private String name;
 }

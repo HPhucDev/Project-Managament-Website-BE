@@ -20,10 +20,11 @@ public interface StudentService {
     StudentEntity findById(String id);
 
     StudentEntity findByUserId(UserEntity user);
-    StudentEntity saveStudent(AddNewStudentRequest addNewStudentRequest);
+    StudentEntity saveStudent(AddNewStudentRequest addNewStudentRequest, UserEntity user);
     void deleteStudent(String id);
     StudentEntity changeInf(ChangeInfoStudentRequest changeInfoStudentRequest, String user);
+    StudentEntity updateStudent(ChangeInfoStudentRequest changeInfoStudentRequest, UserEntity user);
 
     StudentEntity findStudentbyUserId(String userid);
-    List<StudentEntity> search(String keyword, String keywordType, OrderByEnum orderBy, StudentSort order, int pageindex, int pagesize);
+    List<StudentEntity> search(String keyword, OrderByEnum orderBy, StudentSort order, int pageindex, int pagesize);
 }

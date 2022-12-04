@@ -9,5 +9,5 @@ import java.util.List;
 
 public interface StudentRepositoryCustom {
 
-    List<StudentEntity> search(String searchText, String searchTextType, OrderByEnum orderBy, StudentSort order, int pageindex, int pagesize);
+    List<StudentEntity> search(String searchText, OrderByEnum orderBy, StudentSort order, int pageindex, int pagesize);
 }
