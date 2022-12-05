@@ -79,7 +79,7 @@ public class StudentRepositoryCustomImpl implements StudentRepositoryCustom {
         pagingResponse.setEmpty(listStudentsSort.size() == 0);
         pagingResponse.setFirst(pageindex == 0);
         pagingResponse.setLast(pageindex == totalPage - 1);
-        pagingResponse.getPageable().put("pageIndex", pageindex);
+        pagingResponse.getPageable().put("pageNumber", pageindex);
         pagingResponse.getPageable().put("pageSize", pagesize);
         pagingResponse.setSize(pagesize);
         pagingResponse.setNumberOfElements(listStudentsSort.size());
