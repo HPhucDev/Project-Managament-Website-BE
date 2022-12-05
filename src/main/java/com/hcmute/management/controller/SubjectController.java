@@ -12,6 +12,7 @@ import com.hcmute.management.model.entity.SubjectEntity;
 import com.hcmute.management.model.entity.UserEntity;
 import com.hcmute.management.model.payload.SuccessResponse;
 import com.hcmute.management.model.payload.request.Subject.AddNewSubjectRequest;
+import com.hcmute.management.model.payload.request.Subject.DemoObject;
 import com.hcmute.management.model.payload.request.Subject.UpdateSubjectRequest;
 import com.hcmute.management.model.payload.response.ErrorResponse;
 import com.hcmute.management.model.payload.response.PagingResponse;
@@ -19,7 +20,9 @@ import com.hcmute.management.security.JWT.JwtUtils;
 import com.hcmute.management.service.EmailService;
 import com.hcmute.management.service.LecturerService;
 import com.hcmute.management.service.SubjectService;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
@@ -172,7 +175,6 @@ public class SubjectController {
         } catch (BadCredentialsException e)
         {
             return new ResponseEntity<>(new ErrorResponse(E401,"UNAUTHORIZED","Unauthorized, please login again"), HttpStatus.UNAUTHORIZED);
-
         }
     }
     @GetMapping("/{id}")
@@ -205,14 +207,14 @@ public class SubjectController {
     @GetMapping("/search")
     @ApiOperation("Search by Criteria")
     public ResponseEntity<Object> searchByCriteria(
-            @RequestParam(required = false,name = "searchText") String searchKey,
+            @ApiParam(required = false,value = "Nhập thông tin bạn muốn tìm kiếm vào đây") String searchKey,
             @RequestParam(defaultValue = "0",name = "pageIndex") int page,
             @RequestParam(defaultValue = "5",name = "pageSize") int size,
-            @RequestParam(defaultValue = "NULL") SubjectStatus subjectStatus,
-            @RequestParam(required = false) String lectureId,
-            @RequestParam(defaultValue = "NULL") MajorEnum major,
-            @RequestParam(defaultValue = "START_DATE") SubjectSort sort,
-            @RequestParam(defaultValue = "DESCENDING")OrderByEnum order
+            @ApiParam(defaultValue = "NULL",name = "subjectStatus",value = "Trạng thái của đề tài") SubjectStatus subjectStatus,
+            @ApiParam(required = false,value = "Mã số của giảng viên") String lectureId,
+            @ApiParam(defaultValue = "NULL",value = "Chuyên ngành") MajorEnum major,
+            @ApiParam(defaultValue = "START_DATE",value = "Lọc theo cái gì nè?")SubjectSort sort,
+            @ApiParam(defaultValue = "DESCENDING",value = "Lọc theo thứ tự gì nè?")OrderByEnum order
             )
     {
         System.out.println(subjectStatus);
@@ -287,4 +289,9 @@ public class SubjectController {
         }
     }
 
+//    @PostMapping(value = "/demo",consumes = {"multipart/form-data"})
+//    public ResponseEntity<Object> test (@ModelAttribute("demo") DemoObject demoObject)
+//    {
+//        return new ResponseEntity<>(HttpStatus.OK);
+//    }
 }

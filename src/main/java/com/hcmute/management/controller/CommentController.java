@@ -71,16 +71,16 @@ public class CommentController {
             return new ResponseEntity<>(new ErrorResponse(E401,"UNAUTHORIZED","Unauthorized, please login again"), HttpStatus.UNAUTHORIZED);
         }
     }
-    @PatchMapping("")
+    @PatchMapping("/{id}")
     @ApiOperation("Update")
-    public ResponseEntity<Object> updateComment(@Valid @RequestBody UpdateCommentRequest updateCommentRequest, BindingResult errors, HttpServletRequest req) throws Exception {
+    public ResponseEntity<Object> updateComment(@PathVariable("id") String id,@Valid @RequestBody UpdateCommentRequest updateCommentRequest, BindingResult errors, HttpServletRequest req) throws Exception {
         if (errors.hasErrors()) {
             throw new MethodArgumentNotValidException(errors);
         }
         UserEntity user;
         try {
             user = authenticateHandler.authenticateUser(req);
-            CommentEntity findComment = commentService.findById(updateCommentRequest.getId());
+            CommentEntity findComment = commentService.findById(id);
             if (findComment == null) {
                 return new ResponseEntity<>(new ErrorResponse(E404, "COMMENT_NOT_FOUND", "Can't find Comment with id provided"), HttpStatus.NOT_FOUND);
 

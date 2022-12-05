@@ -1,11 +1,19 @@
 package com.hcmute.management.model.payload.request.Subject;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import org.springframework.data.rest.core.annotation.RestResource;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 
 import javax.validation.Constraint;
 import javax.validation.constraints.Max;
@@ -21,10 +29,11 @@ import java.util.Date;
 @Data
 @NoArgsConstructor
 public class AddNewSubjectRequest {
+    @ApiParam(hidden = true)
     final String EMPTY_MESSAGE ="cannot be empty";
-    @NotEmpty(message = "Subject name "+EMPTY_MESSAGE)
+    @ApiParam()
     private String name;
-    @NotEmpty(message = "target "+EMPTY_MESSAGE)
+    @NotEmpty(message = "target"+EMPTY_MESSAGE)
     private String target;
     @NotEmpty(message = "Requirement "+EMPTY_MESSAGE)
     private String requirement;

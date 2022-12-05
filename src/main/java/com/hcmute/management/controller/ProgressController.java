@@ -105,16 +105,14 @@ public class ProgressController {
         return new ResponseEntity<>(progress, HttpStatus.OK);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/{progressId}")
     @ApiOperation("Update")
     @ResponseBody
-    public ResponseEntity<Object> updateProgress(HttpServletRequest req, @RequestBody @Valid UpdateProgressRequest updateProgressRequest, @PathVariable("id") String id) {
-        String authorizationHeader = req.getHeader(AUTHORIZATION);
-        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-            String accessToken = authorizationHeader.substring("Bearer ".length());
-            if (jwtUtils.validateExpiredToken(accessToken)) {
-                throw new BadCredentialsException("access token is expired");
-            }
+    public ResponseEntity<Object> updateProgress(HttpServletRequest req, @RequestBody @Valid UpdateProgressRequest updateProgressRequest, @PathVariable("progressId") String id) {
+        UserEntity user;
+        try
+        {
+            user=authenticateHandler.authenticateUser(req);
             ProgressEntity progress = new ProgressEntity();
             if (progressService.findById(id) != null) {
                 progress = progressService.updateProgress(updateProgressRequest, id);
@@ -123,22 +121,26 @@ public class ProgressController {
                 return new ResponseEntity<>(new ErrorResponse(E404, "PROGRESS_NOT_FOUND","Progress not found"), HttpStatus.NOT_FOUND);
             }
         }
-        throw new BadCredentialsException("access token is missing");
+        catch (BadCredentialsException e)
+        {
+            return new ResponseEntity<>(new ErrorResponse(E401,"UNAUTHORIZED","Unauthorized, please login again"), HttpStatus.UNAUTHORIZED);
+        }
+
     }
 
     @DeleteMapping("")
     @ApiOperation("Delete")
-    public ResponseEntity<SuccessResponse> deleteProgress(@RequestBody List<String> listProgressId, HttpServletRequest httpServletRequest) {
-        String authorizationHeader = httpServletRequest.getHeader(AUTHORIZATION);
-        SuccessResponse response = new SuccessResponse();
-        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-            String accessToken = authorizationHeader.substring("Bearer ".length());
-            if (jwtUtils.validateExpiredToken(accessToken) == true) {
-                throw new BadCredentialsException("access token is  expired");
-            }
+    public ResponseEntity<Object> deleteProgress(@RequestBody List<String> listProgressId, HttpServletRequest httpServletRequest) {
+        UserEntity user;
+        try
+        {
+            user=authenticateHandler.authenticateUser(httpServletRequest);
             progressService.deleteById(listProgressId);
             return new ResponseEntity<>(HttpStatus.OK);
-        } else throw new BadCredentialsException("access token is missing");
+        } catch (BadCredentialsException e)
+        {
+            return new ResponseEntity<>(new ErrorResponse(E401,"UNAUTHORIZED","Unauthorized, please login again"), HttpStatus.UNAUTHORIZED);
+        }
     }
 
 }
