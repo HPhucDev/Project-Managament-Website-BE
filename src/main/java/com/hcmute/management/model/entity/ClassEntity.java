@@ -28,7 +28,7 @@ public class ClassEntity {
 
     @Column(name = "\"class_name\"")
     private String classname;
-    @OneToMany( fetch = FetchType.EAGER, mappedBy = "classes")
+    @OneToMany( fetch = FetchType.EAGER, mappedBy = "classes",targetEntity = StudentEntity.class)
     @JsonIgnore
     private Set<StudentEntity> listStudent;
 
