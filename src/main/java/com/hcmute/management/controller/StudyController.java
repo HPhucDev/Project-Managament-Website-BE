@@ -132,221 +132,169 @@ public class StudyController {
     @DeleteMapping("/{id}")
     @ApiOperation("Delete")
     public ResponseEntity<Object> deleteStudentById(HttpServletRequest httpServletRequest, @PathVariable("id") String id) {
-        String authorizationHeader = httpServletRequest.getHeader(AUTHORIZATION);
-        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-            String accessToken = authorizationHeader.substring("Bearer ".length());
-            if (jwtUtils.validateExpiredToken(accessToken)) {
-                throw new BadCredentialsException("Access token is expired");
-            }
+        UserEntity user;
+        try {
+            user = authenticateHandler.authenticateUser(httpServletRequest);
             StudentEntity student = studentService.findById(id);
             if (student == null) {
                 return new ResponseEntity<>(new ErrorResponse(E404, "STUDENT_ID_NOT_FOUND", "Student id not found"), HttpStatus.NOT_FOUND);
             } else {
 
                 studentService.deleteStudent(id);
-                UserEntity user = userService.findById(student.getUser().getId());
-                for (RoleEntity role : user.getRoles()) {
+                UserEntity userofStudent = userService.findById(student.getUser().getId());
+                for (RoleEntity role : userofStudent.getRoles()) {
                     role.setUsers(null);
                 }
-                user.getRoles().clear();
-                userService.delete(user);
+                userofStudent.getRoles().clear();
+                userService.delete(userofStudent);
                 return new ResponseEntity<>(HttpStatus.OK);
             }
+        } catch (BadCredentialsException e) {
+            return new ResponseEntity<>(new ErrorResponse(E401, "UNAUTHORIZED", "Unauthorized, please login again"), HttpStatus.UNAUTHORIZED);
         }
-        throw new BadCredentialsException("Access token is missing");
+
     }
 
     @PostMapping("/addGroupLeader/{subjectId}")
     @ApiOperation("Add Group Leader")
     public ResponseEntity<Object> addGroupLeader(@PathVariable("subjectId") String id, HttpServletRequest request) {
-        String authorizationHeader = request.getHeader(AUTHORIZATION);
-        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-            String accessToken = authorizationHeader.substring("Bearer ".length());
-            if (jwtUtils.validateExpiredToken(accessToken)) {
-                throw new BadCredentialsException("Access token is expired");
-            }
-            UserEntity user = userService.findById(UUID.fromString(jwtUtils.getUserNameFromJwtToken(accessToken)).toString());
-            if (user == null) {
-                throw new BadCredentialsException("User not found");
+        UserEntity user;
+        try {
+            user = authenticateHandler.authenticateUser(request);
+            StudentEntity student = studentService.findByUserId(user);
+            if (student == null) {
+                return new ResponseEntity<>(new ErrorResponse(E404, "STUDENT_NOT_FOUND", "Student not found"), HttpStatus.NOT_FOUND);
             } else {
-                StudentEntity student = studentService.findByUserId(user);
-                if (student == null) {
-                    return new ResponseEntity<>(new ErrorResponse(E404, "STUDENT_NOT_FOUND", "Student not found"), HttpStatus.NOT_FOUND);
-                } else {
-                    SubjectEntity subject = subjectService.getSubjectById(id);
-                    if (subject == null) {
-                        return new ResponseEntity<>(new ErrorResponse(E404, "SUBJECT_DO_NOT_EXISTS", "Subject doesn't exists"), HttpStatus.NOT_FOUND);
-                    } else if (subject.getGroupLeader() != null) {
-                        return new ResponseEntity<>(new ErrorResponse(E400, "SUBJECT_HAS_BEEN_ASSIGNED", "Subject has been assigned"), HttpStatus.BAD_REQUEST);
-                    } else if (user.getSubjectLeader() != null) {
-                        return new ResponseEntity<>(new ErrorResponse(E400, "USER_HAS_BEEN_ASSIGNED_TO_ANOTHER_PROJECT", "User has been assigned to another project"), HttpStatus.BAD_REQUEST);
-                    }
-                    subject.setGroupLeader(user);
-                    user.setSubjectLeader(subject);
-                    subject = subjectService.saveSubject(subject);
-                    Map<String, Object> map = new HashMap<>();
-                    map.put("Content", subject);
-                    map.put("", user);
-                    return new ResponseEntity<>(map, HttpStatus.OK);
+                SubjectEntity subject = subjectService.getSubjectById(id);
+                if (subject == null) {
+                    return new ResponseEntity<>(new ErrorResponse(E404, "SUBJECT_DO_NOT_EXISTS", "Subject doesn't exists"), HttpStatus.NOT_FOUND);
+                } else if (subject.getGroupLeader() != null) {
+                    return new ResponseEntity<>(new ErrorResponse(E400, "SUBJECT_HAS_BEEN_ASSIGNED", "Subject has been assigned"), HttpStatus.BAD_REQUEST);
+                } else if (user.getSubjectLeader() != null) {
+                    return new ResponseEntity<>(new ErrorResponse(E400, "USER_HAS_BEEN_ASSIGNED_TO_ANOTHER_PROJECT", "User has been assigned to another project"), HttpStatus.BAD_REQUEST);
                 }
+                subject.setGroupLeader(user);
+                user.setSubjectLeader(subject);
+                subject = subjectService.saveSubject(subject);
+                return new ResponseEntity<>(subject, HttpStatus.OK);
             }
+        } catch (BadCredentialsException e) {
+            return new ResponseEntity<>(new ErrorResponse(E401, "UNAUTHORIZED", "Unauthorized, please login again"), HttpStatus.UNAUTHORIZED);
         }
-        throw new BadCredentialsException("Access token is missing");
+
     }
 
     @PostMapping("/addGroupMember/{subjectId}")
     @ApiOperation("Add Group Member")
     public ResponseEntity<Object> addGroupMember(@RequestParam(value = "listMember") List<String> listMember, @PathVariable("subjectId") String id, HttpServletRequest req) {
-        String authorizationHeader = req.getHeader(AUTHORIZATION);
-        SuccessResponse response = new SuccessResponse();
-        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-            String accessToken = authorizationHeader.substring("Bearer ".length());
-            if (jwtUtils.validateExpiredToken(accessToken)) {
-                throw new BadCredentialsException("access token is expired");
-            }
-            UserEntity user = userService.findById(UUID.fromString(jwtUtils.getUserNameFromJwtToken(accessToken)).toString());
-            if (user == null) {
-                throw new BadCredentialsException("User not found");
+        UserEntity user;
+        try {
+            user = authenticateHandler.authenticateUser(req);
+            StudentEntity student = studentService.findByUserId(user);
+            if (student == null) {
+                return new ResponseEntity<>(new ErrorResponse(E404, "ACCOUNT_HAS_NO_INFORMATION", "account has no information"), HttpStatus.NOT_FOUND);
             } else {
-                StudentEntity student = studentService.findByUserId(user);
-                if (student == null) {
-
-                    return new ResponseEntity<>(new ErrorResponse(E404, "ACCOUNT_HAS_NO_INFORMATION", "account has no information"), HttpStatus.NOT_FOUND);
+                SubjectEntity subject = subjectService.getSubjectById(id);
+                if (subject == null || subject.getGroupLeader() != user) {
+                    return new ResponseEntity<>(new ErrorResponse(E404, "SUBJECT_DO_NOT_EXIST_OR_USER_IS_NOT_LEADER", "Subject doesn't exists or User is not leader"), HttpStatus.NOT_FOUND);
 
                 } else {
-                    SubjectEntity subject = subjectService.getSubjectById(id);
-                    if (subject == null || subject.getGroupLeader() != user) {
-                        return new ResponseEntity<>(new ErrorResponse(E404, "SUBJECT_DO_NOT_EXIST_OR_USER_IS_NOT_LEADER", "Subject doesn't exists or User is not leader"), HttpStatus.NOT_FOUND);
-
-                    } else {
-                        if (listMember.size() + subject.getGroupMember().size() > subject.getGroupCap() - 1) {
-                            return new ResponseEntity<>(new ErrorResponse(E400, "INVALID_NUMBER_OF_GROUP_MEMBER", "Invalid number of group member"), HttpStatus.BAD_REQUEST);
-
-                        } else {
-                            UserEntity tempUser = new UserEntity();
-                            for (String i : listMember) {
-                                tempUser = userService.findById(i);
-                                if (tempUser == null || tempUser.getSubject() != null || tempUser.getSubjectLeader() != null) {
-                                    return new ResponseEntity<>(new ErrorResponse(E404, "ID_NOT_VALID", "Member with id " + i + " is not valid"), HttpStatus.NOT_FOUND);
-                                }
-                                subject.getGroupMember().add(tempUser);
-                                tempUser.setSubject(subject);
-                            }
-                        }
-                    }
-                    subject = subjectService.saveSubject(subject);
-                    Map<String, Object> map = new HashMap<>();
-                    map.put("subjectName", subject.getName());
-                    map.put("listUser", subject.getGroupMember());
-                    return new ResponseEntity<>(map, HttpStatus.OK);
-                }
-            }
-        }
-        throw new BadCredentialsException("access token is missing");
-    }
-
-    @DeleteMapping("/deleteGroupMember/{id}")
-    @ApiOperation("Delete Group Member")
-    public ResponseEntity<Object> deleteGroupMember(@RequestParam(value = "listMember") List<String> listMember, @PathVariable("id") String id, HttpServletRequest req) {
-        String authorizationHeader = req.getHeader(AUTHORIZATION);
-        SuccessResponse response = new SuccessResponse();
-        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-            String accessToken = authorizationHeader.substring("Bearer ".length());
-            if (jwtUtils.validateExpiredToken(accessToken)) {
-                throw new BadCredentialsException("access token is expired");
-            }
-            UserEntity user = userService.findById(UUID.fromString(jwtUtils.getUserNameFromJwtToken(accessToken)).toString());
-            if (user == null) {
-                throw new BadCredentialsException("User not found");
-            } else {
-                StudentEntity student = studentService.findByUserId(user);
-                if (student == null) {
-                    return new ResponseEntity<>(new ErrorResponse(E404, "ACCOUNT_HAVE_NÓ_STUDENT_INFOMATION", "Account have no student information"), HttpStatus.NOT_FOUND);
-                } else {
-                    SubjectEntity subject = subjectService.getSubjectById(id);
-                    if (subject == null || subject.getGroupLeader() != user) {
-                        return new ResponseEntity<>(new ErrorResponse(E404, "SUBJECT_DOES_NOT_EXIST_OR_USER_IS_NOT_LEADER", "Subject does not exist or uer is not leader"), HttpStatus.NOT_FOUND);
+                    if (listMember.size() + subject.getGroupMember().size() > subject.getGroupCap() - 1) {
+                        return new ResponseEntity<>(new ErrorResponse(E400, "INVALID_NUMBER_OF_GROUP_MEMBER", "Invalid number of group member"), HttpStatus.BAD_REQUEST);
                     } else {
                         UserEntity tempUser = new UserEntity();
                         for (String i : listMember) {
                             tempUser = userService.findById(i);
-                            if (tempUser == null || tempUser.getSubject() != subject) {
-                                return new ResponseEntity<>(new ErrorResponse(E400, "MEMBER_ID_IS_NOT_VALID", "Member with id" + i + " is not valid"), HttpStatus.NOT_FOUND);
+                            if (tempUser == null || tempUser.getSubject() != null || tempUser.getSubjectLeader() != null) {
+                                return new ResponseEntity<>(new ErrorResponse(E404, "ID_NOT_VALID", "Member with id " + i + " is not valid"), HttpStatus.NOT_FOUND);
                             }
-                            subject.getGroupMember().remove(tempUser);
-                            tempUser.setSubject(null);
+                            subject.getGroupMember().add(tempUser);
+                            tempUser.setSubject(subject);
                         }
                     }
-                    subject = subjectService.saveSubject(subject);
-                    return new ResponseEntity<>(HttpStatus.OK);
                 }
+                subject = subjectService.saveSubject(subject);
+                return new ResponseEntity<>(subject, HttpStatus.OK);
             }
+        } catch (BadCredentialsException e) {
+            return new ResponseEntity<>(new ErrorResponse(E401, "UNAUTHORIZED", "Unauthorized, please login again"), HttpStatus.UNAUTHORIZED);
         }
-        throw new BadCredentialsException("access token is missing");
+    }
+
+
+    @DeleteMapping("/deleteGroupMember/{id}")
+    @ApiOperation("Delete Group Member")
+    public ResponseEntity<Object> deleteGroupMember(@RequestParam(value = "listMember") List<String> listMember, @PathVariable("id") String id, HttpServletRequest req) {
+        UserEntity user;
+        try {
+            user = authenticateHandler.authenticateUser(req);
+            StudentEntity student = studentService.findByUserId(user);
+            if (student == null) {
+                return new ResponseEntity<>(new ErrorResponse(E404, "ACCOUNT_HAVE_NÓ_STUDENT_INFOMATION", "Account have no student information"), HttpStatus.NOT_FOUND);
+            } else {
+                SubjectEntity subject = subjectService.getSubjectById(id);
+                if (subject == null || subject.getGroupLeader() != user) {
+                    return new ResponseEntity<>(new ErrorResponse(E404, "SUBJECT_DOES_NOT_EXIST_OR_USER_IS_NOT_LEADER", "Subject does not exist or uer is not leader"), HttpStatus.NOT_FOUND);
+                } else {
+                    UserEntity tempUser = new UserEntity();
+                    for (String i : listMember) {
+                        tempUser = userService.findById(i);
+                        if (tempUser == null || tempUser.getSubject() != subject) {
+                            return new ResponseEntity<>(new ErrorResponse(E400, "MEMBER_ID_IS_NOT_VALID", "Member with id" + i + " is not valid"), HttpStatus.NOT_FOUND);
+                        }
+                        subject.getGroupMember().remove(tempUser);
+                        tempUser.setSubject(null);
+                    }
+                }
+                subject = subjectService.saveSubject(subject);
+                return new ResponseEntity<>(HttpStatus.OK);
+            }
+        } catch (BadCredentialsException e) {
+            return new ResponseEntity<>(new ErrorResponse(E401, "UNAUTHORIZED", "Unauthorized, please login again"), HttpStatus.UNAUTHORIZED);
+        }
     }
 
     @DeleteMapping("/deleteGroupLeader/{subjectId}")
     @ApiOperation("Delete Group Leader")
     public ResponseEntity<Object> deleteGroupLeader(@PathVariable("subjectId") String id, HttpServletRequest req) {
-        String authorizationHeader = req.getHeader(AUTHORIZATION);
-        SuccessResponse response = new SuccessResponse();
-        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-            String accessToken = authorizationHeader.substring("Bearer ".length());
-            if (jwtUtils.validateExpiredToken(accessToken)) {
-                throw new BadCredentialsException("access token is expired");
-            }
-            UserEntity user = userService.findById(UUID.fromString(jwtUtils.getUserNameFromJwtToken(accessToken)).toString());
-            if (user == null) {
-                throw new BadCredentialsException("User not found");
+        UserEntity user;
+        try {
+            user = authenticateHandler.authenticateUser(req);
+            SubjectEntity subject = subjectService.getSubjectById(id);
+            if (subject == null || subject.getGroupLeader() != user) {
+                return new ResponseEntity<>(new ErrorResponse(E404, "SUBJECT_DOES_NOT_EXIST_OR_USER_ID_IS_NOT_LEADER", "Subject does not exist or user is not leader"), HttpStatus.NOT_FOUND);
             } else {
-                SubjectEntity subject = subjectService.getSubjectById(id);
-                if (subject == null || subject.getGroupLeader() != user) {
-                    return new ResponseEntity<>(new ErrorResponse(E404, "SUBJECT_DOES_NOT_EXIST_OR_USER_ID_IS_NOT_LEADER", "Subject does not exist or user is not leader"), HttpStatus.NOT_FOUND);
-                } else {
-                    for (UserEntity tempUser : subject.getGroupMember()) {
-                        tempUser.setSubject(null);
-                        subject.getGroupMember().remove(user);
-                    }
-                    subject.setGroupLeader(null);
-                    user.setSubjectLeader(null);
+                for (UserEntity tempUser : subject.getGroupMember()) {
+                    tempUser.setSubject(null);
+                    subject.getGroupMember().remove(user);
                 }
-                return new ResponseEntity<>(HttpStatus.OK);
+                subject.setGroupLeader(null);
+                user.setSubjectLeader(null);
             }
+            subject = subjectService.saveSubject(subject);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (BadCredentialsException e) {
+            return new ResponseEntity<>(new ErrorResponse(E401, "UNAUTHORIZED", "Unauthorized, please login again"), HttpStatus.UNAUTHORIZED);
         }
-        throw new BadCredentialsException("access token is missing");
     }
 
-    @GetMapping("/getAllSubject")
-    @ApiOperation("Get All Subject")
+    @GetMapping("/getStudentSubject")
+    @ApiOperation("Get Student Subject")
     public ResponseEntity<Object> getStudentSubject(HttpServletRequest req) {
-        String authorizationHeader = req.getHeader(AUTHORIZATION);
-        SuccessResponse response = new SuccessResponse();
-        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-            String accessToken = authorizationHeader.substring("Bearer ".length());
-            if (jwtUtils.validateExpiredToken(accessToken)) {
-                throw new BadCredentialsException("access token is expired");
-            }
-            UserEntity user = userService.findById(UUID.fromString(jwtUtils.getUserNameFromJwtToken(accessToken)).toString());
-            if (user == null) {
-                throw new BadCredentialsException("User not found");
+        UserEntity user;
+        try {
+            user = authenticateHandler.authenticateUser(req);
+            if (user.getSubjectLeader() == null && user.getSubject() == null) {
+                return new ResponseEntity<>(new ErrorResponse(E404, "USER_HAS_NOT_BEEN_ASSIGNED_TO_ANY_PROJECT", "User has not been assigned to any project"), HttpStatus.FOUND);
             } else {
-                if (user.getSubjectLeader() == null && user.getSubject() == null) {
-                    return new ResponseEntity<>(new ErrorResponse(E404, "USER_HAS_NOT_BEEN_ASSIGNED_TO_ANY_PROJECT", "User has not been assigned to any project"), HttpStatus.FOUND);
-                } else {
-                    response.setStatus(HttpStatus.OK.value());
-                    response.setMessage("Get student Subject info success");
-                    response.setSuccess(true);
-
-//                    response.getData().put("info", user.getSubject() == null ? user.getSubjectLeader() : user.getSubject());
-//                    response.getData().put("teamRole", user.getSubject() == null ? "Leader" : "Teammate");
-                    Map<String, Object> map = new HashMap<>();
-                    map.put("info", user.getSubject() == null ? user.getSubjectLeader() : user.getSubject());
-                    map.put("teamRole", user.getSubject() == null ? "Leader" : "Teammate");
-                    return new ResponseEntity<>(map, HttpStatus.OK);
-                }
+                Map<String, Object> map = new HashMap<>();
+                map.put("info", user.getSubject() == null ? user.getSubjectLeader() : user.getSubject());
+                map.put("teamRole", user.getSubject() == null ? "Leader" : "Teammate");
+                return new ResponseEntity<>(map, HttpStatus.OK);
             }
+        } catch (BadCredentialsException e) {
+            return new ResponseEntity<>(new ErrorResponse(E401, "UNAUTHORIZED", "Unauthorized, please login again"), HttpStatus.UNAUTHORIZED);
         }
-        throw new BadCredentialsException("access token is missing");
     }
 
     @GetMapping("/search")
