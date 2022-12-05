@@ -1,15 +1,14 @@
 package com.hcmute.management.controller;
 
 import com.hcmute.management.common.AppUserRole;
+import com.hcmute.management.common.LecturerSort;
 import com.hcmute.management.common.OrderByEnum;
+import com.hcmute.management.common.SubjectSort;
 import com.hcmute.management.handler.AuthenticateHandler;
 import com.hcmute.management.handler.MethodArgumentNotValidException;
 import com.hcmute.management.handler.ValueDuplicateException;
 import com.hcmute.management.mapping.LecturerMapping;
-import com.hcmute.management.model.entity.LecturerEntity;
-import com.hcmute.management.model.entity.RoleEntity;
-import com.hcmute.management.model.entity.SubjectEntity;
-import com.hcmute.management.model.entity.UserEntity;
+import com.hcmute.management.model.entity.*;
 import com.hcmute.management.model.payload.SuccessResponse;
 import com.hcmute.management.model.payload.request.Lecturer.AddNewLecturerRequest;
 import com.hcmute.management.model.payload.request.Lecturer.UpdateLecturerRequest;
@@ -98,54 +97,56 @@ public class LecturerController {
         map.put("content",listLecturer);
         return new ResponseEntity<>(map,HttpStatus.OK);
     }
-    @GetMapping("/paging")
-    @ApiOperation("Get All")
-    public ResponseEntity<PagingResponse> getAllLecturerPaging(@RequestParam(defaultValue = "0",name = "pageIndex") int page,
-                                                          @RequestParam(defaultValue = "5",name = "pageSize") int size)
-    {
-        Page<LecturerEntity> pageLecturer = lecturerService.findAllLecturerPaging(page,size);
-        List<LecturerEntity> listLecturer = pageLecturer.toList();
-        int totalElements = lecturerService.getAllLecturer().size();
-        PagingResponse pagingResponse = new PagingResponse();
-        List<Object> Result = Arrays.asList(listLecturer.toArray());
-        pagingResponse.setTotalPages(pageLecturer.getTotalPages());
-        pagingResponse.setEmpty(listLecturer.size()==0);
-        pagingResponse.setFirst(page==0);
-        pagingResponse.setLast(page == pageLecturer.getTotalPages()-1);
-        pagingResponse.getPageable().put("pageNumber",page);
-        pagingResponse.getPageable().put("pageSize",size);
-        pagingResponse.setSize(size);
-        pagingResponse.setNumberOfElements(listLecturer.size());
-        pagingResponse.setTotalElements((int) pageLecturer.getTotalElements());
-        pagingResponse.setContent(Result);
-        return new ResponseEntity<>(pagingResponse ,HttpStatus.OK);
-    }
+//    @GetMapping("/paging")
+//    @ApiOperation("Get All")
+//    public ResponseEntity<PagingResponse> getAllLecturerPaging(@RequestParam(defaultValue = "0",name = "pageIndex") int page,
+//                                                          @RequestParam(defaultValue = "5",name = "pageSize") int size)
+//    {
+//        Page<LecturerEntity> pageLecturer = lecturerService.findAllLecturerPaging(page,size);
+//        List<LecturerEntity> listLecturer = pageLecturer.toList();
+//        int totalElements = lecturerService.getAllLecturer().size();
+//        PagingResponse pagingResponse = new PagingResponse();
+//        List<Object> Result = Arrays.asList(listLecturer.toArray());
+//        pagingResponse.setTotalPages(pageLecturer.getTotalPages());
+//        pagingResponse.setEmpty(listLecturer.size()==0);
+//        pagingResponse.setFirst(page==0);
+//        pagingResponse.setLast(page == pageLecturer.getTotalPages()-1);
+//        pagingResponse.getPageable().put("pageNumber",page);
+//        pagingResponse.getPageable().put("pageSize",size);
+//        pagingResponse.setSize(size);
+//        pagingResponse.setNumberOfElements(listLecturer.size());
+//        pagingResponse.setTotalElements((int) pageLecturer.getTotalElements());
+//        pagingResponse.setContent(Result);
+//        return new ResponseEntity<>(pagingResponse ,HttpStatus.OK);
+//    }
 
     @GetMapping("/search")
-    @ApiOperation("Search by Criteria (error)")
+    @ApiOperation("Search by Criteria")
     public ResponseEntity<Object> searchByCriteria(
-            @RequestParam(required = false,name = "searchText") String searchKey,
-            @RequestParam(defaultValue = "0",name = "pageIndex") int page,
-            @RequestParam(defaultValue = "5",name = "pageSize") int size,
+            @RequestParam(defaultValue = "",name = "searchText") String searchText,
+            @RequestParam(defaultValue = "0",name = "pageIndex") int pageIndex,
+            @RequestParam(defaultValue = "5",name = "pageSize") int pageSize,
+            @RequestParam(defaultValue = "MSSV") LecturerSort sort,
             @RequestParam(defaultValue = "DESCENDING") OrderByEnum order
     )
     {
-        Page<Object> pageLecturer = lecturerService.searchByCriteria(searchKey,page,size,order.getName());
-        List<Object> listLecturer = pageLecturer.toList();
+        List<LecturerEntity> listLecturer = lecturerService.search(searchText,order,sort,pageIndex,pageSize);
+        int totalElements = listLecturer.size();
+        int totalPage = totalElements % pageSize == 0 ? totalElements / pageSize : totalElements / pageSize + 1;
         PagingResponse pagingResponse = new PagingResponse();
-        Map<String,Object> map = new HashMap<>();
+        Map<String, Object> map = new HashMap<>();
         List<Object> Result = Arrays.asList(listLecturer.toArray());
-        pagingResponse.setTotalPages(pageLecturer.getTotalPages());
-        pagingResponse.setEmpty(listLecturer.size()==0);
-        pagingResponse.setFirst(page==0);
-        pagingResponse.setLast(page == pageLecturer.getTotalPages()-1);
-        pagingResponse.getPageable().put("pageNumber",page);
-        pagingResponse.getPageable().put("pageSize",size);
-        pagingResponse.setSize(size);
+        pagingResponse.setTotalPages(totalPage);
+        pagingResponse.setEmpty(listLecturer.size() == 0);
+        pagingResponse.setFirst(pageIndex == 0);
+        pagingResponse.setLast(pageIndex == totalPage - 1);
+        pagingResponse.getPageable().put("pageIndex", pageIndex);
+        pagingResponse.getPageable().put("pageSize", pageSize);
+        pagingResponse.setSize(pageSize);
         pagingResponse.setNumberOfElements(listLecturer.size());
-        pagingResponse.setTotalElements((int) pageLecturer.getTotalElements());
+        pagingResponse.setTotalElements(totalElements);
         pagingResponse.setContent(Result);
-        return new ResponseEntity<>(pagingResponse ,HttpStatus.OK);
+        return new ResponseEntity<>(pagingResponse, HttpStatus.OK);
     }
 
     @PatchMapping(value = "",consumes = {"multipart/form-data"})
