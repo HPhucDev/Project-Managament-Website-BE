@@ -7,6 +7,7 @@ import com.hcmute.management.handler.ValueDuplicateException;
 import com.hcmute.management.model.entity.*;
 import com.hcmute.management.model.payload.request.Student.AddNewStudentRequest;
 import com.hcmute.management.model.payload.request.Student.ChangeInfoStudentRequest;
+import com.hcmute.management.model.payload.response.PagingResponse;
 import com.hcmute.management.repository.ClassRepository;
 import com.hcmute.management.repository.RoleRepository;
 import com.hcmute.management.repository.StudentRepository;
@@ -21,10 +22,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Service
 @Transactional
@@ -143,8 +141,8 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public List<StudentEntity> search(String keyword, OrderByEnum orderBy, StudentSort order, int pageindex, int pagesize) {
-       List<StudentEntity> list = studentRepository.search(keyword,orderBy,order,pageindex,pagesize);
+    public PagingResponse search(String keyword, OrderByEnum orderBy, StudentSort order, int pageindex, int pagesize) {
+        PagingResponse list = studentRepository.search(keyword,orderBy,order,pageindex,pagesize);
        return list;
     }
 

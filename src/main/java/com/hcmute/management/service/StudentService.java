@@ -7,11 +7,13 @@ import com.hcmute.management.model.entity.StudentEntity;
 import com.hcmute.management.model.entity.UserEntity;
 import com.hcmute.management.model.payload.request.Student.AddNewStudentRequest;
 import com.hcmute.management.model.payload.request.Student.ChangeInfoStudentRequest;
+import com.hcmute.management.model.payload.response.PagingResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 @Component
 @Service
@@ -26,5 +28,5 @@ public interface StudentService {
     StudentEntity updateStudent(ChangeInfoStudentRequest changeInfoStudentRequest, UserEntity user);
 
     StudentEntity findStudentbyUserId(String userid);
-    List<StudentEntity> search(String keyword, OrderByEnum orderBy, StudentSort order, int pageindex, int pagesize);
+    PagingResponse search(String keyword, OrderByEnum orderBy, StudentSort order, int pageindex, int pagesize);
 }
