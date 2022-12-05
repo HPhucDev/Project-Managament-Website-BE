@@ -1,7 +1,11 @@
 package com.hcmute.management.service.impl;
 
+import com.hcmute.management.common.LecturerSort;
+import com.hcmute.management.common.OrderByEnum;
+import com.hcmute.management.common.StudentSort;
 import com.hcmute.management.handler.ValueDuplicateException;
 import com.hcmute.management.model.entity.LecturerEntity;
+import com.hcmute.management.model.entity.StudentEntity;
 import com.hcmute.management.model.entity.SubjectEntity;
 import com.hcmute.management.model.entity.UserEntity;
 import com.hcmute.management.model.payload.request.Lecturer.AddNewLecturerRequest;
@@ -99,10 +103,16 @@ public class LecturerServiceImpl implements LecturerService {
         return pageResult;
     }
     @Override
-    public Page<Object> searchByCriteria(String keyWord, int pageNo, int pageSize, String order) {
+    public Page<Object> searchByCriteria(String keyWord, int pageNo, int pageSize,String sort, String order) {
         Pageable paging = PageRequest.of(pageNo,pageSize);
         Page<Object> pageResult = lecturerRepository.searchByCriteria(keyWord,paging);
         return pageResult;
+    }
+
+    @Override
+    public List<LecturerEntity> search(String keyword, OrderByEnum orderBy, LecturerSort order, int pageindex, int pagesize){
+        List<LecturerEntity> list = lecturerRepository.search(keyword,orderBy,order,pageindex,pagesize);
+        return list;
     }
 }
 

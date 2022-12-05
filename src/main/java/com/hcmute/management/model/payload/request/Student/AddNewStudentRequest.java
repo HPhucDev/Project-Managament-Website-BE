@@ -35,8 +35,6 @@ public class AddNewStudentRequest {
     private String educationprogram;
     @NotNull(message = "Mã lớp học can not be empty")
     private String  classid;
-    @NotNull(message = "Phone number can not be empty")
-    private String phone;
     @NotNull(message = "Email can not be empty")
     private String email;
     @NotNull(message = "Ngày tháng năm không được để trống")

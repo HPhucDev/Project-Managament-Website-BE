@@ -90,7 +90,7 @@ public class StudyController {
             }
             UserEntity foundUser = userService.findByUserName(id);
             if (foundUser != null) {
-                return new ResponseEntity<>(new ErrorResponse(E400, "PHONE_EXISTS", "Phone has been used by another student"), HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>(new ErrorResponse(E400, "USERNAME_EXISTED", "Username has been used by another student"), HttpStatus.BAD_REQUEST);
             }
             PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
             UserEntity addNewUser = new UserEntity(passwordEncoder.encode(id), id);
@@ -378,8 +378,8 @@ public class StudyController {
 
     @GetMapping("/search")
     @ApiOperation("Search by Criteria")
-    public ResponseEntity<Object> search(@RequestParam(defaultValue = "0") int pageIndex,
-                                         @RequestParam(defaultValue = "5") int pageSize, @RequestParam(defaultValue = "DESCENDING") OrderByEnum order, @RequestParam(defaultValue = "MAJOR")StudentSort studentSort, @RequestParam(defaultValue = "") String searchText) {
+    public ResponseEntity<Object> search(@RequestParam(defaultValue = "0",name = "pageIndex") int pageIndex,
+                                         @RequestParam(defaultValue = "5",name = "pageSize") int pageSize, @RequestParam(defaultValue = "DESCENDING") OrderByEnum order, @RequestParam(defaultValue = "MAJOR")StudentSort studentSort, @RequestParam(defaultValue = "",name = "searchText") String searchText) {
         List<StudentEntity> listStudent = studentService.search(searchText,order,studentSort,pageIndex,pageSize);
         int totalElements = listStudent.size();
         int totalPage = totalElements % pageSize == 0 ? totalElements / pageSize : totalElements / pageSize + 1;

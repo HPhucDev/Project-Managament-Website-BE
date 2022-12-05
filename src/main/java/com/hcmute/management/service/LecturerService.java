@@ -1,6 +1,10 @@
 package com.hcmute.management.service;
 
+import com.hcmute.management.common.LecturerSort;
+import com.hcmute.management.common.OrderByEnum;
+import com.hcmute.management.common.StudentSort;
 import com.hcmute.management.model.entity.LecturerEntity;
+import com.hcmute.management.model.entity.StudentEntity;
 import com.hcmute.management.model.entity.UserEntity;
 import com.hcmute.management.model.payload.request.Lecturer.AddNewLecturerRequest;
 import com.hcmute.management.model.payload.request.Lecturer.UpdateLecturerRequest;
@@ -21,5 +25,6 @@ public interface LecturerService {
     void deleteById(String id);
     Page<LecturerEntity> findAllLecturerPaging(int pageNo, int pagSize);
     public LecturerEntity findByUser(UserEntity user);
-    Page<Object> searchByCriteria(String keyWord, int pageNo, int pageSize, String order);
+    Page<Object> searchByCriteria(String keyWord, int pageNo, int pageSize,String sort, String order);
+    List<LecturerEntity> search(String keyword, OrderByEnum orderBy, LecturerSort order, int pageindex, int pagesize);
 }
