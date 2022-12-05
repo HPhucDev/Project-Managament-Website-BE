@@ -90,7 +90,7 @@ public class StudyController {
             }
             UserEntity foundUser = userService.findByUserName(id);
             if (foundUser != null) {
-                return new ResponseEntity<>(new ErrorResponse(E400, "PHONE_EXISTS", "Phone has been used by another student"), HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>(new ErrorResponse(E400, "USERNAME_EXISTED", "Username has been used by another student"), HttpStatus.BAD_REQUEST);
             }
             PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
             UserEntity addNewUser = new UserEntity(passwordEncoder.encode(id), id);
