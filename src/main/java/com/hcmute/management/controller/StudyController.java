@@ -299,8 +299,8 @@ public class StudyController {
 
     @GetMapping("/search")
     @ApiOperation("Search by Criteria")
-    public ResponseEntity<Object> search(@RequestParam(defaultValue = "0") int pageIndex,
-                                         @RequestParam(defaultValue = "5") int pageSize, @RequestParam(defaultValue = "DESCENDING") OrderByEnum order, @RequestParam(defaultValue = "MAJOR") StudentSort studentSort, @RequestParam(defaultValue = "") String searchText) {
+    public ResponseEntity<Object> search(@RequestParam(defaultValue = "0",name = "pageIndex") int pageIndex,
+                                         @RequestParam(defaultValue = "5",name = "pageSize") int pageSize, @RequestParam(defaultValue = "DESCENDING") OrderByEnum order, @RequestParam(defaultValue = "MAJOR") StudentSort studentSort, @RequestParam(defaultValue = "",name = "searchText") String searchText) {
         PagingResponse pagingResponse = studentService.search(searchText, order, studentSort, pageIndex, pageSize);
         return new ResponseEntity<>(pagingResponse, HttpStatus.OK);
     }

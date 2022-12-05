@@ -3,8 +3,12 @@ package com.hcmute.management.repository.custom.impl;
 import com.hcmute.management.common.LecturerSort;
 import com.hcmute.management.common.OrderByEnum;
 import com.hcmute.management.model.entity.LecturerEntity;
+import com.hcmute.management.model.entity.StudentEntity;
+import com.hcmute.management.model.payload.response.PagingResponse;
 import com.hcmute.management.repository.custom.LecturerRepositoryCustom;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -12,15 +16,14 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class LecturerRepositoryCustomImpl implements LecturerRepositoryCustom {
     @PersistenceContext
     private EntityManager entityManager;
 
     @Override
-    public List<LecturerEntity> search(String searchText, OrderByEnum orderBy, LecturerSort order, int pageindex, int pagesize) {
+    public PagingResponse search(String searchText, OrderByEnum orderBy, LecturerSort order, int pageindex, int pagesize) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
 
         //Create filter query and count query
@@ -62,8 +65,25 @@ public class LecturerRepositoryCustomImpl implements LecturerRepositoryCustom {
         }
 
         query.select(root).where(predicates.toArray(new Predicate[predicates.size()]));
+        List<LecturerEntity> listLecturersTotal =
+                entityManager.createQuery(query).getResultList();
         List<LecturerEntity> listLecturers =
                 entityManager.createQuery(query).setFirstResult((pageindex) * pagesize).setMaxResults(pagesize).getResultList();
-        return listLecturers;
+        int totalElements = listLecturersTotal.size();
+        int totalPage = totalElements % pagesize == 0 ? totalElements / pagesize : totalElements / pagesize + 1;
+        PagingResponse pagingResponse = new PagingResponse();
+        Map<String, Object> map = new HashMap<>();
+        List<Object> Result = Arrays.asList(listLecturers.toArray());
+        pagingResponse.setTotalPages(totalPage);
+        pagingResponse.setEmpty(listLecturers.size() == 0);
+        pagingResponse.setFirst(pageindex == 0);
+        pagingResponse.setLast(pageindex == totalPage - 1);
+        pagingResponse.getPageable().put("pageNumber", pageindex);
+        pagingResponse.getPageable().put("pageSize", pagesize);
+        pagingResponse.setSize(pagesize);
+        pagingResponse.setNumberOfElements(totalElements);
+        pagingResponse.setTotalElements(totalElements);
+        pagingResponse.setContent(Result);
+        return pagingResponse;
     }
 }

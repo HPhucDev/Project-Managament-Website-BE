@@ -10,6 +10,7 @@ import com.hcmute.management.model.entity.SubjectEntity;
 import com.hcmute.management.model.entity.UserEntity;
 import com.hcmute.management.model.payload.request.Lecturer.AddNewLecturerRequest;
 import com.hcmute.management.model.payload.request.Lecturer.UpdateLecturerRequest;
+import com.hcmute.management.model.payload.response.PagingResponse;
 import com.hcmute.management.repository.LecturerRepository;
 import com.hcmute.management.repository.UserRepository;
 import com.hcmute.management.service.LecturerService;
@@ -110,9 +111,9 @@ public class LecturerServiceImpl implements LecturerService {
     }
 
     @Override
-    public List<LecturerEntity> search(String keyword, OrderByEnum orderBy, LecturerSort order, int pageindex, int pagesize){
-        List<LecturerEntity> list = lecturerRepository.search(keyword,orderBy,order,pageindex,pagesize);
-        return list;
+    public PagingResponse search(String keyword, OrderByEnum orderBy, LecturerSort order, int pageindex, int pagesize){
+        PagingResponse page = lecturerRepository.search(keyword,orderBy,order,pageindex,pagesize);
+        return page;
     }
 }
 
