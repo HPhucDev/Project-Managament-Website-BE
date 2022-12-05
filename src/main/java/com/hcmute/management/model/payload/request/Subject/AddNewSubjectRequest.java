@@ -46,6 +46,7 @@ public class AddNewSubjectRequest {
     @Max(value = 4,message = "Group cannot have more than 4 student")
     @Min(value = 0)
     private int groupCap;
+    private int groupLectureCap;
     private boolean regFromOtherMajor;
     @NotEmpty(message = "Major " + EMPTY_MESSAGE)
     private String major;

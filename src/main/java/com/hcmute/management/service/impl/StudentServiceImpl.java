@@ -1,6 +1,9 @@
 package com.hcmute.management.service.impl;
 
 import com.hcmute.management.common.AppUserRole;
+import com.hcmute.management.common.OrderByEnum;
+import com.hcmute.management.common.StudentSort;
+import com.hcmute.management.handler.ValueDuplicateException;
 import com.hcmute.management.model.entity.*;
 import com.hcmute.management.model.payload.request.Student.AddNewStudentRequest;
 import com.hcmute.management.model.payload.request.Student.ChangeInfoStudentRequest;
@@ -53,19 +56,18 @@ public class StudentServiceImpl implements StudentService {
         else return null;
     }
 
+
+
     @Override
-    public StudentEntity saveStudent(AddNewStudentRequest addNewStudentRequest) {
-        UserEntity user = new UserEntity();
-        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-        RoleEntity roleEntity = roleRepository.findByName(AppUserRole.ROLE_STUDENT);
-        Set<RoleEntity> roles = new HashSet<>();
-        roles.add(roleEntity);
-        user.setRoles(roles);
+    public StudentEntity saveStudent(AddNewStudentRequest addNewStudentRequest, UserEntity user) {
+        StudentEntity student = new StudentEntity();
         user.setFullName(addNewStudentRequest.getFullname());
         user.setGender(addNewStudentRequest.getSex());
-        user.setUserName(addNewStudentRequest.getPhone());
-        user.setPassword(passwordEncoder.encode(addNewStudentRequest.getMssv()));
-        StudentEntity student = new StudentEntity();
+        Optional<UserEntity> foundUser = userRepository.findByEmail(addNewStudentRequest.getEmail());
+        if (!userRepository.findByEmail(addNewStudentRequest.getEmail()).isEmpty())
+            throw new ValueDuplicateException("This email has already existed");
+        user.setBirthDay(addNewStudentRequest.getBirthday());
+        user.setEmail(addNewStudentRequest.getEmail());
         student.setId(addNewStudentRequest.getMssv());
         student.setUser(userRepository.save(user));
         student.setMajor(addNewStudentRequest.getMajor());
@@ -92,7 +94,33 @@ public class StudentServiceImpl implements StudentService {
            return null;
         }
         user.setFullName(changeInfoStudentRequest.getFullname());
-        user.setGender(changeInfoStudentRequest.getSex());
+        user.setGender(changeInfoStudentRequest.getGender());
+        student.setUser(userRepository.save(user));
+        student.setMajor(changeInfoStudentRequest.getMajor());
+        student.setEducation_program(changeInfoStudentRequest.getEducationprogram());
+        student.setSchool_year(changeInfoStudentRequest.getSchoolyear());
+        ClassEntity classEntity = classRepository.findById(changeInfoStudentRequest.getClassid()).get();
+        if(classEntity == null)
+        {
+            throw new RuntimeException("Error: Lớp học không tồn tại");
+        }
+        student.setClasses(classEntity);
+        return studentRepository.save(student);
+    }
+
+    @Override
+    public StudentEntity updateStudent(ChangeInfoStudentRequest changeInfoStudentRequest, UserEntity user) {
+        StudentEntity student = findByUserId(user);
+        if(student == null)
+        {
+            return null;
+        }
+        user.setFullName(changeInfoStudentRequest.getFullname());
+        user.setGender(changeInfoStudentRequest.getGender());
+        if (!userRepository.findByEmail(changeInfoStudentRequest.getEmail()).isEmpty() && user.getEmail()!= changeInfoStudentRequest.getEmail())
+            throw new ValueDuplicateException("This email has already existed");
+        user.setEmail(changeInfoStudentRequest.getEmail());
+        user.setBirthDay(changeInfoStudentRequest.getBirthday());
         student.setUser(userRepository.save(user));
         student.setMajor(changeInfoStudentRequest.getMajor());
         student.setEducation_program(changeInfoStudentRequest.getEducationprogram());
@@ -115,9 +143,9 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public Page<StudentEntity> search(int pageNo, int pagSize) {
-        Pageable paging = PageRequest.of(pageNo,pagSize);
-        Page<StudentEntity> pageResult =studentRepository.findAllStudentPaging(paging);
-        return pageResult;
+    public List<StudentEntity> search(String keyword, OrderByEnum orderBy, StudentSort order, int pageindex, int pagesize) {
+       List<StudentEntity> list = studentRepository.search(keyword,orderBy,order,pageindex,pagesize);
+       return list;
     }
+
 }

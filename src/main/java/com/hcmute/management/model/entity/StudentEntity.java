@@ -1,8 +1,11 @@
 package com.hcmute.management.model.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.swagger.annotations.ApiModelProperty;
 import org.springframework.data.rest.core.annotation.RestResource;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -23,7 +26,9 @@ public class StudentEntity {
     @OneToOne()
     @JoinColumn(name = "user_id", referencedColumnName = "user_id")
     private UserEntity user;
-
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss", shape = JsonFormat.Shape.STRING)
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    @ApiModelProperty(required = true, example = "2021-08-20T00:00:00")
     @Column(name = "\"school_year\"")
     private Date school_year;
 
