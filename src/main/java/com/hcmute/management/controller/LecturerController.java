@@ -130,22 +130,7 @@ public class LecturerController {
             @RequestParam(defaultValue = "DESCENDING") OrderByEnum order
     )
     {
-        List<LecturerEntity> listLecturer = lecturerService.search(searchText,order,sort,pageIndex,pageSize);
-        int totalElements = listLecturer.size();
-        int totalPage = totalElements % pageSize == 0 ? totalElements / pageSize : totalElements / pageSize + 1;
-        PagingResponse pagingResponse = new PagingResponse();
-        Map<String, Object> map = new HashMap<>();
-        List<Object> Result = Arrays.asList(listLecturer.toArray());
-        pagingResponse.setTotalPages(totalPage);
-        pagingResponse.setEmpty(listLecturer.size() == 0);
-        pagingResponse.setFirst(pageIndex == 0);
-        pagingResponse.setLast(pageIndex == totalPage - 1);
-        pagingResponse.getPageable().put("pageIndex", pageIndex);
-        pagingResponse.getPageable().put("pageSize", pageSize);
-        pagingResponse.setSize(pageSize);
-        pagingResponse.setNumberOfElements(listLecturer.size());
-        pagingResponse.setTotalElements(totalElements);
-        pagingResponse.setContent(Result);
+        PagingResponse pagingResponse = lecturerService.search(searchText,order,sort,pageIndex,pageSize);
         return new ResponseEntity<>(pagingResponse, HttpStatus.OK);
     }
 

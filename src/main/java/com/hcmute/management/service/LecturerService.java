@@ -8,6 +8,7 @@ import com.hcmute.management.model.entity.StudentEntity;
 import com.hcmute.management.model.entity.UserEntity;
 import com.hcmute.management.model.payload.request.Lecturer.AddNewLecturerRequest;
 import com.hcmute.management.model.payload.request.Lecturer.UpdateLecturerRequest;
+import com.hcmute.management.model.payload.response.PagingResponse;
 import org.apache.catalina.User;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
@@ -26,5 +27,5 @@ public interface LecturerService {
     Page<LecturerEntity> findAllLecturerPaging(int pageNo, int pagSize);
     public LecturerEntity findByUser(UserEntity user);
     Page<Object> searchByCriteria(String keyWord, int pageNo, int pageSize,String sort, String order);
-    List<LecturerEntity> search(String keyword, OrderByEnum orderBy, LecturerSort order, int pageindex, int pagesize);
+    PagingResponse search(String keyword, OrderByEnum orderBy, LecturerSort order, int pageindex, int pagesize);
 }
