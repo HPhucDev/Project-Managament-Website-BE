@@ -1,7 +1,9 @@
 package com.hcmute.management.controller;
 
+import com.hcmute.management.common.AppUserRole;
 import com.hcmute.management.handler.AuthenticateHandler;
 import com.hcmute.management.handler.MethodArgumentNotValidException;
+import com.hcmute.management.handler.ValueDuplicateException;
 import com.hcmute.management.model.entity.*;
 import com.hcmute.management.model.payload.SuccessResponse;
 import com.hcmute.management.model.payload.request.Student.AddNewStudentRequest;
@@ -21,9 +23,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 
 import javax.servlet.http.HttpServletRequest;
@@ -68,48 +73,60 @@ public class StudyController {
         return new ResponseEntity<>(map, HttpStatus.OK);
     }
 
-    @PostMapping("")
-    @ResponseBody
+    @PostMapping(value = "", consumes = {"multipart/form-data"})
     @ApiOperation("Create")
-    public ResponseEntity<Object> createStudent(HttpServletRequest httpServletRequest, @RequestBody AddNewStudentRequest addNewStudentRequest, BindingResult bindingResult) throws Exception {
+    public ResponseEntity<Object> createStudent(HttpServletRequest httpServletRequest, @Valid AddNewStudentRequest addNewStudentRequest, @RequestPart MultipartFile file, BindingResult bindingResult) throws Exception {
         if (bindingResult.hasErrors()) {
             throw new MethodArgumentNotValidException(bindingResult);
         }
-        String authorizationHeader = httpServletRequest.getHeader(AUTHORIZATION);
-        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-            String accessToken = authorizationHeader.substring("Bearer ".length());
-            if (jwtUtils.validateExpiredToken(accessToken)) {
-                throw new BadCredentialsException("Access token is expired");
+        UserEntity user;
+        try {
+            user = authenticateHandler.authenticateUser(httpServletRequest);
+            String id = addNewStudentRequest.getMssv();
+            StudentEntity findStudent = studentService.findById(addNewStudentRequest.getMssv());
+            if (findStudent != null) {
+                return new ResponseEntity<>(new ErrorResponse(E400, "ID_EXISTS", "Id has been used"), HttpStatus.BAD_REQUEST);
             }
-            if (studentService.findById(addNewStudentRequest.getMssv()) == null) {
-                StudentEntity student = studentService.saveStudent(addNewStudentRequest);
-                return new ResponseEntity<>(student, HttpStatus.OK);
-            } else
-                return new ResponseEntity<>(new ErrorResponse(E400, "STUDENT_ID_EXISTED", "Student id existed"), HttpStatus.BAD_REQUEST);
+            UserEntity foundUser = userService.findByUserName(id);
+            if (foundUser != null) {
+                return new ResponseEntity<>(new ErrorResponse(E400, "USERNAME_EXISTED", "Username has been used by another student"), HttpStatus.BAD_REQUEST);
+            }
+            PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+            UserEntity addNewUser = new UserEntity(passwordEncoder.encode(id), id);
+            addNewUser = userService.register(addNewUser, AppUserRole.ROLE_STUDENT);
+            StudentEntity student = studentService.saveStudent(addNewStudentRequest, addNewUser);
+            userService.addUserImage(file, addNewUser);
+            return new ResponseEntity<>(student, HttpStatus.OK);
+        } catch (BadCredentialsException e) {
+            return new ResponseEntity<>(new ErrorResponse(E401, "UNAUTHORIZED", "Unauthorized, please login again"), HttpStatus.UNAUTHORIZED);
+        } catch (ValueDuplicateException e) {
+            return new ResponseEntity<>(new ErrorResponse(E400, "EMAIL_ALREADY_EXISTS", e.getMessage()), HttpStatus.BAD_REQUEST);
         }
-        throw new BadCredentialsException("Access token is missing");
     }
 
-    @PatchMapping("/{id}")
-    @ResponseBody
+
+    @PatchMapping(value = "", consumes = {"multipart/form-data"})
     @ApiOperation("Update")
-    public ResponseEntity<Object> updateStudentById(HttpServletRequest httpServletRequest, @RequestBody @Valid ChangeInfoStudentRequest changeInfoStudentRequest, @PathVariable("id") String userid, BindingResult bindingResult) throws Exception {
+    public ResponseEntity<Object> updateStudentById(HttpServletRequest httpServletRequest,@Valid ChangeInfoStudentRequest changeInfoStudentRequest,@RequestPart MultipartFile file, BindingResult bindingResult) throws Exception {
         if (bindingResult.hasErrors()) {
             throw new MethodArgumentNotValidException(bindingResult);
         }
-        String authorizationHeader = httpServletRequest.getHeader(AUTHORIZATION);
-        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-            String accessToken = authorizationHeader.substring("Bearer ".length());
-            if (jwtUtils.validateExpiredToken(accessToken)) {
-                throw new BadCredentialsException("Access token is expired");
+        UserEntity user;
+        try {
+            user = authenticateHandler.authenticateUser(httpServletRequest);
+            StudentEntity student = studentService.findByUserId(user);
+            if (student == null) {
+                return new ResponseEntity<>(new ErrorResponse(E400, "YOU_ARE_NOT_A_STUDENT", "You aren't a Student"), HttpStatus.BAD_REQUEST);
+
             }
-            if (studentService.findStudentbyUserId(userid) != null) {
-                StudentEntity student = studentService.changeInf(changeInfoStudentRequest, userid);
-                return new ResponseEntity<>(student, HttpStatus.OK);
-            } else
-                return new ResponseEntity<>(new ErrorResponse(E400, "STUDENT_ID_EXISTED", "Student id existed"), HttpStatus.BAD_REQUEST);
+            StudentEntity updateStudent = studentService.updateStudent(changeInfoStudentRequest, user);
+            if (!file.isEmpty()) {
+                userService.addUserImage(file, user);
+            }
+            return new ResponseEntity<>(updateStudent, HttpStatus.OK);
+        } catch (BadCredentialsException e) {
+            return new ResponseEntity<>(new ErrorResponse(E401, "UNAUTHORIZED", "Unauthorized, please login again"), HttpStatus.UNAUTHORIZED);
         }
-        throw new BadCredentialsException("Access token is missing");
     }
 
     @DeleteMapping("/{id}")
@@ -249,9 +266,9 @@ public class StudyController {
         }
     }
 
-    @DeleteMapping("/deleteGroupLeader/{id}")
+    @DeleteMapping("/deleteGroupLeader/{subjectId}")
     @ApiOperation("Delete Group Leader")
-    public ResponseEntity<Object> deleteGroupLeader(@PathVariable("id") String id, HttpServletRequest req) {
+    public ResponseEntity<Object> deleteGroupLeader(@PathVariable("subjectId") String id, HttpServletRequest req) {
         UserEntity user;
         try {
             user= authenticateHandler.authenticateUser(req);
@@ -276,60 +293,48 @@ public class StudyController {
 
     }
 
-    @GetMapping("/getAllSubject")
-    @ApiOperation("Get All Subject")
-    public ResponseEntity<SuccessResponse> getStudentSubject(HttpServletRequest req) {
-        String authorizationHeader = req.getHeader(AUTHORIZATION);
-        SuccessResponse response = new SuccessResponse();
-        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-            String accessToken = authorizationHeader.substring("Bearer ".length());
-            if (jwtUtils.validateExpiredToken(accessToken)) {
-                throw new BadCredentialsException("access token is expired");
-            }
-            UserEntity user = userService.findById(UUID.fromString(jwtUtils.getUserNameFromJwtToken(accessToken)).toString());
-            if (user == null) {
-                throw new BadCredentialsException("User not found");
-            } else {
+    @GetMapping("/getStudentSubject")
+    @ApiOperation("Get Student Subject")
+    public ResponseEntity<Object> getStudentSubject(HttpServletRequest req) {
+       UserEntity user;
+        try {
+                user=authenticateHandler.authenticateUser(req);
                 if (user.getSubjectLeader() == null && user.getSubject() == null) {
-                    response.setStatus(HttpStatus.FOUND.value());
-                    response.setMessage("User has not been assigned to any project");
-                    response.setSuccess(false);
-                    return new ResponseEntity<>(response, HttpStatus.FOUND);
+                    return new ResponseEntity<>(new ErrorResponse(E400,"USER_NOT_IN_PROJECT","User has not been assigned to any project"), HttpStatus.FOUND);
                 } else {
-                    response.setStatus(HttpStatus.OK.value());
-                    response.setMessage("Get student Subject info success");
-                    response.setSuccess(true);
-                    response.getData().put("info", user.getSubject() == null ? user.getSubjectLeader() : user.getSubject());
-                    response.getData().put("teamRole", user.getSubject() == null ? "Leader" : "Teammate");
-                    return new ResponseEntity<>(response, HttpStatus.OK);
+                    Map<String,Object> map = new HashMap<>();
+                    map.put("info",user.getSubject() == null ? user.getSubjectLeader() : user.getSubject());
+                    map.put("teamRole",user.getSubject() == null ? "Leader" : "Teammate");
+                    return new ResponseEntity<>(map, HttpStatus.OK);
                 }
             }
-        }
-        throw new BadCredentialsException("access token is missing");
+        catch (BadCredentialsException e)
+    {
+        return new ResponseEntity<>(new ErrorResponse(E401,"UNAUTHORIZED","Unauthorized, please login again"), HttpStatus.UNAUTHORIZED);
+    }
     }
 
-    @GetMapping("/search")
-    @ApiOperation("Search by Criteria")
-    public ResponseEntity<Object> search(@RequestParam(defaultValue = "0") int page,
-                                         @RequestParam(defaultValue = "5") int size) {
-        Page<StudentEntity> studentEntityPage = studentService.search(page, size);
-        List<StudentEntity> listStudent = studentEntityPage.toList();
-        int totalElements = studentService.findAllStudent().size();
-        int totalPage = totalElements % size == 0 ? totalElements / size : totalElements / size + 1;
-        PagingResponse pagingResponse = new PagingResponse();
-        Map<String, Object> map = new HashMap<>();
-        List<Object> Result = Arrays.asList(listStudent.toArray());
-        pagingResponse.setTotalPages(totalPage);
-        pagingResponse.setEmpty(listStudent.size() == 0);
-        pagingResponse.setFirst(page == 0);
-        pagingResponse.setLast(page == totalPage - 1);
-        pagingResponse.getPageable().put("pageNumber", page);
-        pagingResponse.getPageable().put("pageSize", size);
-        pagingResponse.setSize(size);
-        pagingResponse.setNumberOfElements(listStudent.size());
-        pagingResponse.setTotalElements(totalElements);
-        pagingResponse.setContent(Result);
-        return new ResponseEntity<>(pagingResponse, HttpStatus.OK);
-    }
+//    @GetMapping("/search")
+//    @ApiOperation("Search by Criteria")
+//    public ResponseEntity<Object> search(@RequestParam(defaultValue = "0",name = "pageIndex") int pageIndex,
+//                                         @RequestParam(defaultValue = "5",name = "pageSize") int pageSize, @RequestParam(defaultValue = "DESCENDING") OrderByEnum order, @RequestParam(defaultValue = "MAJOR")StudentSort studentSort, @RequestParam(defaultValue = "",name = "searchText") String searchText) {
+//        List<StudentEntity> listStudent = studentService.search(searchText,order,studentSort,pageIndex,pageSize);
+//        int totalElements = listStudent.size();
+//        int totalPage = totalElements % pageSize == 0 ? totalElements / pageSize : totalElements / pageSize + 1;
+//        PagingResponse pagingResponse = new PagingResponse();
+//        Map<String, Object> map = new HashMap<>();
+//        List<Object> Result = Arrays.asList(listStudent.toArray());
+//        pagingResponse.setTotalPages(totalPage);
+//        pagingResponse.setEmpty(listStudent.size() == 0);
+//        pagingResponse.setFirst(pageIndex == 0);
+//        pagingResponse.setLast(pageIndex == totalPage - 1);
+//        pagingResponse.getPageable().put("pageIndex", pageIndex);
+//        pagingResponse.getPageable().put("pageSize", pageSize);
+//        pagingResponse.setSize(pageSize);
+//        pagingResponse.setNumberOfElements(listStudent.size());
+//        pagingResponse.setTotalElements(totalElements);
+//        pagingResponse.setContent(Result);
+//        return new ResponseEntity<>(pagingResponse, HttpStatus.OK);
+//    }
 }
 

@@ -99,12 +99,12 @@ public class StudentServiceImpl implements StudentService {
         student.setMajor(changeInfoStudentRequest.getMajor());
         student.setEducation_program(changeInfoStudentRequest.getEducationprogram());
         student.setSchool_year(changeInfoStudentRequest.getSchoolyear());
-        ClassEntity classEntity = classRepository.findById(changeInfoStudentRequest.getClassid()).get();
-        if(classEntity == null)
+        Optional<ClassEntity> classEntity = classRepository.findById(changeInfoStudentRequest.getClassid());
+        if(classEntity.isEmpty())
         {
             throw new RuntimeException("Error: Lớp học không tồn tại");
         }
-        student.setClasses(classEntity);
+        student.setClasses(classEntity.get());
         return studentRepository.save(student);
     }
 

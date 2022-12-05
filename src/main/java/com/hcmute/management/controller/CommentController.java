@@ -61,7 +61,7 @@ public class CommentController {
             user = authenticateHandler.authenticateUser(req);
 
 
-            ProgressEntity findProgress =progressService.findById(addNewCommentRequest.getProgressid());
+            ProgressEntity findProgress =progressService.findById(addNewCommentRequest.getProgressId());
             if(findProgress==null){
                 return new ResponseEntity<>(new ErrorResponse(E400,"PROGRESS_NOT_FOUND","Can't find Progress with id provided"),HttpStatus.BAD_REQUEST);
             }
@@ -71,9 +71,9 @@ public class CommentController {
             return new ResponseEntity<>(new ErrorResponse(E401,"UNAUTHORIZED","Unauthorized, please login again"), HttpStatus.UNAUTHORIZED);
         }
     }
-    @PatchMapping("/{id}")
+    @PatchMapping("/{commentId}")
     @ApiOperation("Update")
-    public ResponseEntity<Object> updateComment(@PathVariable("id") String id,@Valid @RequestBody UpdateCommentRequest updateCommentRequest, BindingResult errors, HttpServletRequest req) throws Exception {
+    public ResponseEntity<Object> updateComment(@PathVariable("commentId") String id,@Valid @RequestBody UpdateCommentRequest updateCommentRequest, BindingResult errors, HttpServletRequest req) throws Exception {
         if (errors.hasErrors()) {
             throw new MethodArgumentNotValidException(errors);
         }
@@ -88,15 +88,15 @@ public class CommentController {
             if (findComment.getUserComment() != user) {
                 return new ResponseEntity<>(new ErrorResponse(E400, "INVALID_COMMENT_OWNER", "This is not your Comment"), HttpStatus.BAD_REQUEST);
             }
-            CommentEntity updateComment = commentService.updateComment(updateCommentRequest, user);
+            CommentEntity updateComment = commentService.updateComment(id,updateCommentRequest, user);
             return new ResponseEntity<>(updateComment, HttpStatus.OK);
         } catch (BadCredentialsException e) {
             return new ResponseEntity<>(new ErrorResponse(E401, "UNAUTHORIZED", "Unauthorized, please login again"), HttpStatus.UNAUTHORIZED);
         }
     }
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{commentId}")
     @ApiOperation("Delete by id")
-    public ResponseEntity<Object>deleteComment(@PathVariable("id") String id,HttpServletRequest req){
+    public ResponseEntity<Object>deleteComment(@PathVariable("commentId") String id,HttpServletRequest req){
         UserEntity user;
         try {
             user = authenticateHandler.authenticateUser(req);

@@ -32,7 +32,7 @@ public class CommentServiceImpl implements CommentService {
     public CommentEntity saveComment(AddNewCommentRequest addNewCommentRequest, UserEntity user) {
         CommentEntity comment =new CommentEntity();
         comment.setMessage(addNewCommentRequest.getMessage());
-        comment.setProgressComment(progressService.findById(addNewCommentRequest.getProgressid()));
+        comment.setProgressComment(progressService.findById(addNewCommentRequest.getProgressId()));
         comment.setTime(LocalDateTime.now(ZoneId.of("GMT+07:00")));
         comment.setUserComment(user);
         return commentRepository.save(comment);
@@ -54,8 +54,8 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public CommentEntity updateComment(UpdateCommentRequest updateCommentRequest,UserEntity user) {
-        CommentEntity comment =findById(updateCommentRequest.getId());
+    public CommentEntity updateComment(String id,UpdateCommentRequest updateCommentRequest,UserEntity user) {
+        CommentEntity comment =findById(id);
         comment.setMessage(updateCommentRequest.getMessage());
         comment.setTime(LocalDateTime.now());
         return commentRepository.save(comment);

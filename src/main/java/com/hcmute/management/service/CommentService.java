@@ -20,7 +20,7 @@ public interface CommentService {
     List<CommentEntity> findAllComment();
     List<CommentEntity> getCommentByProgressId(String id);
     CommentEntity findById(String id);
-    CommentEntity updateComment(UpdateCommentRequest updateCommentRequest,UserEntity user);
+    CommentEntity updateComment(String id,UpdateCommentRequest updateCommentRequest,UserEntity user);
     Page<CommentEntity> findAllCommentPaging(int pageNo, int pagSize);
     void deleteById(String id);
 }

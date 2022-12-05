@@ -13,5 +13,5 @@ public class AddNewCommentRequest {
     @NotEmpty(message = "Nội dung không được để trống")
     private String message;
     @NotEmpty(message="ProgressId ")
-    private  String progressid;
+    private  String progressId;
 }
