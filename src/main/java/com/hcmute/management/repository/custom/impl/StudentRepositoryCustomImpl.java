@@ -4,6 +4,7 @@ import com.hcmute.management.common.OrderByEnum;
 import com.hcmute.management.common.StudentSort;
 import com.hcmute.management.model.entity.StudentEntity;
 import com.hcmute.management.model.entity.UserEntity;
+import com.hcmute.management.model.payload.response.PagingResponse;
 import com.hcmute.management.repository.custom.StudentRepositoryCustom;
 import com.mysql.cj.log.Log;
 import org.hibernate.Criteria;
@@ -16,15 +17,14 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class StudentRepositoryCustomImpl implements StudentRepositoryCustom {
     @PersistenceContext
     private EntityManager entityManager;
 
     @Override
-    public List<StudentEntity> search(String searchText, OrderByEnum orderBy, StudentSort order, int pageindex, int pagesize) {
+    public PagingResponse search(String searchText, OrderByEnum orderBy, StudentSort order, int pageindex, int pagesize) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
 
         //Create filter query and count query
@@ -67,7 +67,24 @@ public class StudentRepositoryCustomImpl implements StudentRepositoryCustom {
 
         query.select(root).where(predicates.toArray(new Predicate[predicates.size()]));
         List<StudentEntity> listStudents =
-                entityManager.createQuery(query).setFirstResult((pageindex) * pagesize).setMaxResults(pagesize).getResultList();
-        return listStudents;
+                entityManager.createQuery(query).getResultList();
+        List<StudentEntity> listStudentsSort =
+                entityManager.createQuery(query).setFirstResult(pageindex * pagesize).setMaxResults(pagesize).getResultList();
+        int totalElements = listStudents.size();
+        int totalPage = totalElements % pagesize == 0 ? totalElements / pagesize : totalElements / pagesize + 1;
+        PagingResponse pagingResponse = new PagingResponse();
+        Map<String, Object> map = new HashMap<>();
+        List<Object> Result = Arrays.asList(listStudentsSort.toArray());
+        pagingResponse.setTotalPages(totalPage);
+        pagingResponse.setEmpty(listStudentsSort.size() == 0);
+        pagingResponse.setFirst(pageindex == 0);
+        pagingResponse.setLast(pageindex == totalPage - 1);
+        pagingResponse.getPageable().put("pageIndex", pageindex);
+        pagingResponse.getPageable().put("pageSize", pagesize);
+        pagingResponse.setSize(pagesize);
+        pagingResponse.setNumberOfElements(listStudentsSort.size());
+        pagingResponse.setTotalElements(totalElements);
+        pagingResponse.setContent(Result);
+        return pagingResponse;
     }
 }

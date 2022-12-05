@@ -5,6 +5,7 @@ import com.hcmute.management.common.StudentSort;
 import com.hcmute.management.model.entity.LecturerEntity;
 import com.hcmute.management.model.entity.StudentEntity;
 import com.hcmute.management.model.entity.UserEntity;
+import com.hcmute.management.model.payload.response.PagingResponse;
 import com.hcmute.management.repository.custom.StudentRepositoryCustom;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -14,6 +15,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 import java.util.List;
+import java.util.Map;
 
 @EnableJpaRepositories
 public interface StudentRepository extends JpaRepository<StudentEntity, String>, StudentRepositoryCustom {
@@ -29,5 +31,5 @@ public interface StudentRepository extends JpaRepository<StudentEntity, String>,
             nativeQuery = true)
     Page<StudentEntity> findAllStudentPaging(Pageable pageable);
 
-    List<StudentEntity> search(String searchText, OrderByEnum orderBy, StudentSort order, int pageindex, int pagesize);
+    PagingResponse search(String searchText, OrderByEnum orderBy, StudentSort order, int pageindex, int pagesize);
 }

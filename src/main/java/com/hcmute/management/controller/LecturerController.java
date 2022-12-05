@@ -43,7 +43,7 @@ import static com.google.common.net.HttpHeaders.AUTHORIZATION;
 
 @ComponentScan
 @RestController
-@RequestMapping("/api/lecture")
+@RequestMapping("/api/lecturer")
 @RequiredArgsConstructor
 public class LecturerController {
     private final LecturerService lecturerService;

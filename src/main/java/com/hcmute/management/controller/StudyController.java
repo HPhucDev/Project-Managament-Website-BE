@@ -107,7 +107,7 @@ public class StudyController {
 
     @PatchMapping(value = "", consumes = {"multipart/form-data"})
     @ApiOperation("Update")
-    public ResponseEntity<Object> updateStudentById(HttpServletRequest httpServletRequest,@Valid ChangeInfoStudentRequest changeInfoStudentRequest,@RequestPart MultipartFile file, BindingResult bindingResult) throws Exception {
+    public ResponseEntity<Object> updateStudentById(HttpServletRequest httpServletRequest, @Valid ChangeInfoStudentRequest changeInfoStudentRequest, @RequestPart MultipartFile file, BindingResult bindingResult) throws Exception {
         if (bindingResult.hasErrors()) {
             throw new MethodArgumentNotValidException(bindingResult);
         }
@@ -227,9 +227,6 @@ public class StudyController {
                             for (String i : listMember) {
                                 tempUser = userService.findById(i);
                                 if (tempUser == null || tempUser.getSubject() != null || tempUser.getSubjectLeader() != null) {
-                                    response.setStatus(HttpStatus.FOUND.value());
-                                    response.setMessage("Member with id " + i + " is not valid");
-                                    response.setSuccess(false);
                                     return new ResponseEntity<>(new ErrorResponse(E404, "ID_NOT_VALID", "Member with id " + i + " is not valid"), HttpStatus.NOT_FOUND);
                                 }
                                 subject.getGroupMember().add(tempUser);
@@ -238,12 +235,10 @@ public class StudyController {
                         }
                     }
                     subject = subjectService.saveSubject(subject);
-                    response.setMessage("Assign subject group member success");
-                    response.setSuccess(true);
-                    response.getData().put("subjectName", subject.getName());
-                    response.getData().put("listUser", subject.getGroupMember());
-                    response.setStatus(HttpStatus.OK.value());
-                    return new ResponseEntity<>(response, HttpStatus.OK);
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("subjectName", subject.getName());
+                    map.put("listUser", subject.getGroupMember());
+                    return new ResponseEntity<>(map, HttpStatus.OK);
                 }
             }
         }
@@ -252,7 +247,7 @@ public class StudyController {
 
     @DeleteMapping("/deleteGroupMember/{id}")
     @ApiOperation("Delete Group Member")
-    public ResponseEntity<SuccessResponse> deleteGroupMember(@RequestParam(value = "listMember") List<String> listMember, @PathVariable("id") String id, HttpServletRequest req) {
+    public ResponseEntity<Object> deleteGroupMember(@RequestParam(value = "listMember") List<String> listMember, @PathVariable("id") String id, HttpServletRequest req) {
         String authorizationHeader = req.getHeader(AUTHORIZATION);
         SuccessResponse response = new SuccessResponse();
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
@@ -266,47 +261,33 @@ public class StudyController {
             } else {
                 StudentEntity student = studentService.findByUserId(user);
                 if (student == null) {
-                    response.setStatus(HttpStatus.FOUND.value());
-                    response.setMessage("Account have no student info");
-                    response.setSuccess(false);
-                    return new ResponseEntity<>(response, HttpStatus.FOUND);
+                    return new ResponseEntity<>(new ErrorResponse(E404, "ACCOUNT_HAVE_NÓ_STUDENT_INFOMATION", "Account have no student information"), HttpStatus.NOT_FOUND);
                 } else {
                     SubjectEntity subject = subjectService.getSubjectById(id);
                     if (subject == null || subject.getGroupLeader() != user) {
-                        response.setStatus(HttpStatus.FOUND.value());
-                        response.setMessage("Subject doesn't exists or User is not leader");
-                        response.setSuccess(false);
-                        return new ResponseEntity<>(response, HttpStatus.FOUND);
+                        return new ResponseEntity<>(new ErrorResponse(E404, "SUBJECT_DOES_NOT_EXIST_OR_USER_IS_NOT_LEADER", "Subject does not exist or uer is not leader"), HttpStatus.NOT_FOUND);
                     } else {
                         UserEntity tempUser = new UserEntity();
                         for (String i : listMember) {
                             tempUser = userService.findById(i);
                             if (tempUser == null || tempUser.getSubject() != subject) {
-                                response.setStatus(HttpStatus.FOUND.value());
-                                response.setMessage("Member with id " + i + " is not valid");
-                                response.setSuccess(false);
-                                return new ResponseEntity<>(response, HttpStatus.FOUND);
+                                return new ResponseEntity<>(new ErrorResponse(E400, "MEMBER_ID_IS_NOT_VALID", "Member with id" + i + " is not valid"), HttpStatus.NOT_FOUND);
                             }
                             subject.getGroupMember().remove(tempUser);
                             tempUser.setSubject(null);
                         }
                     }
                     subject = subjectService.saveSubject(subject);
-                    response.setMessage("Delete subject group member success");
-                    response.setSuccess(true);
-                    response.getData().put("subjectName", subject.getName());
-                    response.getData().put("listUser", subject.getGroupMember());
-                    response.setStatus(HttpStatus.OK.value());
-                    return new ResponseEntity<>(response, HttpStatus.OK);
+                    return new ResponseEntity<>(HttpStatus.OK);
                 }
             }
         }
         throw new BadCredentialsException("access token is missing");
     }
 
-    @DeleteMapping("/deleteGroupLeader/{id}")
+    @DeleteMapping("/deleteGroupLeader/{subjectId}")
     @ApiOperation("Delete Group Leader")
-    public ResponseEntity<SuccessResponse> deleteGroupLeader(@PathVariable("id") String id, HttpServletRequest req) {
+    public ResponseEntity<Object> deleteGroupLeader(@PathVariable("subjectId") String id, HttpServletRequest req) {
         String authorizationHeader = req.getHeader(AUTHORIZATION);
         SuccessResponse response = new SuccessResponse();
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
@@ -320,10 +301,7 @@ public class StudyController {
             } else {
                 SubjectEntity subject = subjectService.getSubjectById(id);
                 if (subject == null || subject.getGroupLeader() != user) {
-                    response.setStatus(HttpStatus.FOUND.value());
-                    response.setMessage("Subject doesn't exists or User is not leader");
-                    response.setSuccess(false);
-                    return new ResponseEntity<>(response, HttpStatus.FOUND);
+                    return new ResponseEntity<>(new ErrorResponse(E404, "SUBJECT_DOES_NOT_EXIST_OR_USER_ID_IS_NOT_LEADER", "Subject does not exist or user is not leader"), HttpStatus.NOT_FOUND);
                 } else {
                     for (UserEntity tempUser : subject.getGroupMember()) {
                         tempUser.setSubject(null);
@@ -332,13 +310,7 @@ public class StudyController {
                     subject.setGroupLeader(null);
                     user.setSubjectLeader(null);
                 }
-                subject = subjectService.saveSubject(subject);
-                response.setMessage("Delete subject leader and group member success");
-                response.setSuccess(true);
-                response.setStatus(HttpStatus.OK.value());
-                response.getData().put("Leader", subject.getGroupLeader());
-                response.getData().put("Member", subject.getGroupMember());
-                return new ResponseEntity<>(response, HttpStatus.OK);
+                return new ResponseEntity<>(HttpStatus.OK);
             }
         }
         throw new BadCredentialsException("access token is missing");
@@ -346,7 +318,7 @@ public class StudyController {
 
     @GetMapping("/getAllSubject")
     @ApiOperation("Get All Subject")
-    public ResponseEntity<SuccessResponse> getStudentSubject(HttpServletRequest req) {
+    public ResponseEntity<Object> getStudentSubject(HttpServletRequest req) {
         String authorizationHeader = req.getHeader(AUTHORIZATION);
         SuccessResponse response = new SuccessResponse();
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
@@ -359,17 +331,18 @@ public class StudyController {
                 throw new BadCredentialsException("User not found");
             } else {
                 if (user.getSubjectLeader() == null && user.getSubject() == null) {
-                    response.setStatus(HttpStatus.FOUND.value());
-                    response.setMessage("User has not been assigned to any project");
-                    response.setSuccess(false);
-                    return new ResponseEntity<>(response, HttpStatus.FOUND);
+                    return new ResponseEntity<>(new ErrorResponse(E404, "USER_HAS_NOT_BEEN_ASSIGNED_TO_ANY_PROJECT", "User has not been assigned to any project"), HttpStatus.FOUND);
                 } else {
                     response.setStatus(HttpStatus.OK.value());
                     response.setMessage("Get student Subject info success");
                     response.setSuccess(true);
-                    response.getData().put("info", user.getSubject() == null ? user.getSubjectLeader() : user.getSubject());
-                    response.getData().put("teamRole", user.getSubject() == null ? "Leader" : "Teammate");
-                    return new ResponseEntity<>(response, HttpStatus.OK);
+
+//                    response.getData().put("info", user.getSubject() == null ? user.getSubjectLeader() : user.getSubject());
+//                    response.getData().put("teamRole", user.getSubject() == null ? "Leader" : "Teammate");
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("info", user.getSubject() == null ? user.getSubjectLeader() : user.getSubject());
+                    map.put("teamRole", user.getSubject() == null ? "Leader" : "Teammate");
+                    return new ResponseEntity<>(map, HttpStatus.OK);
                 }
             }
         }
@@ -379,23 +352,8 @@ public class StudyController {
     @GetMapping("/search")
     @ApiOperation("Search by Criteria")
     public ResponseEntity<Object> search(@RequestParam(defaultValue = "0") int pageIndex,
-                                         @RequestParam(defaultValue = "5") int pageSize, @RequestParam(defaultValue = "DESCENDING") OrderByEnum order, @RequestParam(defaultValue = "MAJOR")StudentSort studentSort, @RequestParam(defaultValue = "") String searchText) {
-        List<StudentEntity> listStudent = studentService.search(searchText,order,studentSort,pageIndex,pageSize);
-        int totalElements = listStudent.size();
-        int totalPage = totalElements % pageSize == 0 ? totalElements / pageSize : totalElements / pageSize + 1;
-        PagingResponse pagingResponse = new PagingResponse();
-        Map<String, Object> map = new HashMap<>();
-        List<Object> Result = Arrays.asList(listStudent.toArray());
-        pagingResponse.setTotalPages(totalPage);
-        pagingResponse.setEmpty(listStudent.size() == 0);
-        pagingResponse.setFirst(pageIndex == 0);
-        pagingResponse.setLast(pageIndex == totalPage - 1);
-        pagingResponse.getPageable().put("pageIndex", pageIndex);
-        pagingResponse.getPageable().put("pageSize", pageSize);
-        pagingResponse.setSize(pageSize);
-        pagingResponse.setNumberOfElements(listStudent.size());
-        pagingResponse.setTotalElements(totalElements);
-        pagingResponse.setContent(Result);
+                                         @RequestParam(defaultValue = "5") int pageSize, @RequestParam(defaultValue = "DESCENDING") OrderByEnum order, @RequestParam(defaultValue = "MAJOR") StudentSort studentSort, @RequestParam(defaultValue = "") String searchText) {
+        PagingResponse pagingResponse = studentService.search(searchText, order, studentSort, pageIndex, pageSize);
         return new ResponseEntity<>(pagingResponse, HttpStatus.OK);
     }
 }
