@@ -105,7 +105,7 @@ public class ProgressController {
         return new ResponseEntity<>(progress, HttpStatus.OK);
     }
 
-    @PutMapping("/{progressId}")
+    @PatchMapping("/{progressId}")
     @ApiOperation("Update")
     @ResponseBody
     public ResponseEntity<Object> updateProgress(HttpServletRequest req, @RequestBody @Valid UpdateProgressRequest updateProgressRequest, @PathVariable("progressId") String id) {
@@ -130,7 +130,7 @@ public class ProgressController {
 
     @DeleteMapping("")
     @ApiOperation("Delete")
-    public ResponseEntity<Object> deleteProgress(@RequestBody List<String> listProgressId, HttpServletRequest httpServletRequest) {
+    public ResponseEntity<Object> deleteProgress(@RequestParam List<String> listProgressId, HttpServletRequest httpServletRequest) {
         UserEntity user;
         try
         {

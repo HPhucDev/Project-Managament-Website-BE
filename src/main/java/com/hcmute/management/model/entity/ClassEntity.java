@@ -27,7 +27,7 @@ public class ClassEntity {
     private String id;
 
     @Column(name = "\"class_name\"")
-    private String classname;
+    private String className;
     @OneToMany( fetch = FetchType.EAGER, mappedBy = "classes",targetEntity = StudentEntity.class)
     @JsonIgnore
     private Set<StudentEntity> listStudent;
@@ -48,16 +48,16 @@ public class ClassEntity {
         this.listStudent = listStudent;
     }
 
-    public String getClassname() {
-        return classname;
+    public String getClassName() {
+        return className;
     }
 
-    public void setClassname(String classname) {
-        this.classname = classname;
+    public void setClassname(String className) {
+        this.className = className;
     }
 
-    public ClassEntity(String classname) {
-        this.classname = classname;
+    public ClassEntity(String className) {
+        this.className = className;
     }
 
     public ClassEntity() {

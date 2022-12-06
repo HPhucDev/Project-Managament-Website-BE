@@ -48,10 +48,10 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public StudentEntity findByUserId(UserEntity user) {
-        StudentEntity student = studentRepository.findByUser(user);
-        if(student != null)
-            return student;
-        else return null;
+        Optional<StudentEntity> student = studentRepository.findByUser(user);
+        if (student.isEmpty())
+            return null;
+        return student.get();
     }
 
 
@@ -59,19 +59,22 @@ public class StudentServiceImpl implements StudentService {
     @Override
     public StudentEntity saveStudent(AddNewStudentRequest addNewStudentRequest, UserEntity user) {
         StudentEntity student = new StudentEntity();
-        user.setFullName(addNewStudentRequest.getFullname());
-        user.setGender(addNewStudentRequest.getSex());
+        user.setFullName(addNewStudentRequest.getFullName());
+        user.setGender(addNewStudentRequest.getGender());
         Optional<UserEntity> foundUser = userRepository.findByEmail(addNewStudentRequest.getEmail());
         if (!userRepository.findByEmail(addNewStudentRequest.getEmail()).isEmpty())
             throw new ValueDuplicateException("This email has already existed");
-        user.setBirthDay(addNewStudentRequest.getBirthday());
+        user.setBirthDay(addNewStudentRequest.getBirthDay());
         user.setEmail(addNewStudentRequest.getEmail());
-        student.setId(addNewStudentRequest.getMssv());
+        student.setId(addNewStudentRequest.getStudentId());
         student.setUser(userRepository.save(user));
         student.setMajor(addNewStudentRequest.getMajor());
-        student.setEducation_program(addNewStudentRequest.getEducationprogram());
-        student.setSchool_year(addNewStudentRequest.getSchoolyear());
-        ClassEntity classEntity = classRepository.findById(addNewStudentRequest.getClassid()).get();
+        student.setEducationProgram(addNewStudentRequest.getEducationProgram());
+        student.setSchoolYear(addNewStudentRequest.getSchoolYear());
+        ClassEntity classEntity = classRepository.findById(addNewStudentRequest.getClassId()).get();
+        if(classEntity == null) {
+            throw new RuntimeException("Class does not existed");
+        }
         student.setClasses(classEntity);
          return studentRepository.save(student);
    }
@@ -91,16 +94,16 @@ public class StudentServiceImpl implements StudentService {
         {
            return null;
         }
-        user.setFullName(changeInfoStudentRequest.getFullname());
+        user.setFullName(changeInfoStudentRequest.getFullName());
         user.setGender(changeInfoStudentRequest.getGender());
         student.setUser(userRepository.save(user));
-        student.setMajor(changeInfoStudentRequest.getMajor());
-        student.setEducation_program(changeInfoStudentRequest.getEducationprogram());
-        student.setSchool_year(changeInfoStudentRequest.getSchoolyear());
-        Optional<ClassEntity> classEntity = classRepository.findById(changeInfoStudentRequest.getClassid());
+        student.setMajor(changeInfoStudentRequest.getMajor().getName());
+        student.setEducationProgram(changeInfoStudentRequest.getEducationProgram());
+        student.setSchoolYear(changeInfoStudentRequest.getSchoolYear());
+        Optional<ClassEntity> classEntity = classRepository.findById(changeInfoStudentRequest.getClassId());
         if(classEntity.isEmpty())
         {
-            throw new RuntimeException("Error: Lớp học không tồn tại");
+            throw new RuntimeException("Class does not existed");
         }
         student.setClasses(classEntity.get());
         return studentRepository.save(student);
@@ -113,20 +116,20 @@ public class StudentServiceImpl implements StudentService {
         {
             return null;
         }
-        user.setFullName(changeInfoStudentRequest.getFullname());
+        user.setFullName(changeInfoStudentRequest.getFullName());
         user.setGender(changeInfoStudentRequest.getGender());
         if (!userRepository.findByEmail(changeInfoStudentRequest.getEmail()).isEmpty() && user.getEmail()!= changeInfoStudentRequest.getEmail())
             throw new ValueDuplicateException("This email has already existed");
         user.setEmail(changeInfoStudentRequest.getEmail());
-        user.setBirthDay(changeInfoStudentRequest.getBirthday());
+        user.setBirthDay(changeInfoStudentRequest.getBirthDay());
         student.setUser(userRepository.save(user));
-        student.setMajor(changeInfoStudentRequest.getMajor());
-        student.setEducation_program(changeInfoStudentRequest.getEducationprogram());
-        student.setSchool_year(changeInfoStudentRequest.getSchoolyear());
-        ClassEntity classEntity = classRepository.findById(changeInfoStudentRequest.getClassid()).get();
+        student.setMajor(changeInfoStudentRequest.getMajor().getName());
+        student.setEducationProgram(changeInfoStudentRequest.getEducationProgram());
+        student.setSchoolYear(changeInfoStudentRequest.getSchoolYear());
+        ClassEntity classEntity = classRepository.findById(changeInfoStudentRequest.getClassId()).get();
         if(classEntity == null)
         {
-            throw new RuntimeException("Error: Lớp học không tồn tại");
+            throw new RuntimeException("Class does not existed");
         }
         student.setClasses(classEntity);
         return studentRepository.save(student);
@@ -144,6 +147,11 @@ public class StudentServiceImpl implements StudentService {
     public PagingResponse search(String keyword, OrderByEnum orderBy, StudentSort order, int pageindex, int pagesize) {
         PagingResponse list = studentRepository.search(keyword,orderBy,order,pageindex,pagesize);
        return list;
+    }
+
+    @Override
+    public void deleteByListId(List<String> listStudentId) {
+
     }
 
 }

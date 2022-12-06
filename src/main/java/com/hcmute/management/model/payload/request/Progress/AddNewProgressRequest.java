@@ -1,5 +1,6 @@
 package com.hcmute.management.model.payload.request.Progress;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,15 +22,17 @@ public class AddNewProgressRequest {
 
     // @NotEmpty(message = "")
     private String status;
-    @NotNull(message = "Ngày tháng năm không được để trống")
+    @NotNull(message = "school year can not be empty")
     @Past(message = "Ngày tháng năm không được vượt quá hôm nay")
     @DateTimeFormat(pattern = "MM/dd/yyyy")
-    private Date createdate;
+    private Date createDate;
 
 
-    @NotNull(message = "Ngày tháng năm không được để trống")
+    @NotNull(message = "school year can not be empty")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss", shape = JsonFormat.Shape.STRING)
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     @Past(message = "Ngày tháng năm không được vượt quá hôm nay")
-    private Date timesubmit;
+    private Date timeSubmit;
 
     @NotEmpty(message = "Id không được để trống")
     private String subjectId;

@@ -1,6 +1,7 @@
 package com.hcmute.management.model.payload.request.Student;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.hcmute.management.common.MajorEnum;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,25 +18,25 @@ import java.util.Date;
 @Setter
 @Getter
 public class ChangeInfoStudentRequest {
-    @NotEmpty(message = "Họ và tên không được để trống")
-    private String fullname;
-    @NotEmpty(message = "Giới tính không được để trống")
+    @NotEmpty(message = "Fullanem can not be empty")
+    private String fullName;
+    @NotEmpty(message = "Gender can not be empty")
     private String gender;
-    @NotEmpty(message = "Địa chỉ không được để trống")
+    @NotEmpty(message = "Address can not be empty")
     private String address;
     @NotNull(message = "school year can not be empty")
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss", shape = JsonFormat.Shape.STRING)
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
-    private Date schoolyear;
-    @NotEmpty(message = "Chuyên ngành không được để trống")
-    private String major;
-    @NotEmpty(message =  "Chương trình đào tạo không được để trống")
-    private String educationprogram;
-    @NotEmpty(message = "Mã lớp học không được để trống")
-    private String classid;
-    @NotEmpty(message = "Email không được để trống")
+    private Date schoolYear;
+    private MajorEnum major;
+    @NotEmpty(message =  "Education program can not be empty")
+    private String educationProgram;
+    @NotEmpty(message = "Class id can not be empty")
+    private String classId;
+    @NotEmpty(message = "Email can not be empty")
     private String email;
-    @NotNull(message = "Ngày tháng năm không được để trống")
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-    private LocalDateTime birthday;
+    @NotNull(message = "school year can not be empty")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss", shape = JsonFormat.Shape.STRING)
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    private LocalDateTime birthDay;
 }

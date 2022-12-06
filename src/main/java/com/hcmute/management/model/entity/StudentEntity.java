@@ -30,10 +30,10 @@ public class StudentEntity {
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     @ApiModelProperty(required = true, example = "2021-08-20T00:00:00")
     @Column(name = "\"school_year\"")
-    private Date school_year;
+    private Date schoolYear;
 
     @Column(name = "\"education_program\"")
-    private String education_program;
+    private String educationProgram;
 
     @ManyToOne()
     @JoinColumn(name = "classes_id")
@@ -54,20 +54,20 @@ public class StudentEntity {
         this.user = user;
     }
 
-    public Date getSchool_year() {
-        return school_year;
+    public Date getSchoolYear() {
+        return schoolYear;
     }
 
-    public void setSchool_year(Date school_year) {
-        this.school_year = school_year;
+    public void setSchoolYear(Date schoolYear) {
+        this.schoolYear = schoolYear;
     }
 
-    public String getEducation_program() {
-        return education_program;
+    public String getEducationProgram() {
+        return educationProgram;
     }
 
-    public void setEducation_program(String education_program) {
-        this.education_program = education_program;
+    public void setEducationProgram(String educationProgram) {
+        this.educationProgram = educationProgram;
     }
 
     public ClassEntity getClasses() {
@@ -86,10 +86,10 @@ public class StudentEntity {
         this.major = major;
     }
 
-    public StudentEntity(UserEntity user, Date school_year, String education_program, ClassEntity classes, String major) {
+    public StudentEntity(UserEntity user, Date schoolYear, String educationProgram, ClassEntity classes, String major) {
         this.user = user;
-        this.school_year = school_year;
-        this.education_program = education_program;
+        this.schoolYear = schoolYear;
+        this.educationProgram = educationProgram;
         this.classes = classes;
         this.major = major;
     }
