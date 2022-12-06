@@ -222,9 +222,9 @@ public class StudyController {
     }
 
 
-    @DeleteMapping("/deleteGroupMember/{id}")
+    @DeleteMapping("/deleteGroupMember/{subjectId}")
     @ApiOperation("Delete Group Member")
-    public ResponseEntity<Object> deleteGroupMember(@RequestParam(value = "listMember") List<String> listMember, @PathVariable("id") String id, HttpServletRequest req) {
+    public ResponseEntity<Object> deleteGroupMember(@RequestParam(value = "listMember") List<String> listMember, @PathVariable("subjectId") String id, HttpServletRequest req) {
         UserEntity user;
         try {
             user = authenticateHandler.authenticateUser(req);

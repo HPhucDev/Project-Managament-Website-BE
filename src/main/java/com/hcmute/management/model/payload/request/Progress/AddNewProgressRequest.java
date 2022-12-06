@@ -24,12 +24,12 @@ public class AddNewProgressRequest {
     @NotNull(message = "Ngày tháng năm không được để trống")
     @Past(message = "Ngày tháng năm không được vượt quá hôm nay")
     @DateTimeFormat(pattern = "MM/dd/yyyy")
-    private Date createdate;
+    private Date createDate;
 
 
     @NotNull(message = "Ngày tháng năm không được để trống")
     @Past(message = "Ngày tháng năm không được vượt quá hôm nay")
-    private Date timesubmit;
+    private Date timeSubmit;
 
     @NotEmpty(message = "Id không được để trống")
     private String subjectId;

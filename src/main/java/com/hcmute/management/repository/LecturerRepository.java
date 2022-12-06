@@ -15,10 +15,11 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 import java.util.List;
+import java.util.Optional;
 
 @EnableJpaRepositories
 public interface LecturerRepository extends JpaRepository<LecturerEntity,String>, LecturerRepositoryCustom {
-    LecturerEntity findByUser(UserEntity user);
+    Optional<LecturerEntity> findByUser(UserEntity user);
     @Query(value = "select * from lecturer",
             countQuery = "select count(*) from lecturer",
             nativeQuery = true)

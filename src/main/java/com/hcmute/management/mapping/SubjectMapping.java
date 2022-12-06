@@ -31,7 +31,7 @@ public class SubjectMapping {
         subject.setDescription(updateSubjectRequest.getDescription());
         subject.setGroupCap(updateSubjectRequest.getGroupCap());
         subject.setRegFromOtherMajor(updateSubjectRequest.isRegFromOtherMajor());
-        subject.setMajor(updateSubjectRequest.getMajor());
+        subject.setMajor(updateSubjectRequest.getMajorEnum().getName());
         subject.setSubjectType(updateSubjectRequest.getSubjectType());
         subject.setYear(updateSubjectRequest.getYear());
         subject.setStatus(updateSubjectRequest.getStatus());
