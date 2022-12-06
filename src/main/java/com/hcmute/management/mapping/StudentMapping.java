@@ -6,10 +6,10 @@ import com.hcmute.management.model.payload.request.Student.AddNewStudentRequest;
 public class StudentMapping {
     public static StudentEntity addStudentToEntity(AddNewStudentRequest addNewStudentRequest) {
         StudentEntity studentEntity = new StudentEntity();
-        studentEntity.setSchool_year(addNewStudentRequest.getSchoolyear());
-        studentEntity.setEducation_program(addNewStudentRequest.getEducationprogram());
-        studentEntity.setMajor(addNewStudentRequest.getMajor());
-        studentEntity.setId(addNewStudentRequest.getMssv());
+        studentEntity.setSchoolYear(addNewStudentRequest.getSchoolYear());
+        studentEntity.setEducationProgram(addNewStudentRequest.getEducationProgram());
+        studentEntity.setMajor(addNewStudentRequest.getMajor().getName());
+        studentEntity.setId(addNewStudentRequest.getStudentId());
         return studentEntity;
     }
 }

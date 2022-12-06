@@ -29,4 +29,5 @@ public interface StudentService {
 
     StudentEntity findStudentbyUserId(String userid);
     PagingResponse search(String keyword, OrderByEnum orderBy, StudentSort order, int pageindex, int pagesize);
+    void deleteByListId(List<String> listStudentId);
 }

@@ -18,26 +18,26 @@ import java.util.Date;
 @NoArgsConstructor
 public class AddNewStudentRequest {
     @NotEmpty(message = " student id can not be empty")
-    private String mssv;
-    @NotEmpty(message = "fullname can not be empty")
-    private String fullname;
+    private String studentId;
+    @NotEmpty(message = "full name can not be empty")
+    private String fullName;
     @NotEmpty(message = "gender can not be empty")
-    private String sex;
+    private String gender;
     @NotEmpty(message = "address can not be empty")
     private String address;
     @NotNull(message = "school year can not be empty")
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss", shape = JsonFormat.Shape.STRING)
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
-    private Date schoolyear;
-    @NotEmpty(message = "major can not be empty")
+    private Date schoolYear;
     private String major;
     @NotEmpty(message =  "program can not be empty")
-    private String educationprogram;
-    @NotNull(message = "Mã lớp học can not be empty")
-    private String  classid;
+    private String educationProgram;
+    @NotNull(message = "class id học can not be empty")
+    private String  classId;
     @NotNull(message = "Email can not be empty")
     private String email;
-    @NotNull(message = "Ngày tháng năm không được để trống")
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+    @NotNull(message = "school year can not be empty")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss", shape = JsonFormat.Shape.STRING)
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime birthday;
 }

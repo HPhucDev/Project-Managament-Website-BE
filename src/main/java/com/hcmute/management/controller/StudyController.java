@@ -76,15 +76,15 @@ public class StudyController {
 
     @PostMapping(value = "", consumes = {"multipart/form-data"})
     @ApiOperation("Create")
-    public ResponseEntity<Object> createStudent(HttpServletRequest httpServletRequest, @Valid AddNewStudentRequest addNewStudentRequest, @RequestPart MultipartFile file, BindingResult bindingResult) throws Exception {
+    public ResponseEntity<Object> createStudent(@Valid AddNewStudentRequest addNewStudentRequest, @RequestPart MultipartFile file,HttpServletRequest httpServletRequest, BindingResult bindingResult) throws Exception {
         if (bindingResult.hasErrors()) {
             throw new MethodArgumentNotValidException(bindingResult);
         }
         UserEntity user;
         try {
             user = authenticateHandler.authenticateUser(httpServletRequest);
-            String id = addNewStudentRequest.getMssv();
-            StudentEntity findStudent = studentService.findById(addNewStudentRequest.getMssv());
+            String id = addNewStudentRequest.getStudentId();
+            StudentEntity findStudent = studentService.findById(addNewStudentRequest.getStudentId());
             if (findStudent != null) {
                 return new ResponseEntity<>(new ErrorResponse(E400, "ID_EXISTS", "Id has been used"), HttpStatus.BAD_REQUEST);
             }
@@ -92,7 +92,7 @@ public class StudyController {
             if (foundUser != null) {
                 return new ResponseEntity<>(new ErrorResponse(E400, "USERNAME_EXISTED", "Username has been used by another student"), HttpStatus.BAD_REQUEST);
             }
-            PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+            PasswordEncoder passwordEncoder = new BCryptPasswordEncoder() ;
             UserEntity addNewUser = new UserEntity(passwordEncoder.encode(id), id);
             addNewUser = userService.register(addNewUser, AppUserRole.ROLE_STUDENT);
             StudentEntity student = studentService.saveStudent(addNewStudentRequest, addNewUser);
@@ -105,7 +105,7 @@ public class StudyController {
         }
     }
 
-    @PatchMapping(value = "", consumes = {"multipart/form-data"})
+    @PatchMapping(value = "/{userId}", consumes = {"multipart/form-data"})
     @ApiOperation("Update")
     public ResponseEntity<Object> updateStudentById(HttpServletRequest httpServletRequest, @Valid ChangeInfoStudentRequest changeInfoStudentRequest, @RequestPart MultipartFile file, BindingResult bindingResult) throws Exception {
         if (bindingResult.hasErrors()) {
@@ -129,17 +129,14 @@ public class StudyController {
         }
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("")
     @ApiOperation("Delete")
-    public ResponseEntity<Object> deleteStudentById(HttpServletRequest httpServletRequest, @PathVariable("id") String id) {
+    public ResponseEntity<Object> deleteStudentById(HttpServletRequest httpServletRequest, @RequestParam(value = "listStudentId") List<String> listStudentId) {
         UserEntity user;
         try {
             user = authenticateHandler.authenticateUser(httpServletRequest);
-            StudentEntity student = studentService.findById(id);
-            if (student == null) {
-                return new ResponseEntity<>(new ErrorResponse(E404, "STUDENT_ID_NOT_FOUND", "Student id not found"), HttpStatus.NOT_FOUND);
-            } else {
-
+            for (String id : listStudentId) {
+                StudentEntity student = studentService.findById(id);
                 studentService.deleteStudent(id);
                 UserEntity userofStudent = userService.findById(student.getUser().getId());
                 for (RoleEntity role : userofStudent.getRoles()) {
@@ -147,8 +144,8 @@ public class StudyController {
                 }
                 userofStudent.getRoles().clear();
                 userService.delete(userofStudent);
-                return new ResponseEntity<>(HttpStatus.OK);
             }
+            return new ResponseEntity<>(HttpStatus.OK);
         } catch (BadCredentialsException e) {
             return new ResponseEntity<>(new ErrorResponse(E401, "UNAUTHORIZED", "Unauthorized, please login again"), HttpStatus.UNAUTHORIZED);
         }
@@ -222,9 +219,9 @@ public class StudyController {
     }
 
 
-    @DeleteMapping("/deleteGroupMember/{id}")
+    @DeleteMapping("/deleteGroupMember/{subjectId}")
     @ApiOperation("Delete Group Member")
-    public ResponseEntity<Object> deleteGroupMember(@RequestParam(value = "listMember") List<String> listMember, @PathVariable("id") String id, HttpServletRequest req) {
+    public ResponseEntity<Object> deleteGroupMember(@RequestParam(value = "listMember") List<String> listMember, @PathVariable("subjectId") String id, HttpServletRequest req) {
         UserEntity user;
         try {
             user = authenticateHandler.authenticateUser(req);
@@ -278,8 +275,8 @@ public class StudyController {
         }
     }
 
-    @GetMapping("/getStudentSubject")
-    @ApiOperation("Get Student Subject")
+    @GetMapping("/getSubjectByStudent")
+    @ApiOperation("Get Subject by Student")
     public ResponseEntity<Object> getStudentSubject(HttpServletRequest req) {
         UserEntity user;
         try {
@@ -299,8 +296,8 @@ public class StudyController {
 
     @GetMapping("/search")
     @ApiOperation("Search by Criteria")
-    public ResponseEntity<Object> search(@RequestParam(defaultValue = "0",name = "pageIndex") int pageIndex,
-                                         @RequestParam(defaultValue = "5",name = "pageSize") int pageSize, @RequestParam(defaultValue = "DESCENDING") OrderByEnum order, @RequestParam(defaultValue = "MAJOR") StudentSort studentSort, @RequestParam(defaultValue = "",name = "searchText") String searchText) {
+    public ResponseEntity<Object> search(@RequestParam(defaultValue = "0", name = "pageIndex") int pageIndex,
+                                         @RequestParam(defaultValue = "5", name = "pageSize") int pageSize, @RequestParam(defaultValue = "DESCENDING") OrderByEnum order, @RequestParam(defaultValue = "MAJOR") StudentSort studentSort, @RequestParam(defaultValue = "", name = "searchText") String searchText) {
         PagingResponse pagingResponse = studentService.search(searchText, order, studentSort, pageIndex, pageSize);
         return new ResponseEntity<>(pagingResponse, HttpStatus.OK);
     }
