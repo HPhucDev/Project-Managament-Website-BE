@@ -19,9 +19,9 @@ import java.util.Date;
 @Data
 @NoArgsConstructor
 public class UpdateLecturerRequest {
-    @NotEmpty(message ="Bằng cấp không được để trống")
+
     private QualificationLecturerEnum qualification;
-    @NotEmpty(message ="Chức vụ không được để trống")
+
     private PositionLecturerEnum position;
     @NotEmpty(message = "Họ và tên không được để trống")
     private String fullName;

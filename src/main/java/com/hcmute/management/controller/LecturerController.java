@@ -145,15 +145,21 @@ public class LecturerController {
         try {
             user = authenticateHandler.authenticateUser(req);
             LecturerEntity lecturer = lecturerService.getLecturerById(id);
-            if (lecturer == null) {
+            if (lecturer == null)
+            {
                 return new ResponseEntity<>(new ErrorResponse(E400,"LECTURER_NOT_FOUND","Can't find Lecturer with id provided "+id),HttpStatus.BAD_REQUEST);
 
             }
-            if(lecturer.getUser()!=user )
+            boolean isAdmin=false;
+            for (RoleEntity role: user.getRoles())
+                if(role.getName().toString()=="ROLE_ADMIN")
+                    isAdmin=true;
+            if(lecturer.getUser()!=user && isAdmin==false)
             {
                 return new ResponseEntity<>(new ErrorResponse(E400,"YOU ARE NOT OWNER OR ADMIN","You aren't not owner or admin"),HttpStatus.BAD_REQUEST);
             }
-            LecturerEntity updateLecturer=lecturerService.updateLecturer(updateLecturerRequest,user);
+            UserEntity userUpdate=lecturer.getUser();
+            LecturerEntity updateLecturer=lecturerService.updateLecturer(updateLecturerRequest,userUpdate);
             if(!file.isEmpty())
             {
                 userService.addUserImage(file,user);
