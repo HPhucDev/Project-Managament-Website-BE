@@ -16,10 +16,11 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @EnableJpaRepositories
 public interface StudentRepository extends JpaRepository<StudentEntity, String>, StudentRepositoryCustom {
-    StudentEntity findByUser(UserEntity user);
+    Optional<StudentEntity> findByUser(UserEntity user);
     @Modifying
     @Query(value =  "Delete from students where id = ?", nativeQuery = true)
     void deleteById(String id);

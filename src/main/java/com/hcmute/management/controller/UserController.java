@@ -5,6 +5,8 @@ import com.hcmute.management.handler.FileNotImageException;
 import com.hcmute.management.model.entity.UserEntity;
 import com.hcmute.management.model.payload.request.User.AddUserInfoRequest;
 import com.hcmute.management.model.payload.response.ErrorResponse;
+import com.hcmute.management.service.LecturerService;
+import com.hcmute.management.service.StudentService;
 import com.hcmute.management.service.UserService;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +19,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+
+import static com.hcmute.management.controller.ProgressController.E404;
 import static com.hcmute.management.controller.SubjectController.E400;
 import static com.hcmute.management.controller.SubjectController.E401;
 
@@ -26,6 +33,8 @@ import static com.hcmute.management.controller.SubjectController.E401;
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
+    private final StudentService studentService;
+    private final LecturerService lecturerService;
     private final AuthenticateHandler authenticateHandler;
     @PostMapping(value = "/userInfo",consumes = {"multipart/form-data"})
     @ApiOperation("Create User Info")
@@ -75,7 +84,18 @@ public class UserController {
         UserEntity user;
         try {
             user = authenticateHandler.authenticateUser(req);
-            return new ResponseEntity<>(user, HttpStatus.OK);
+//            Map<String,Object> map = new HashMap<>();
+
+            if (studentService.findByUserId(user) != null)
+            {
+                return new ResponseEntity<>(user.getStudent(),HttpStatus.OK);
+            } else if (lecturerService.findByUser(user)!= null) {
+                return new ResponseEntity<>(user.getLecturer(),HttpStatus.OK);
+            }
+            else
+            {
+                return new ResponseEntity<>(new ErrorResponse(E404,"NO_INFO","User have no student, lecturer infomation"),HttpStatus.NOT_FOUND);
+            }
         } catch (BadCredentialsException e) {
             return new ResponseEntity<>(new ErrorResponse(E401, "UNAUTHORIZED", "Unauthorized, please login again"), HttpStatus.UNAUTHORIZED);
         }

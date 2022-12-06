@@ -1,5 +1,8 @@
 package com.hcmute.management.model.payload.request.Subject;
 
+import com.hcmute.management.common.MajorEnum;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,6 +22,7 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 public class UpdateSubjectRequest {
+    @ApiParam(hidden = true)
     final String EMPTY_MESSAGE ="cannot be empty";
     @NotEmpty(message = "Subject name "+EMPTY_MESSAGE)
     private String name;
@@ -33,10 +37,9 @@ public class UpdateSubjectRequest {
     @Max(value = 4,message = "Group cannot have more than 4 student")
     @Min(value = 0)
     private int groupCap;
-    private int groupLectureCap;
+//    private int groupLectureCap;
     private boolean regFromOtherMajor;
-    @NotEmpty(message = "Major " + EMPTY_MESSAGE)
-    private String major;
+    private MajorEnum majorEnum;
     @NotEmpty(message = "Subject Type "+EMPTY_MESSAGE)
     private String subjectType;
     @NotEmpty(message = "Year "+EMPTY_MESSAGE)

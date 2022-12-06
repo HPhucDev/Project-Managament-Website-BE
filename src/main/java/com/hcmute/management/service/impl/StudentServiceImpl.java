@@ -48,10 +48,10 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public StudentEntity findByUserId(UserEntity user) {
-        StudentEntity student = studentRepository.findByUser(user);
-        if(student != null)
-            return student;
-        else return null;
+        Optional<StudentEntity> student = studentRepository.findByUser(user);
+        if (student.isEmpty())
+            return null;
+        return student.get();
     }
 
 

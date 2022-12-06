@@ -145,6 +145,7 @@ public class SubjectController {
                                                 @RequestPart MultipartFile file,
                                                 BindingResult errors,
                                                 HttpServletRequest httpServletRequest,
+                                                @RequestParam MajorEnum majorEnum,
                                                 @PathVariable("id") String id,
                                                 @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
                                                 @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate) throws Exception {
@@ -191,7 +192,7 @@ public class SubjectController {
     }
     @DeleteMapping("")
     @ApiOperation("Delete")
-    public ResponseEntity<Object> deleteSubject(@RequestBody List<String> listSubjectId,HttpServletRequest httpServletRequest)
+    public ResponseEntity<Object> deleteSubject(@RequestParam List<String> listSubjectId,HttpServletRequest httpServletRequest)
     {
         UserEntity user;
         try {

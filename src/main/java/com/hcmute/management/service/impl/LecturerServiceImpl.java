@@ -65,9 +65,9 @@ public class LecturerServiceImpl implements LecturerService {
     }
     @Override
     public LecturerEntity findByUser(UserEntity user) {
-        LecturerEntity lecturer = lecturerRepository.findByUser(user);
-        if(lecturer != null)
-            return lecturer;
+        Optional<LecturerEntity> lecturer = lecturerRepository.findByUser(user);
+        if(lecturer.isPresent())
+            return lecturer.get();
         else return null;
     }
     @Override
