@@ -126,7 +126,7 @@ public class LecturerController {
             @RequestParam(defaultValue = "",name = "searchText") String searchText,
             @RequestParam(defaultValue = "0",name = "pageIndex") int pageIndex,
             @RequestParam(defaultValue = "5",name = "pageSize") int pageSize,
-            @RequestParam(defaultValue = "MSSV") LecturerSort sort,
+            @RequestParam(defaultValue = "ID") LecturerSort sort,
             @RequestParam(defaultValue = "DESCENDING") OrderByEnum order
     )
     {
@@ -134,20 +134,24 @@ public class LecturerController {
         return new ResponseEntity<>(pagingResponse, HttpStatus.OK);
     }
 
-    @PatchMapping(value = "",consumes = {"multipart/form-data"})
+    @PatchMapping(value ="/{LecturerId}",consumes = {"multipart/form-data"})
     @ApiOperation("Update")
-    @PreAuthorize("hasRole('ROLE_LECTURER')")
-    public ResponseEntity<Object> updateLecturer(@Valid UpdateLecturerRequest updateLecturerRequest, @RequestPart MultipartFile file, BindingResult errors, HttpServletRequest req) throws Exception {
+//    @PreAuthorize("hasRole('ROLE_LECTURER')")
+    public ResponseEntity<Object> updateLecturer(@PathVariable("LecturerId")String id,@Valid UpdateLecturerRequest updateLecturerRequest, @RequestPart MultipartFile file, BindingResult errors, HttpServletRequest req) throws Exception {
         if (errors.hasErrors()) {
             throw new MethodArgumentNotValidException(errors);
         }
         UserEntity user;
         try {
             user = authenticateHandler.authenticateUser(req);
-            LecturerEntity lecturer = lecturerService.findByUser(user);
+            LecturerEntity lecturer = lecturerService.getLecturerById(id);
             if (lecturer == null) {
-                return new ResponseEntity<>(new ErrorResponse(E400,"YOU_ARE_NOT_A_LECTURER","You aren't a Lecturer"),HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>(new ErrorResponse(E400,"LECTURER_NOT_FOUND","Can't find Lecturer with id provided "+id),HttpStatus.BAD_REQUEST);
 
+            }
+            if(lecturer.getUser()!=user )
+            {
+                return new ResponseEntity<>(new ErrorResponse(E400,"YOU ARE NOT OWNER OR ADMIN","You aren't not owner or admin"),HttpStatus.BAD_REQUEST);
             }
             LecturerEntity updateLecturer=lecturerService.updateLecturer(updateLecturerRequest,user);
             if(!file.isEmpty())
@@ -159,9 +163,9 @@ public class LecturerController {
         return new ResponseEntity<>(new ErrorResponse(E401,"UNAUTHORIZED","Unauthorized, please login again"), HttpStatus.UNAUTHORIZED);
     }
     }
-    @GetMapping("/{id}")
+    @GetMapping("/{LecturerId}")
     @ApiOperation("Get by Id")
-    public ResponseEntity<Object>getLecturerById(@PathVariable("id")String id){
+    public ResponseEntity<Object>getLecturerById(@PathVariable("LecturerId")String id){
         LecturerEntity lecturer = lecturerService.getLecturerById(id);
         if(lecturer==null)
         {
@@ -171,11 +175,25 @@ public class LecturerController {
     }
     @DeleteMapping("")
     @ApiOperation("Delete")
-    public ResponseEntity<Object>deleteLecturer(@RequestBody List<String> listLecturerId,HttpServletRequest req){
+    public ResponseEntity<Object>deleteLecturer(@RequestParam(value = "listLecturer") List<String>  listLecturerId,HttpServletRequest req){
         UserEntity user;
         try {
             user = authenticateHandler.authenticateUser(req);
-            lecturerService.deleteByListId(listLecturerId);
+            for(String id:listLecturerId)
+            {
+                LecturerEntity lecturer =lecturerService.getLecturerById(id);
+                if(lecturer!=null && user!=lecturer.getUser())
+                {
+                    UserEntity deleteUser = userService.findById(lecturer.getUser().getId());
+                    for (RoleEntity role : deleteUser.getRoles())
+                    {
+                        role.setUsers(null);
+                    }
+                    lecturerService.deleteById(id);
+                    deleteUser.getRoles().clear();
+                    userService.delete(deleteUser);
+                }
+            }
             return new ResponseEntity<>(HttpStatus.OK);
         }catch (BadCredentialsException e) {
             return new ResponseEntity<>(new ErrorResponse(E401,"UNAUTHORIZED","Unauthorized, please login again"), HttpStatus.UNAUTHORIZED);

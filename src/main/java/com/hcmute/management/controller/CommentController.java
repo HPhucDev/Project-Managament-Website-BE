@@ -114,7 +114,7 @@ public class CommentController {
             return new ResponseEntity<>(new ErrorResponse(E401,"UNAUTHORIZED","Unauthorized, please login again"), HttpStatus.UNAUTHORIZED);
         }
     }
-    @GetMapping("/{id}")
+    @GetMapping("/{commentId}")
     @ApiOperation("Get by Id")
     public ResponseEntity<Object>getCommentById(@PathVariable("id")String id){
         CommentEntity findComment =commentService.findById(id);
@@ -144,10 +144,10 @@ public class CommentController {
         map.put("content",listComment);
         return new ResponseEntity<>(map,HttpStatus.OK);
     }
-    @GetMapping("/paging")
+    @GetMapping("/search")
     @ApiOperation("Get All")
-    public ResponseEntity<PagingResponse> getAllCommentPaging(@RequestParam(defaultValue = "0") int page,
-                                                               @RequestParam(defaultValue = "5") int size)
+    public ResponseEntity<PagingResponse> getAllCommentPaging(@RequestParam(defaultValue = "0",name = "pageIndex") int page,
+                                                               @RequestParam(defaultValue = "5",name = "pageSize") int size)
     {
         Page<CommentEntity> pageComment = commentService.findAllCommentPaging(page,size);
         List<CommentEntity> listComment = pageComment.toList();

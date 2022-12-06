@@ -6,15 +6,15 @@ import com.hcmute.management.model.payload.request.Lecturer.UpdateLecturerReques
 
 public class LecturerMapping {
     public static LecturerEntity updateRequestToEntity(LecturerEntity lecturer,UpdateLecturerRequest updateLecturerRequest){
-        lecturer.setQualification(updateLecturerRequest.getQualification());
-        lecturer.setPosition(updateLecturerRequest.getPosition());
+        lecturer.setQualification(updateLecturerRequest.getQualification().getName());
+        lecturer.setPosition(updateLecturerRequest.getPosition().getName());
         return lecturer;
     }
 
     public static LecturerEntity addLecturerToEntity(AddNewLecturerRequest addNewLecturerRequest){
         LecturerEntity lecturer =new LecturerEntity();
-        lecturer.setQualification(addNewLecturerRequest.getQualification());
-        lecturer.setPosition(addNewLecturerRequest.getPosition());
+        lecturer.setQualification(addNewLecturerRequest.getQualification().getName());
+        lecturer.setPosition(addNewLecturerRequest.getPosition().getName());
         return lecturer;
     }
 
