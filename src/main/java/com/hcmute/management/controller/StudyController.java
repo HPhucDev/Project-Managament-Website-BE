@@ -54,11 +54,11 @@ public class StudyController {
     @Autowired
     AuthenticateHandler authenticateHandler;
 
-    @GetMapping("/{id}")
-    @ApiOperation("Get by id")
+    @GetMapping("/{studentId}")
+    @ApiOperation("Get by student id")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<Object> getStudentById(@PathVariable String id) {
-        StudentEntity student = studentService.findById(id);
+    public ResponseEntity<Object> getStudentById(@PathVariable String studentId) {
+        StudentEntity student = studentService.findById(studentId);
         if (student == null) {
             return new ResponseEntity<>(new ErrorResponse(E404, "STUDENT_ID_NOT_FOUND", "Student id not found"), HttpStatus.NOT_FOUND);
         } else

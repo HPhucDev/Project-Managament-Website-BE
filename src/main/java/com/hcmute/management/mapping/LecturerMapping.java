@@ -13,8 +13,8 @@ public class LecturerMapping {
 
     public static LecturerEntity addLecturerToEntity(AddNewLecturerRequest addNewLecturerRequest){
         LecturerEntity lecturer =new LecturerEntity();
-        lecturer.setQualification(addNewLecturerRequest.getQualification().getName());
-        lecturer.setPosition(addNewLecturerRequest.getPosition().getName());
+        lecturer.setQualification(addNewLecturerRequest.getQualification());
+        lecturer.setPosition(addNewLecturerRequest.getPosition());
         return lecturer;
     }
 

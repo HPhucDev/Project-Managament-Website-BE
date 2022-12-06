@@ -64,14 +64,17 @@ public class StudentServiceImpl implements StudentService {
         Optional<UserEntity> foundUser = userRepository.findByEmail(addNewStudentRequest.getEmail());
         if (!userRepository.findByEmail(addNewStudentRequest.getEmail()).isEmpty())
             throw new ValueDuplicateException("This email has already existed");
-        user.setBirthDay(addNewStudentRequest.getBirthday());
+        user.setBirthDay(addNewStudentRequest.getBirthDay());
         user.setEmail(addNewStudentRequest.getEmail());
         student.setId(addNewStudentRequest.getStudentId());
         student.setUser(userRepository.save(user));
-        student.setMajor(addNewStudentRequest.getMajor().getName());
+        student.setMajor(addNewStudentRequest.getMajor());
         student.setEducationProgram(addNewStudentRequest.getEducationProgram());
         student.setSchoolYear(addNewStudentRequest.getSchoolYear());
         ClassEntity classEntity = classRepository.findById(addNewStudentRequest.getClassId()).get();
+        if(classEntity == null) {
+            throw new RuntimeException("Class does not existed");
+        }
         student.setClasses(classEntity);
          return studentRepository.save(student);
    }
@@ -100,7 +103,7 @@ public class StudentServiceImpl implements StudentService {
         Optional<ClassEntity> classEntity = classRepository.findById(changeInfoStudentRequest.getClassId());
         if(classEntity.isEmpty())
         {
-            throw new RuntimeException("Error: Lớp học không tồn tại");
+            throw new RuntimeException("Class does not existed");
         }
         student.setClasses(classEntity.get());
         return studentRepository.save(student);
@@ -118,7 +121,7 @@ public class StudentServiceImpl implements StudentService {
         if (!userRepository.findByEmail(changeInfoStudentRequest.getEmail()).isEmpty() && user.getEmail()!= changeInfoStudentRequest.getEmail())
             throw new ValueDuplicateException("This email has already existed");
         user.setEmail(changeInfoStudentRequest.getEmail());
-        user.setBirthDay(changeInfoStudentRequest.getBirthday());
+        user.setBirthDay(changeInfoStudentRequest.getBirthDay());
         student.setUser(userRepository.save(user));
         student.setMajor(changeInfoStudentRequest.getMajor().getName());
         student.setEducationProgram(changeInfoStudentRequest.getEducationProgram());
@@ -126,7 +129,7 @@ public class StudentServiceImpl implements StudentService {
         ClassEntity classEntity = classRepository.findById(changeInfoStudentRequest.getClassId()).get();
         if(classEntity == null)
         {
-            throw new RuntimeException("Error: Lớp học không tồn tại");
+            throw new RuntimeException("Class does not existed");
         }
         student.setClasses(classEntity);
         return studentRepository.save(student);

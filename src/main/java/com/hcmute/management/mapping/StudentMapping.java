@@ -8,7 +8,7 @@ public class StudentMapping {
         StudentEntity studentEntity = new StudentEntity();
         studentEntity.setSchoolYear(addNewStudentRequest.getSchoolYear());
         studentEntity.setEducationProgram(addNewStudentRequest.getEducationProgram());
-        studentEntity.setMajor(addNewStudentRequest.getMajor().getName());
+        studentEntity.setMajor(addNewStudentRequest.getMajor());
         studentEntity.setId(addNewStudentRequest.getStudentId());
         return studentEntity;
     }
