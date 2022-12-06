@@ -6,9 +6,8 @@ import lombok.Getter;
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Getter
-public enum LecturerSort {
-    ID("id"),
-    POSITION("position"),
-    QUALIFICATION("qualification");
+public enum QualificationLecturerEnum {
+    THACSI("Thạc sĩ"),
+    TIENSI("Tiến sĩ");
     private String name;
 }

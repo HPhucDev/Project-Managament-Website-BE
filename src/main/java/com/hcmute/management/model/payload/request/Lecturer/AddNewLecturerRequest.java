@@ -1,5 +1,7 @@
 package com.hcmute.management.model.payload.request.Lecturer;
 
+import com.hcmute.management.common.PositionLecturerEnum;
+import com.hcmute.management.common.QualificationLecturerEnum;
 import com.hcmute.management.model.entity.UserEntity;
 import lombok.Data;
 import lombok.Getter;

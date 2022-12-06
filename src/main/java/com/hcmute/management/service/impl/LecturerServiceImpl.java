@@ -59,8 +59,8 @@ public class LecturerServiceImpl implements LecturerService {
         user.setEmail(updateLecturerRequest.getEmail());
         user.setBirthDay(updateLecturerRequest.getBirthday());
         lecturer.setUser(userRepository.save(user));
-        lecturer.setQualification(updateLecturerRequest.getQualification());
-        lecturer.setPosition(updateLecturerRequest.getPosition());
+        lecturer.setQualification(updateLecturerRequest.getQualification().getName());
+        lecturer.setPosition(updateLecturerRequest.getPosition().getName());
         return lecturerRepository.save(lecturer);
     }
     @Override
