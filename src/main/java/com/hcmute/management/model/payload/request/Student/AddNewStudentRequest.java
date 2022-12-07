@@ -28,7 +28,7 @@ public class AddNewStudentRequest {
     @NotNull(message = "school year can not be empty")
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss", shape = JsonFormat.Shape.STRING)
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
-    private Date schoolYear;
+    private LocalDateTime schoolYear;
     private String major;
     @NotEmpty(message =  "program can not be empty")
     private String educationProgram;
