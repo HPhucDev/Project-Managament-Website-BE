@@ -13,6 +13,7 @@ import com.hcmute.management.model.payload.request.Student.ChangeInfoStudentRequ
 import com.hcmute.management.model.payload.response.ErrorResponse;
 import com.hcmute.management.model.payload.response.PagingResponse;
 import com.hcmute.management.security.JWT.JwtUtils;
+import com.hcmute.management.service.ClassService;
 import com.hcmute.management.service.StudentService;
 import com.hcmute.management.service.SubjectService;
 import com.hcmute.management.service.UserService;
@@ -51,6 +52,7 @@ public class StudyController {
     private final StudentService studentService;
     private final SubjectService subjectService;
     private final UserService userService;
+    private final ClassService classService;
     @Autowired
     AuthenticateHandler authenticateHandler;
 
@@ -93,9 +95,16 @@ public class StudyController {
                 return new ResponseEntity<>(new ErrorResponse(E400, "USERNAME_EXISTED", "Username has been used by another student"), HttpStatus.BAD_REQUEST);
             }
             PasswordEncoder passwordEncoder = new BCryptPasswordEncoder() ;
+            if (userService.findByEmail(addNewStudentRequest.getEmail())!=null && user.getEmail()!= addNewStudentRequest.getEmail())
+                throw new ValueDuplicateException("This email has already existed");
+            ClassEntity classEntity = classService.findByName(addNewStudentRequest.getClassName());
+            if (classEntity==null)
+            {
+                return new ResponseEntity<>(new ErrorResponse(E404,"CLASS_NOT_FOUND","Class not found"),HttpStatus.NOT_FOUND);
+            }
             UserEntity addNewUser = new UserEntity(passwordEncoder.encode(id), id);
             addNewUser = userService.register(addNewUser, AppUserRole.ROLE_STUDENT);
-            StudentEntity student = studentService.saveStudent(addNewStudentRequest, addNewUser);
+            StudentEntity student = studentService.saveStudent(addNewStudentRequest, addNewUser,classEntity);
             userService.addUserImage(file, addNewUser);
             return new ResponseEntity<>(student, HttpStatus.OK);
         } catch (BadCredentialsException e) {
@@ -117,9 +126,16 @@ public class StudyController {
             StudentEntity student = studentService.findByUserId(user);
             if (student == null) {
                 return new ResponseEntity<>(new ErrorResponse(E400, "YOU_ARE_NOT_A_STUDENT", "You aren't a Student"), HttpStatus.BAD_REQUEST);
-
             }
-            StudentEntity updateStudent = studentService.updateStudent(changeInfoStudentRequest, user);
+            if (userService.findByEmail(changeInfoStudentRequest.getEmail())!=null && user.getEmail()!= changeInfoStudentRequest.getEmail())
+                throw new ValueDuplicateException("This email has already existed");
+            ClassEntity classEntity = classService.findByName(changeInfoStudentRequest.getClassName());
+
+            if (classEntity==null)
+            {
+                return new ResponseEntity<>(new ErrorResponse(E404,"CLASS_NOT_FOUND","Class not found"),HttpStatus.NOT_FOUND);
+            }
+            StudentEntity updateStudent = studentService.updateStudent(changeInfoStudentRequest, user,classEntity);
             if (!file.isEmpty()) {
                 userService.addUserImage(file, user);
             }

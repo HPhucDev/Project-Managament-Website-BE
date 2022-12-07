@@ -75,6 +75,8 @@ public class LecturerController {
         if(foundUser!=null){
             return new ResponseEntity<>(new ErrorResponse(E400,"PHONE_EXISTS","Phone has been used by another Lecturer"),HttpStatus.BAD_REQUEST);
         }
+            if (userService.findByEmail(addNewLecturerRequest.getEmail())!=null && user.getEmail()!= addNewLecturerRequest.getEmail())
+                throw new ValueDuplicateException("This email has already existed");
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         UserEntity addNewUser =new UserEntity(passwordEncoder.encode(id),id);
         addNewUser=userService.register(addNewUser, AppUserRole.ROLE_LECTURER);
@@ -159,6 +161,8 @@ public class LecturerController {
                 return new ResponseEntity<>(new ErrorResponse(E400,"YOU ARE NOT OWNER OR ADMIN","You aren't not owner or admin"),HttpStatus.BAD_REQUEST);
             }
             UserEntity userUpdate=lecturer.getUser();
+            if (userService.findByEmail(updateLecturerRequest.getEmail())!=null && user.getEmail()!= updateLecturerRequest.getEmail())
+                throw new ValueDuplicateException("This email has already existed");
             LecturerEntity updateLecturer=lecturerService.updateLecturer(updateLecturerRequest,userUpdate);
             if(!file.isEmpty())
             {

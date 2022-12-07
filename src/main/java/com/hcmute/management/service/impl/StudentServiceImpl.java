@@ -57,13 +57,11 @@ public class StudentServiceImpl implements StudentService {
 
 
     @Override
-    public StudentEntity saveStudent(AddNewStudentRequest addNewStudentRequest, UserEntity user) {
+    public StudentEntity saveStudent(AddNewStudentRequest addNewStudentRequest, UserEntity user,ClassEntity classEntity) {
         StudentEntity student = new StudentEntity();
         user.setFullName(addNewStudentRequest.getFullName());
         user.setGender(addNewStudentRequest.getGender());
         Optional<UserEntity> foundUser = userRepository.findByEmail(addNewStudentRequest.getEmail());
-        if (!userRepository.findByEmail(addNewStudentRequest.getEmail()).isEmpty())
-            throw new ValueDuplicateException("This email has already existed");
         user.setBirthDay(addNewStudentRequest.getBirthDay());
         user.setEmail(addNewStudentRequest.getEmail());
         student.setId(addNewStudentRequest.getStudentId());
@@ -71,12 +69,8 @@ public class StudentServiceImpl implements StudentService {
         student.setMajor(addNewStudentRequest.getMajor());
         student.setEducationProgram(addNewStudentRequest.getEducationProgram());
         student.setSchoolYear(addNewStudentRequest.getSchoolYear());
-        ClassEntity classEntity = classRepository.findById(addNewStudentRequest.getClassId()).get();
-        if(classEntity == null) {
-            throw new RuntimeException("Class does not existed");
-        }
         student.setClasses(classEntity);
-         return studentRepository.save(student);
+        return studentRepository.save(student);
    }
 
     @Override
@@ -87,7 +81,7 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public StudentEntity changeInf(ChangeInfoStudentRequest changeInfoStudentRequest, String userId) {
+    public StudentEntity changeInf(ChangeInfoStudentRequest changeInfoStudentRequest, String userId,ClassEntity classEntity) {
         StudentEntity student = studentRepository.findByUserId(userId);
         UserEntity user = userRepository.findById(userId).get();
         if(student == null)
@@ -100,17 +94,12 @@ public class StudentServiceImpl implements StudentService {
         student.setMajor(changeInfoStudentRequest.getMajor().getName());
         student.setEducationProgram(changeInfoStudentRequest.getEducationProgram());
         student.setSchoolYear(changeInfoStudentRequest.getSchoolYear());
-        Optional<ClassEntity> classEntity = classRepository.findById(changeInfoStudentRequest.getClassId());
-        if(classEntity.isEmpty())
-        {
-            throw new RuntimeException("Class does not existed");
-        }
-        student.setClasses(classEntity.get());
+        student.setClasses(classEntity);
         return studentRepository.save(student);
     }
 
     @Override
-    public StudentEntity updateStudent(ChangeInfoStudentRequest changeInfoStudentRequest, UserEntity user) {
+    public StudentEntity updateStudent(ChangeInfoStudentRequest changeInfoStudentRequest, UserEntity user,ClassEntity classEntity) {
         StudentEntity student = findByUserId(user);
         if(student == null)
         {
@@ -126,11 +115,6 @@ public class StudentServiceImpl implements StudentService {
         student.setMajor(changeInfoStudentRequest.getMajor().getName());
         student.setEducationProgram(changeInfoStudentRequest.getEducationProgram());
         student.setSchoolYear(changeInfoStudentRequest.getSchoolYear());
-        ClassEntity classEntity = classRepository.findById(changeInfoStudentRequest.getClassId()).get();
-        if(classEntity == null)
-        {
-            throw new RuntimeException("Class does not existed");
-        }
         student.setClasses(classEntity);
         return studentRepository.save(student);
     }

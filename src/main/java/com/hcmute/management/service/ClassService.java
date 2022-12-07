@@ -13,4 +13,5 @@ public interface ClassService {
     ClassEntity findById(String id);
     void deleteClass(ClassEntity classEntity);
     List<ClassEntity> getAllClass();
+    ClassEntity findByName(String name);
 }

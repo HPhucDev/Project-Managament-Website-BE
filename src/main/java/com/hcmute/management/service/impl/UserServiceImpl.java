@@ -10,6 +10,7 @@ import com.hcmute.management.service.ImageStorageService;
 import com.hcmute.management.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.apache.catalina.User;
+import org.checkerframework.checker.nullness.Opt;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -83,6 +84,14 @@ private final UserRepository userRepository;
     @Override
     public UserEntity saveUser(UserEntity user) {
         return userRepository.save(user);
+    }
+
+    @Override
+    public UserEntity findByEmail(String email) {
+        Optional<UserEntity> user = userRepository.findByEmail(email);
+        if(user.isEmpty())
+            return null;
+        return user.get();
     }
 
     public boolean isImageFile(MultipartFile file) {
