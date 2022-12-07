@@ -30,13 +30,13 @@ public class ProgressEntity {
     private String status;
 
     @Column(name = "\"create_date\"")
-    private Date createdate;
+    private Date createDate;
 
     @Column(name = "\"modifier_date\"")
-    private Date modiferdate;
+    private Date modiferDate;
 
     @Column(name = "\"time_submit\"")
-    private Date timesubmit;
+    private Date timeSubmit;
 
     @Column(name = "\"week\"")
     private int week;
@@ -88,28 +88,28 @@ public class ProgressEntity {
         this.status = status;
     }
 
-    public Date getCreatedate() {
-        return createdate;
+    public Date getCreateDate() {
+        return createDate;
     }
 
     public void setCreatedate(Date createdate) {
-        this.createdate = createdate;
+        this.createDate = createdate;
     }
 
     public Date getModiferdate() {
-        return modiferdate;
+        return modiferDate;
     }
 
     public void setModiferdate(Date modiferdate) {
-        this.modiferdate = modiferdate;
+        this.modiferDate = modiferdate;
     }
 
     public Date getTimesubmit() {
-        return timesubmit;
+        return timeSubmit;
     }
 
     public void setTimesubmit(Date timesubmit) {
-        this.timesubmit = timesubmit;
+        this.timeSubmit = timesubmit;
     }
 
     public SubjectEntity getSubject() {

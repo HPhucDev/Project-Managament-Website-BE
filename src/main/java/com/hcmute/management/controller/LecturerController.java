@@ -75,6 +75,8 @@ public class LecturerController {
         if(foundUser!=null){
             return new ResponseEntity<>(new ErrorResponse(E400,"PHONE_EXISTS","Phone has been used by another Lecturer"),HttpStatus.BAD_REQUEST);
         }
+            if (userService.findByEmail(addNewLecturerRequest.getEmail())!=null && user.getEmail()!= addNewLecturerRequest.getEmail())
+                throw new ValueDuplicateException("This email has already existed");
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         UserEntity addNewUser =new UserEntity(passwordEncoder.encode(id),id);
         addNewUser=userService.register(addNewUser, AppUserRole.ROLE_LECTURER);
@@ -145,15 +147,23 @@ public class LecturerController {
         try {
             user = authenticateHandler.authenticateUser(req);
             LecturerEntity lecturer = lecturerService.getLecturerById(id);
-            if (lecturer == null) {
+            if (lecturer == null)
+            {
                 return new ResponseEntity<>(new ErrorResponse(E400,"LECTURER_NOT_FOUND","Can't find Lecturer with id provided "+id),HttpStatus.BAD_REQUEST);
 
             }
-            if(lecturer.getUser()!=user )
+            boolean isAdmin=false;
+            for (RoleEntity role: user.getRoles())
+                if(role.getName().toString()=="ROLE_ADMIN")
+                    isAdmin=true;
+            if(lecturer.getUser()!=user && isAdmin==false)
             {
                 return new ResponseEntity<>(new ErrorResponse(E400,"YOU ARE NOT OWNER OR ADMIN","You aren't not owner or admin"),HttpStatus.BAD_REQUEST);
             }
-            LecturerEntity updateLecturer=lecturerService.updateLecturer(updateLecturerRequest,user);
+            UserEntity userUpdate=lecturer.getUser();
+            if (userService.findByEmail(updateLecturerRequest.getEmail())!=null && user.getEmail()!= updateLecturerRequest.getEmail())
+                throw new ValueDuplicateException("This email has already existed");
+            LecturerEntity updateLecturer=lecturerService.updateLecturer(updateLecturerRequest,userUpdate);
             if(!file.isEmpty())
             {
                 userService.addUserImage(file,user);

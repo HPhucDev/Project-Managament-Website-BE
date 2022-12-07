@@ -2,6 +2,7 @@ package com.hcmute.management.service;
 
 import com.hcmute.management.common.OrderByEnum;
 import com.hcmute.management.common.StudentSort;
+import com.hcmute.management.model.entity.ClassEntity;
 import com.hcmute.management.model.entity.LecturerEntity;
 import com.hcmute.management.model.entity.StudentEntity;
 import com.hcmute.management.model.entity.UserEntity;
@@ -22,10 +23,10 @@ public interface StudentService {
     StudentEntity findById(String id);
 
     StudentEntity findByUserId(UserEntity user);
-    StudentEntity saveStudent(AddNewStudentRequest addNewStudentRequest, UserEntity user);
+    StudentEntity saveStudent(AddNewStudentRequest addNewStudentRequest, UserEntity user, ClassEntity classEntity);
     void deleteStudent(String id);
-    StudentEntity changeInf(ChangeInfoStudentRequest changeInfoStudentRequest, String user);
-    StudentEntity updateStudent(ChangeInfoStudentRequest changeInfoStudentRequest, UserEntity user);
+    StudentEntity changeInf(ChangeInfoStudentRequest changeInfoStudentRequest, String user,ClassEntity classEntity);
+    StudentEntity updateStudent(ChangeInfoStudentRequest changeInfoStudentRequest, UserEntity user,ClassEntity classEntity);
 
     StudentEntity findStudentbyUserId(String userid);
     PagingResponse search(String keyword, OrderByEnum orderBy, StudentSort order, int pageindex, int pagesize);

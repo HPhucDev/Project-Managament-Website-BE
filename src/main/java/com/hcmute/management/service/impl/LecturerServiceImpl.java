@@ -38,8 +38,6 @@ public class LecturerServiceImpl implements LecturerService {
         user.setFullName(addNewLecturerRequest.getFullName());
         user.setGender(addNewLecturerRequest.getGender());
         Optional<UserEntity> foundUser = userRepository.findByEmail(addNewLecturerRequest.getEmail());
-        if (!userRepository.findByEmail(addNewLecturerRequest.getEmail()).isEmpty())
-            throw new ValueDuplicateException("This email has already existed");
         user.setEmail(addNewLecturerRequest.getEmail());
         user.setBirthDay(addNewLecturerRequest.getBirthday());
         lecturer.setId(addNewLecturerRequest.getId());
@@ -54,8 +52,6 @@ public class LecturerServiceImpl implements LecturerService {
         LecturerEntity lecturer= findByUser(user);
         user.setFullName(updateLecturerRequest.getFullName());
         user.setGender(updateLecturerRequest.getGender());
-        if (!userRepository.findByEmail(updateLecturerRequest.getEmail()).isEmpty() && user.getEmail()!= updateLecturerRequest.getEmail())
-            throw new ValueDuplicateException("This email has already existed");
         user.setEmail(updateLecturerRequest.getEmail());
         user.setBirthDay(updateLecturerRequest.getBirthday());
         lecturer.setUser(userRepository.save(user));

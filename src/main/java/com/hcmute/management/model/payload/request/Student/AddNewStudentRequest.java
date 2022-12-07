@@ -26,18 +26,16 @@ public class AddNewStudentRequest {
     @NotEmpty(message = "address can not be empty")
     private String address;
     @NotNull(message = "school year can not be empty")
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss", shape = JsonFormat.Shape.STRING)
-    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private LocalDateTime schoolYear;
     private String major;
     @NotEmpty(message =  "program can not be empty")
     private String educationProgram;
-    @NotNull(message = "class id học can not be empty")
-    private String  classId;
+    @NotNull(message = "class name can not be empty")
+    private String  className;
     @NotNull(message = "Email can not be empty")
     private String email;
     @NotNull(message = "school year can not be empty")
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss", shape = JsonFormat.Shape.STRING)
-    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private LocalDateTime birthDay;
 }

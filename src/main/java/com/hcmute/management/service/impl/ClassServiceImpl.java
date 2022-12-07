@@ -37,4 +37,12 @@ public class ClassServiceImpl implements ClassService {
     public List<ClassEntity> getAllClass() {
         return classRepository.findAll();
     }
+
+    @Override
+    public ClassEntity findByName(String name) {
+        Optional<ClassEntity> classEntity = classRepository.findByClassName(name);
+        if (classEntity.isEmpty())
+            return null;
+        return classEntity.get();
+    }
 }

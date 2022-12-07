@@ -20,4 +20,5 @@ UserEntity addUserImage(MultipartFile file,UserEntity user) throws FileNotImageE
 String uploadFile(MultipartFile file,String name);
 
 UserEntity saveUser(UserEntity user);
+UserEntity findByEmail(String name);
 }
