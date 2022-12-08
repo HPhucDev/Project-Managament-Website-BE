@@ -53,8 +53,8 @@ public class StudentRepositoryCustomImpl implements StudentRepositoryCustom {
 //            }
 //        }
         Predicate predicatesId = cb.like(root.get("id"), "%" + searchText + "%");
-        Predicate predicateedcation = cb.like(root.get("education_program"), "%" + searchText + "%");
-        Predicate predicateclass_id = cb.like(cb.concat(root.get("classes").get("classname"), " "),"%" + searchText + "%");
+        Predicate predicateedcation = cb.like(root.get("educationProgram"), "%" + searchText + "%");
+        Predicate predicateclass_id = cb.like(cb.concat(root.get("classes").get("className"), " "),"%" + searchText + "%");
         Predicate predicatename = cb.like(cb.concat(root.get("user").get("fullName"), " "),"%" + searchText + "%");
         predicates.add(cb.or(predicatesId,predicateedcation,predicateclass_id,predicatename));
 
@@ -75,6 +75,7 @@ public class StudentRepositoryCustomImpl implements StudentRepositoryCustom {
         PagingResponse pagingResponse = new PagingResponse();
         Map<String, Object> map = new HashMap<>();
         List<Object> Result = Arrays.asList(listStudentsSort.toArray());
+
         pagingResponse.setTotalPages(totalPage);
         pagingResponse.setEmpty(listStudentsSort.size() == 0);
         pagingResponse.setFirst(pageindex == 0);

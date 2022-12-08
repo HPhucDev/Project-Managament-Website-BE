@@ -153,6 +153,9 @@ public class StudyController {
             user = authenticateHandler.authenticateUser(httpServletRequest);
             for (String id : listStudentId) {
                 StudentEntity student = studentService.findById(id);
+                if(student == null){
+                    return new ResponseEntity<>(new ErrorResponse(E404, "STUDENT_NOT_FOUND", "Student id can not be found with " + id + ""), HttpStatus.UNAUTHORIZED);
+                }
                 studentService.deleteStudent(id);
                 UserEntity userofStudent = userService.findById(student.getUser().getId());
                 for (RoleEntity role : userofStudent.getRoles()) {

@@ -7,9 +7,9 @@ import lombok.Getter;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Getter
 public enum StudentSort {
-    EDUCATION_PROGRAM("education_program"),
+    EDUCATION_PROGRAM("educationProgram"),
     MAJOR("major"),
     CLASS("classes"),
-    SCHOOL_YEAR("school_year");
+    SCHOOL_YEAR("schoolYear");
     private String name;
 }
