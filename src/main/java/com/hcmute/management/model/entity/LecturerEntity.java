@@ -21,7 +21,6 @@ public class LecturerEntity {
 
     @OneToOne()
     @JoinColumn(name="\"user\"",referencedColumnName = "user_id")
-    @JsonIgnore
     private UserEntity user;
 
     @OneToMany(mappedBy = "lecturer",targetEntity = SubjectEntity.class,cascade = CascadeType.ALL)

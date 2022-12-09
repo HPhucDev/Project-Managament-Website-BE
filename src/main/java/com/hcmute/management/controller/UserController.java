@@ -84,19 +84,19 @@ public class UserController {
         UserEntity user;
         try {
             user = authenticateHandler.authenticateUser(req);
-            Map<String,Object> map = new HashMap<>();
+
 
             if (studentService.findByUserId(user) != null)
             {
-                map.put("user",user);
-                map.put("student",user.getStudent());
-                return new ResponseEntity<>(map,HttpStatus.OK);
-//                return new ResponseEntity<>(user.getStudent(),HttpStatus.OK);
+//                map.put("user",user);
+//                map.put("student",user.getStudent());
+//                return new ResponseEntity<>(map,HttpStatus.OK);
+               return new ResponseEntity<>(user.getStudent(),HttpStatus.OK);
             } else if (lecturerService.findByUser(user)!= null) {
-                map.put("user",user);
-                map.put("lecturer",user.getLecturer());
-                return new ResponseEntity<>(map,HttpStatus.OK);
-//                return new ResponseEntity<>(user.getLecturer(),HttpStatus.OK);
+//                map.put("user",user);
+//                map.put("lecturer",user.getLecturer());
+//                return new ResponseEntity<>(map,HttpStatus.OK);
+                return new ResponseEntity<>(user.getLecturer(),HttpStatus.OK);
             }
             else
             {

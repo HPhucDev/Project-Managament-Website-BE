@@ -97,7 +97,7 @@ public class SubjectController {
                 String url = subjectService.uploadSubjectFile(file,subject);
                 subject.setAttachmentLink(url);
                 subject=subjectService.saveSubject(subject);
-                emailService.sendSubjectConfirmEmail(subject);
+//                emailService.sendSubjectConfirmEmail(subject);
                 return new ResponseEntity<>(subject,HttpStatus.OK);
             }
         }catch (BadCredentialsException e)
