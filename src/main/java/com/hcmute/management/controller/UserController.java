@@ -70,14 +70,14 @@ public class UserController {
             return new ResponseEntity<>(new ErrorResponse(E401,"UNAUTHORIZED","Unauthorized, please login again"), HttpStatus.UNAUTHORIZED);
         }
     }
-    @PostMapping(value = "/file",consumes = {"multipart/form-data"})
-    @ApiOperation("Create")
-    public ResponseEntity<Object> addFile(@RequestPart MultipartFile file)
-    {
-        System.out.println(file.getContentType());
-        String url = userService.uploadFile(file,"demo");
-        return new ResponseEntity<>(url,HttpStatus.OK);
-    }
+//    @PostMapping(value = "/file",consumes = {"multipart/form-data"})
+//    @ApiOperation("Create")
+//    public ResponseEntity<Object> addFile(@RequestPart MultipartFile file)
+//    {
+//        System.out.println(file.getContentType());
+//        String url = userService.uploadFile(file,"demo");
+//        return new ResponseEntity<>(url,HttpStatus.OK);
+//    }
     @GetMapping("/userInfo")
     @ApiOperation("Get User Info")
     public ResponseEntity<Object> getUserInfo(HttpServletRequest req) {

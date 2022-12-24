@@ -1,5 +1,6 @@
 package com.hcmute.management.security.config;
 
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -11,4 +12,6 @@ public class PasswordConfig {
     public PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder(10);
     }
+
+    
 }

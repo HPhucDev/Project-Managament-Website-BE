@@ -89,7 +89,7 @@ public class SubjectController {
 
             }
             else {
-                subject.setLecturer(user.getLecturer());
+                subject.setLecturer(lecturer);
                 subject.setStatus(Integer.valueOf(SubjectStatus.PENDING.getStatus()));
                 String uuid = String.valueOf(UUID.randomUUID());
                 subject.setId(uuid);
@@ -97,7 +97,7 @@ public class SubjectController {
                 String url = subjectService.uploadSubjectFile(file,subject);
                 subject.setAttachmentLink(url);
                 subject=subjectService.saveSubject(subject);
-//                emailService.sendSubjectConfirmEmail(subject);
+                emailService.sendSubjectConfirmEmail(subject);
                 return new ResponseEntity<>(subject,HttpStatus.OK);
             }
         }catch (BadCredentialsException e)

@@ -27,6 +27,8 @@ public class LecturerEntity {
     @JsonIgnore
     private Set<SubjectEntity> subjects;
 
+
+
     public Set<SubjectEntity> getSubjects() {
         return subjects;
     }

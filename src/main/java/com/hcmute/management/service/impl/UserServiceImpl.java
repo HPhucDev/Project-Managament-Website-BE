@@ -97,6 +97,7 @@ private final UserRepository userRepository;
     public boolean isImageFile(MultipartFile file) {
         return Arrays.asList(new String[] {"image/png","image/jpg","image/jpeg", "image/bmp"})
                 .contains(file.getContentType().trim().toLowerCase());
+
     }
     public boolean isUploadFile(MultipartFile file) {
         return Arrays.asList(new String[] {"application/pdf","application/x-zip-compressed","application/octet-stream"})
