@@ -1,10 +1,15 @@
 package com.hcmute.management.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.swagger.annotations.ApiModelProperty;
+import net.bytebuddy.asm.Advice;
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.rest.core.annotation.RestResource;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Set;
 
@@ -28,15 +33,21 @@ public class ProgressEntity {
 
     @Column(name = "\"status\"")
     private String status;
-
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss", shape = JsonFormat.Shape.STRING)
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    @ApiModelProperty(required = true, example = "2021-08-20T00:00:00")
     @Column(name = "\"create_date\"")
-    private Date createDate;
-
+    private LocalDateTime createDate;
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss", shape = JsonFormat.Shape.STRING)
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    @ApiModelProperty(required = true, example = "2021-08-20T00:00:00")
     @Column(name = "\"modifier_date\"")
-    private Date modiferDate;
-
+    private LocalDateTime modiferDate;
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss", shape = JsonFormat.Shape.STRING)
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    @ApiModelProperty(required = true, example = "2021-08-20T00:00:00")
     @Column(name = "\"time_submit\"")
-    private Date timeSubmit;
+    private LocalDateTime timeSubmit;
 
     @Column(name = "\"week\"")
     private int week;
@@ -46,8 +57,8 @@ public class ProgressEntity {
     @JsonIgnore
     private SubjectEntity subject;
 
-    @OneToOne()
-    @JoinColumn(name = "\"student_id\"", referencedColumnName = "id")
+    @ManyToOne()
+    @JoinColumn(name = "\"student_id\"")
     private StudentEntity student;
 
     @OneToMany(mappedBy = "progressComment", targetEntity = CommentEntity.class, cascade = CascadeType.ALL)
@@ -89,28 +100,28 @@ public class ProgressEntity {
         this.status = status;
     }
 
-    public Date getCreateDate() {
-        return createDate;
-    }
-
-    public void setCreatedate(Date createdate) {
-        this.createDate = createdate;
-    }
-
-    public Date getModiferdate() {
+    public LocalDateTime getModiferDate() {
         return modiferDate;
     }
 
-    public void setModiferdate(Date modiferdate) {
-        this.modiferDate = modiferdate;
+    public void setModiferDate(LocalDateTime modiferDate) {
+        this.modiferDate = modiferDate;
     }
 
-    public Date getTimesubmit() {
+    public LocalDateTime getTimeSubmit() {
         return timeSubmit;
     }
 
-    public void setTimesubmit(Date timesubmit) {
-        this.timeSubmit = timesubmit;
+    public void setTimeSubmit(LocalDateTime timeSubmit) {
+        this.timeSubmit = timeSubmit;
+    }
+
+    public LocalDateTime getCreateDate() {
+        return createDate;
+    }
+
+    public void setCreateDate(LocalDateTime createDate) {
+        this.createDate = createDate;
     }
 
     public SubjectEntity getSubject() {
