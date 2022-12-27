@@ -3,6 +3,7 @@ package com.hcmute.management.service.impl;
 import com.hcmute.management.handler.FileNotImageException;
 import com.hcmute.management.model.entity.AttachmentEntity;
 import com.hcmute.management.model.entity.ProgressEntity;
+import com.hcmute.management.model.entity.SubjectEntity;
 import com.hcmute.management.repository.AttachmentRepository;
 import com.hcmute.management.repository.ProgressRepository;
 import com.hcmute.management.service.AttachmentService;
@@ -45,5 +46,11 @@ public class AttachmentServiceImpl implements AttachmentService {
             }
         }
         progressRepository.save(progress);
+    }
+
+    @Override
+    public List<AttachmentEntity> findAllBySubject(SubjectEntity subject) {
+        List<AttachmentEntity> list = attachmentRepository.findAllByProgress_Subject(subject);
+        return list;
     }
 }

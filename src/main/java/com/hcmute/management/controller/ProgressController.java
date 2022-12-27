@@ -58,21 +58,24 @@ public class ProgressController {
 
     @PostMapping(value = "",consumes = {"multipart/form-data"})
     @ApiOperation("Create")
-    @Transactional()
     public ResponseEntity<Object> addProgress(@Valid AddNewProgressRequest addNewProgressRequest, @RequestPart MultipartFile[] files, BindingResult errors, HttpServletRequest httpServletRequest) throws Exception {
        UserEntity user;
        try {
            user = authenticateHandler.authenticateUser(httpServletRequest);
            SubjectEntity subject = subjectService.getSubjectById(addNewProgressRequest.getSubjectId());
-           if (user==null || subject==null || user.getSubject()==null) {
+           if (user==null || subject==null) {
                return new ResponseEntity<>(new ErrorResponse(E400,"INVALID_REQUEST","Your request is invalid, please check and try again"), HttpStatus.BAD_REQUEST);
            }
            if (user.getSubjectLeader()!=subject && user.getSubject()!=subject)
            {
                return new ResponseEntity<>(new ErrorResponse(E400,"INVALID_USER","You are not assign to this subject"), HttpStatus.BAD_REQUEST);
            }
+           if (progressService.findBySubjectAndWeek(subject,addNewProgressRequest.getWeek())!=null)
+           {
+               return new ResponseEntity<>(new ErrorResponse(E400,"INVALID_WEEK","This week have progress"),HttpStatus.BAD_REQUEST);
+           }
            try {
-                     ProgressEntity progress = progressService.saveProgress(addNewProgressRequest);
+                     ProgressEntity progress = progressService.saveProgress(user,addNewProgressRequest);
                      attachmentService.uploadFile(files, progress);
                      return new ResponseEntity<>(progress, HttpStatus.OK);
                  }catch (FileNotImageException fileNotImageException)

@@ -1,10 +1,7 @@
 package com.hcmute.management.service.impl;
 
 import com.hcmute.management.mapping.ProgressMapping;
-import com.hcmute.management.model.entity.AttachmentEntity;
-import com.hcmute.management.model.entity.ProgressEntity;
-import com.hcmute.management.model.entity.StudentEntity;
-import com.hcmute.management.model.entity.SubjectEntity;
+import com.hcmute.management.model.entity.*;
 import com.hcmute.management.model.payload.request.Progress.AddNewProgressRequest;
 import com.hcmute.management.model.payload.request.Progress.UpdateProgressRequest;
 import com.hcmute.management.repository.ProgressRepository;
@@ -15,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -31,20 +29,17 @@ public class ProgressServiceImpl implements ProgressService {
     final ProgressRepository progressRepository;
 
     @Override
-    public ProgressEntity saveProgress(AddNewProgressRequest progressRequest) {
-        Optional<StudentEntity> student = studentRepository.findById(progressRequest.getStudentId());
+    public ProgressEntity saveProgress(UserEntity user,AddNewProgressRequest progressRequest) {
         Optional<SubjectEntity> subject = subjectRepository.findById(progressRequest.getSubjectId());
-        if(student.isEmpty()) {
-            throw new RuntimeException("STUDENT_NOT_FOUND");
-        }
         if(subject.isEmpty()) {
             throw  new RuntimeException("SUBJECT_NOT_FOUND");
         }
-
         ProgressEntity progress = ProgressMapping.addProgressToEntity(progressRequest);
         progress.setAttachments(new HashSet<>());
-        progress.setStudent(student.get());
+        progress.setStudent(user.getStudent());
         progress.setSubject(subject.get());
+        progress.setCreateDate(LocalDateTime.now());
+        progress.setTimeSubmit(LocalDateTime.now());
         return progressRepository.save(progress);
 
     }
@@ -72,6 +67,12 @@ public class ProgressServiceImpl implements ProgressService {
         progress.setSubject(subject);
         progress.setId(id);
         return progressRepository.save(progress);
+    }
+
+    @Override
+    public ProgressEntity findBySubjectAndWeek(SubjectEntity subject, int week) {
+        Optional<ProgressEntity> progress = progressRepository.findBySubjectAndWeek(subject,week);
+        return progress.isEmpty() ? null : progress.get();
     }
 
     @Override

@@ -11,6 +11,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.List;
 
 
 @Entity
@@ -44,6 +45,17 @@ public class StudentEntity {
 
     @Column(name = "\"major\"")
     private String major;
+    @OneToMany(mappedBy = "student",targetEntity = ProgressEntity.class)
+    @JsonIgnore
+    private List<ProgressEntity> progress;
+
+    public List<ProgressEntity> getProgress() {
+        return progress;
+    }
+
+    public void setProgress(List<ProgressEntity> progress) {
+        this.progress = progress;
+    }
 
     public String getId() {
         return id;

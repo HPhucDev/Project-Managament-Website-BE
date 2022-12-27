@@ -7,6 +7,7 @@ import com.hcmute.management.common.SubjectStatus;
 import com.hcmute.management.handler.AuthenticateHandler;
 import com.hcmute.management.handler.MethodArgumentNotValidException;
 import com.hcmute.management.mapping.SubjectMapping;
+import com.hcmute.management.model.entity.AttachmentEntity;
 import com.hcmute.management.model.entity.LecturerEntity;
 import com.hcmute.management.model.entity.SubjectEntity;
 import com.hcmute.management.model.entity.UserEntity;
@@ -17,6 +18,7 @@ import com.hcmute.management.model.payload.request.Subject.UpdateSubjectRequest;
 import com.hcmute.management.model.payload.response.ErrorResponse;
 import com.hcmute.management.model.payload.response.PagingResponse;
 import com.hcmute.management.security.JWT.JwtUtils;
+import com.hcmute.management.service.AttachmentService;
 import com.hcmute.management.service.EmailService;
 import com.hcmute.management.service.LecturerService;
 import com.hcmute.management.service.SubjectService;
@@ -55,6 +57,7 @@ public class SubjectController {
     private final AuthenticateHandler authenticateHandler;
     private final EmailService emailService;
     private final LecturerService lecturerService;
+    private final AttachmentService attachmentService;
     public static String E400="Bad request";
     public static String E404="Not found";
     public static String E401="Unauthorize";
@@ -188,7 +191,11 @@ public class SubjectController {
         {
             return new ResponseEntity<>(new ErrorResponse(E404,"SUBJECT_NOT_FOUND","Can't find subject with id provided"), HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<>(subject,HttpStatus.OK);
+        List<AttachmentEntity> listAttachment = attachmentService.findAllBySubject(subject);
+        Map<String, Object> map = new HashMap<>();
+        map.put("subject",subject);
+        map.put("listAttachment",listAttachment);
+        return new ResponseEntity<>(map,HttpStatus.OK);
     }
     @DeleteMapping("")
     @ApiOperation("Delete")

@@ -9,6 +9,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Past;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Getter
@@ -23,16 +24,17 @@ public class UpdateProgressRequest {
     private String status;
     @NotNull(message = "Ngày tháng năm không được để trống")
     @Past(message = "Ngày tháng năm không được vượt quá hôm nay")
-    @DateTimeFormat(pattern = "MM/dd/yyyy")
-    private Date createDate;
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+    private LocalDateTime createDate;
 
     @NotNull(message = "Ngày tháng năm không được để trống")
-    @DateTimeFormat(pattern = "MM/dd/yyyy")
-    private Date modiferDate;
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+    private LocalDateTime modiferDate;
 
     @NotNull(message = "Ngày tháng năm không được để trống")
     @Past(message = "Ngày tháng năm không được vượt quá hôm nay")
-    private Date timeSubmit;
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+    private LocalDateTime timeSubmit;
 
     @NotEmpty(message = "Id không được để trống")
     private String subjectId;
