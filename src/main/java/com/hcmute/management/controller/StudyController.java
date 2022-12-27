@@ -18,6 +18,7 @@ import com.hcmute.management.service.StudentService;
 import com.hcmute.management.service.SubjectService;
 import com.hcmute.management.service.UserService;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -220,7 +221,7 @@ public class StudyController {
                     } else {
                         UserEntity tempUser = new UserEntity();
                         for (String i : listMember) {
-                            tempUser = userService.findById(i);
+                            tempUser = userService.findByUserName(i);
                             if (tempUser == null || tempUser.getSubject() != null || tempUser.getSubjectLeader() != null) {
                                 return new ResponseEntity<>(new ErrorResponse(E404, "ID_NOT_VALID", "Member with id " + i + " is not valid"), HttpStatus.NOT_FOUND);
                             }
@@ -254,7 +255,7 @@ public class StudyController {
                 } else {
                     UserEntity tempUser = new UserEntity();
                     for (String i : listMember) {
-                        tempUser = userService.findById(i);
+                        tempUser = userService.findByUserName(i);
                         if (tempUser == null || tempUser.getSubject() != subject) {
                             return new ResponseEntity<>(new ErrorResponse(E400, "MEMBER_ID_IS_NOT_VALID", "Member with id" + i + " is not valid"), HttpStatus.NOT_FOUND);
                         }

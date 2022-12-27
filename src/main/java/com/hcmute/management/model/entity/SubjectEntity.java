@@ -64,6 +64,17 @@ public class SubjectEntity {
     @Column(name = "\"end_Date\"")
     private LocalDateTime endDate;
 
+    @OneToMany(mappedBy = "subject",targetEntity = ProgressEntity.class)
+    private List<ProgressEntity> progress;
+
+    public List<ProgressEntity> getProgress() {
+        return progress;
+    }
+
+    public void setProgress(List<ProgressEntity> progress) {
+        this.progress = progress;
+    }
+
     @Column(name = "\"attachment\"")
     private String attachmentLink;
 

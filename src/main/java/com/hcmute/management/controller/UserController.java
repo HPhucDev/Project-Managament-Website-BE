@@ -70,33 +70,33 @@ public class UserController {
             return new ResponseEntity<>(new ErrorResponse(E401,"UNAUTHORIZED","Unauthorized, please login again"), HttpStatus.UNAUTHORIZED);
         }
     }
-    @PostMapping(value = "/file",consumes = {"multipart/form-data"})
-    @ApiOperation("Create")
-    public ResponseEntity<Object> addFile(@RequestPart MultipartFile file)
-    {
-        System.out.println(file.getContentType());
-        String url = userService.uploadFile(file,"demo");
-        return new ResponseEntity<>(url,HttpStatus.OK);
-    }
+//    @PostMapping(value = "/file",consumes = {"multipart/form-data"})
+//    @ApiOperation("Create")
+//    public ResponseEntity<Object> addFile(@RequestPart MultipartFile file)
+//    {
+//        System.out.println(file.getContentType());
+//        String url = userService.uploadFile(file,"demo");
+//        return new ResponseEntity<>(url,HttpStatus.OK);
+//    }
     @GetMapping("/userInfo")
     @ApiOperation("Get User Info")
     public ResponseEntity<Object> getUserInfo(HttpServletRequest req) {
         UserEntity user;
         try {
             user = authenticateHandler.authenticateUser(req);
-            Map<String,Object> map = new HashMap<>();
+
 
             if (studentService.findByUserId(user) != null)
             {
-                map.put("user",user);
-                map.put("student",user.getStudent());
-                return new ResponseEntity<>(map,HttpStatus.OK);
-//                return new ResponseEntity<>(user.getStudent(),HttpStatus.OK);
+//                map.put("user",user);
+//                map.put("student",user.getStudent());
+//                return new ResponseEntity<>(map,HttpStatus.OK);
+               return new ResponseEntity<>(user.getStudent(),HttpStatus.OK);
             } else if (lecturerService.findByUser(user)!= null) {
-                map.put("user",user);
-                map.put("lecturer",user.getLecturer());
-                return new ResponseEntity<>(map,HttpStatus.OK);
-//                return new ResponseEntity<>(user.getLecturer(),HttpStatus.OK);
+//                map.put("user",user);
+//                map.put("lecturer",user.getLecturer());
+//                return new ResponseEntity<>(map,HttpStatus.OK);
+                return new ResponseEntity<>(user.getLecturer(),HttpStatus.OK);
             }
             else
             {

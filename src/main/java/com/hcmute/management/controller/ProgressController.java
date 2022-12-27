@@ -77,7 +77,7 @@ public class ProgressController {
                      return new ResponseEntity<>(progress, HttpStatus.OK);
                  }catch (FileNotImageException fileNotImageException)
                  {
-                     return new ResponseEntity<>(new ErrorResponse("Unsupported Media Type","FILE_NOT_IMAGE",fileNotImageException.getMessage()),HttpStatus.UNSUPPORTED_MEDIA_TYPE);
+                     return new ResponseEntity<>(new ErrorResponse("Unsupported Media Type","FILE_TYPE_NOT_VALID",fileNotImageException.getMessage()),HttpStatus.UNSUPPORTED_MEDIA_TYPE);
                  }
             } catch (BadCredentialsException e)
        {

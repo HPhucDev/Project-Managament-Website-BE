@@ -89,7 +89,7 @@ public class SubjectController {
 
             }
             else {
-                subject.setLecturer(user.getLecturer());
+                subject.setLecturer(lecturer);
                 subject.setStatus(Integer.valueOf(SubjectStatus.PENDING.getStatus()));
                 String uuid = String.valueOf(UUID.randomUUID());
                 subject.setId(uuid);

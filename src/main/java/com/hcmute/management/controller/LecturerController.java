@@ -35,6 +35,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import javax.validation.constraints.Null;
 
 import java.util.*;
 
@@ -135,7 +136,20 @@ public class LecturerController {
         PagingResponse pagingResponse = lecturerService.search(searchText,order,sort,pageIndex,pageSize);
         return new ResponseEntity<>(pagingResponse, HttpStatus.OK);
     }
-
+//    @GetMapping("/searchDemo")
+//    @ApiOperation("Search by Criteria")
+//    public ResponseEntity<Object> searchByCriteriaDemo(
+//            @RequestParam(required = false,name = "searchText") String searchText,
+//            @RequestParam(defaultValue = "0",name = "pageIndex") int pageIndex,
+//            @RequestParam(defaultValue = "5",name = "pageSize") int pageSize,
+//            @RequestParam(defaultValue = "ID") LecturerSort sort,
+//            @RequestParam(defaultValue = "DESCENDING") OrderByEnum order
+//    )
+//    {
+//        Page<Object> page = lecturerService.searchByCriteria(searchText,pageIndex,pageSize,sort.getName(),order.getName());
+//
+//        return new ResponseEntity<>(page, HttpStatus.OK);
+//    }
     @PatchMapping(value ="/{LecturerId}",consumes = {"multipart/form-data"})
     @ApiOperation("Update")
 //    @PreAuthorize("hasRole('ROLE_LECTURER')")

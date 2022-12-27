@@ -27,7 +27,7 @@ public class StudentEntity {
 
     @OneToOne()
     @JoinColumn(name = "user_id", referencedColumnName = "user_id")
-    @JsonIgnore
+
     private UserEntity user;
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss", shape = JsonFormat.Shape.STRING)
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
