@@ -80,4 +80,11 @@ public class ProgressServiceImpl implements ProgressService {
             progressRepository.deleteById(id);
         }
     }
+
+    @Override
+    public int getPercent(String subjectId) {
+        int count = progressRepository.getPercent(subjectId);
+        return count;
+    }
+
 }

@@ -18,4 +18,6 @@ public interface ProgressService {
     ProgressEntity updateProgress(UpdateProgressRequest updateProgressRequest, String id);
 
     void deleteById(List<String> listid);
+    int getPercent(String subjectId);
+
 }

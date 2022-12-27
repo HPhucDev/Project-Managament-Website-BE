@@ -142,5 +142,19 @@ public class ProgressController {
             return new ResponseEntity<>(new ErrorResponse(E401,"UNAUTHORIZED","Unauthorized, please login again"), HttpStatus.UNAUTHORIZED);
         }
     }
+    @GetMapping("/getPercent/{subjectId}")
+    @ApiOperation("Get percent progress by subject id")
+    public ResponseEntity<Object> getPercentbySubjectId(@PathVariable("subjectId") String subjectId) {
+        if(subjectService.getSubjectById(subjectId)== null) {
+            return new ResponseEntity<>(new ErrorResponse(E404, "SUBJECT_NOT_FOUND","Subject not found"),HttpStatus.NOT_FOUND);
+        }
+        else {
+            int count = progressService.getPercent(subjectId);
+            float percent = count / 15;
+            Map<String, Object> map = new HashMap();
+            map.put("Percent", percent);
+            return new ResponseEntity<>(map, HttpStatus.OK);
+        }
+    }
 
 }
