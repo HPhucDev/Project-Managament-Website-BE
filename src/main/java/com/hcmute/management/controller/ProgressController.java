@@ -153,9 +153,10 @@ public class ProgressController {
         }
         else {
             int count = progressService.getPercent(subjectId);
-            float percent = count / 15;
+            float percent = (float) count / 15 * 100;
             Map<String, Object> map = new HashMap();
             map.put("Percent", percent);
+            map.put("Total",count + "/" + "15");
             return new ResponseEntity<>(map, HttpStatus.OK);
         }
     }

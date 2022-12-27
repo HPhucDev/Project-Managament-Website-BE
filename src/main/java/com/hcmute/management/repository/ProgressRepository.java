@@ -3,6 +3,7 @@ package com.hcmute.management.repository;
 import com.hcmute.management.model.entity.ProgressEntity;
 import com.hcmute.management.model.entity.SubjectEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 import java.util.Optional;
