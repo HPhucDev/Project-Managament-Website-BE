@@ -17,25 +17,25 @@ import java.util.Date;
 @Data
 @NoArgsConstructor
 public class AddNewStudentRequest {
-    @NotEmpty(message = " student id can not be empty")
+    @NotEmpty(message = " Student id can not be empty")
     private String studentId;
-    @NotEmpty(message = "full name can not be empty")
+    @NotEmpty(message = "Full name can not be empty")
     private String fullName;
-    @NotEmpty(message = "gender can not be empty")
+    @NotEmpty(message = "Gender can not be empty")
     private String gender;
-    @NotEmpty(message = "address can not be empty")
+    @NotEmpty(message = "Address can not be empty")
     private String address;
-    @NotNull(message = "school year can not be empty")
+    @NotNull(message = "School year can not be empty")
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private LocalDateTime schoolYear;
     private String major;
-    @NotEmpty(message =  "program can not be empty")
+    @NotEmpty(message =  "Program can not be empty")
     private String educationProgram;
-    @NotNull(message = "class name can not be empty")
+    @NotNull(message = "Class name can not be empty")
     private String  className;
     @NotNull(message = "Email can not be empty")
     private String email;
-    @NotNull(message = "school year can not be empty")
+    @NotNull(message = "School year can not be empty")
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private LocalDateTime birthDay;
 }

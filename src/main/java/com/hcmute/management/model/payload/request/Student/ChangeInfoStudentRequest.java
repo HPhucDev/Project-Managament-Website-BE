@@ -34,8 +34,8 @@ public class ChangeInfoStudentRequest {
     private String educationProgram;
     @NotEmpty(message = "Class id can not be empty")
     private String className;
-    @NotEmpty(message = "Email can not be empty")
-    private String email;
+//    @NotEmpty(message = "Email can not be empty")
+//    private String email;
     @NotNull(message = "school year can not be empty")
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss", shape = JsonFormat.Shape.STRING)
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")

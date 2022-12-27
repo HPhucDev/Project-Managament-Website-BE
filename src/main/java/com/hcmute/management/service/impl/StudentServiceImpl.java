@@ -107,9 +107,9 @@ public class StudentServiceImpl implements StudentService {
         }
         user.setFullName(changeInfoStudentRequest.getFullName());
         user.setGender(changeInfoStudentRequest.getGender());
-        if (!userRepository.findByEmail(changeInfoStudentRequest.getEmail()).isEmpty() && user.getEmail()!= changeInfoStudentRequest.getEmail())
-            throw new ValueDuplicateException("This email has already existed");
-        user.setEmail(changeInfoStudentRequest.getEmail());
+//        if (!userRepository.findByEmail(changeInfoStudentRequest.getEmail()).isEmpty() && user.getEmail()!= changeInfoStudentRequest.getEmail())
+//            throw new ValueDuplicateException("This email has already existed");
+//       user.setEmail(changeInfoStudentRequest.getEmail());
         user.setBirthDay(changeInfoStudentRequest.getBirthDay());
         student.setUser(userRepository.save(user));
         student.setMajor(changeInfoStudentRequest.getMajor().getName());

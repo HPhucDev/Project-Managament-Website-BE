@@ -127,8 +127,8 @@ public class StudyController {
             if (student == null) {
                 return new ResponseEntity<>(new ErrorResponse(E400, "YOU_ARE_NOT_A_STUDENT", "You aren't a Student"), HttpStatus.BAD_REQUEST);
             }
-            if (userService.findByEmail(changeInfoStudentRequest.getEmail())!=null && user.getEmail()!= changeInfoStudentRequest.getEmail())
-                throw new ValueDuplicateException("This email has already existed");
+//            if (userService.findByEmail(changeInfoStudentRequest.getEmail())!=null && user.getEmail()!= changeInfoStudentRequest.getEmail())
+//                throw new ValueDuplicateException("This email has already existed");
             ClassEntity classEntity = classService.findByName(changeInfoStudentRequest.getClassName());
 
             if (classEntity==null)

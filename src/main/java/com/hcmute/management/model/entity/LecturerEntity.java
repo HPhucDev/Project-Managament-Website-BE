@@ -23,7 +23,7 @@ public class LecturerEntity {
     @JoinColumn(name="\"user\"",referencedColumnName = "user_id")
     @JsonIgnore
     private UserEntity user;
-
+    
     @OneToMany(mappedBy = "lecturer",targetEntity = SubjectEntity.class,cascade = CascadeType.ALL)
     @JsonIgnore
     private Set<SubjectEntity> subjects;
