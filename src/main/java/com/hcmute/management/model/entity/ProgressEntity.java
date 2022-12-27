@@ -13,7 +13,7 @@ import java.util.Set;
 @Table(name = "\"progress\"")
 public class ProgressEntity {
     @Id
-    @Column(name = "\"project_id\"")
+    @Column(name = "\"progress_id\"")
     @GeneratedValue(
             generator = "UUID"
     )
@@ -41,12 +41,13 @@ public class ProgressEntity {
     @Column(name = "\"week\"")
     private int week;
 
-    @OneToOne()
-    @JoinColumn(name = "project_id", referencedColumnName = "project_id")
+    @ManyToOne()
+    @JoinColumn(name = "\"subject_id\"")
+    @JsonIgnore
     private SubjectEntity subject;
 
     @OneToOne()
-    @JoinColumn(name = "student_id", referencedColumnName = "id")
+    @JoinColumn(name = "\"student_id\"", referencedColumnName = "id")
     private StudentEntity student;
 
     @OneToMany(mappedBy = "progressComment", targetEntity = CommentEntity.class, cascade = CascadeType.ALL)
