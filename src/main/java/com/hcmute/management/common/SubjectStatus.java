@@ -12,7 +12,9 @@ public enum SubjectStatus {
     NEED_CHECKED("1"),
     PENDING("2"),
     UNASSIGNED("3"),
-    ASSIGNED("4");
+    ASSIGNED("4"),
+    APPROVE_REPORT("5"),
+    DENY_TO_REPORT("6");
     private String status;
 
 
